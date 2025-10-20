@@ -1,6 +1,45 @@
-import { oldEnglish } from './oldEnglish';
 import { LanguageDefinition } from './LanguageDefinition';
 import { PatternNotFoundError, NoValidContinuationsError, MaxLoopsExceededError } from '../exceptions/PatternGenerationError';
+
+/**
+ * Enum for supported languages
+ */
+export enum SupportedLanguage {
+  OLD_ENGLISH = 'oldEnglish'
+}
+
+/**
+ * Get the language pattern definition for a supported language
+ */
+export function getLanguagePattern(language: SupportedLanguage): LanguageDefinition {
+  switch (language) {
+    case SupportedLanguage.OLD_ENGLISH:
+      // Lazy load to avoid circular dependencies
+      const { oldEnglish } = require('./oldEnglish');
+      return oldEnglish;
+    default:
+      throw new Error(`Unsupported language: ${language}`);
+  }
+}
+
+/**
+ * Get all supported languages
+ */
+export function getSupportedLanguages(): SupportedLanguage[] {
+  return Object.values(SupportedLanguage);
+}
+
+/**
+ * Get display name for a supported language
+ */
+export function getLanguageDisplayName(language: SupportedLanguage): string {
+  switch (language) {
+    case SupportedLanguage.OLD_ENGLISH:
+      return 'Old English';
+    default:
+      return language;
+  }
+}
 
 export interface NameSegmentation {
   segments: string[];
@@ -457,13 +496,25 @@ export function isNameAnalyzable(name: string, language: LanguageDefinition): bo
  * Generic name analyzer that automatically selects the appropriate language
  * Currently defaults to Old English, but can be extended to detect language or use preferences
  */
-export function analyzeNameGeneric(inputName: string): AnalysisResult {
-  // For now, default to Old English
-  // In the future, this could:
-  // - Auto-detect the language based on patterns
-  // - Use user preferences
-  // - Accept a language parameter from URL/settings
-  return analyzeName(inputName, oldEnglish);
+export function analyzeNameGeneric(inputName: string, language: SupportedLanguage = SupportedLanguage.OLD_ENGLISH): AnalysisResult {
+  const languageDefinition = getLanguagePattern(language);
+  return analyzeName(inputName, languageDefinition);
+}
+
+/**
+ * Generate names using a specific supported language
+ */
+export function generateNamesForLanguage(language: SupportedLanguage, count: number = 10, minLength?: number, maxLength?: number): string[] {
+  const languageDefinition = getLanguagePattern(language);
+  return generateNames(languageDefinition, count, minLength, maxLength);
+}
+
+/**
+ * Generate names with meanings using a specific supported language
+ */
+export function generateNamesWithMeaningsForLanguage(language: SupportedLanguage, count: number = 10, minLength?: number, maxLength?: number): Array<{ name: string; meaning: string; }> {
+  const languageDefinition = getLanguagePattern(language);
+  return generateNamesWithMeanings(languageDefinition, count, minLength, maxLength);
 }
 // Helper function to deep copy the patterns object to avoid modifying the original
 export function deepCopyPatterns(patterns: { [key: string]: string[]; }): { [key: string]: string[]; } {
@@ -780,17 +831,23 @@ export function generateNamesWithMeanings(language: LanguageDefinition, count: n
 // Old English specific convenience functions
 
 export function generateOldEnglishName(minLength?: number, maxLength?: number): string {
-  return generateName(oldEnglish, minLength, maxLength);
+  const languageDefinition = getLanguagePattern(SupportedLanguage.OLD_ENGLISH);
+  return generateName(languageDefinition, minLength, maxLength);
 }
-export function generateOldEnglishNames(count: number = 10, minLength?: number, maxLength?: number): string[] {
-  return generateNames(oldEnglish, count, minLength, maxLength);
-}
-export function generateOldEnglishNamesWithMeanings(count: number = 10, minLength?: number, maxLength?: number): Array<{ name: string; meaning: string; }> {
-  return generateNamesWithMeanings(oldEnglish, count, minLength, maxLength);
-}
-// Helper function to get meaning for an existing name
 
+export function generateOldEnglishNames(count: number = 10, minLength?: number, maxLength?: number): string[] {
+  const languageDefinition = getLanguagePattern(SupportedLanguage.OLD_ENGLISH);
+  return generateNames(languageDefinition, count, minLength, maxLength);
+}
+
+export function generateOldEnglishNamesWithMeanings(count: number = 10, minLength?: number, maxLength?: number): Array<{ name: string; meaning: string; }> {
+  const languageDefinition = getLanguagePattern(SupportedLanguage.OLD_ENGLISH);
+  return generateNamesWithMeanings(languageDefinition, count, minLength, maxLength);
+}
+
+// Helper function to get meaning for an existing name
 export function getOldEnglishNameMeaning(name: string): string {
-  return getNameMeaning(name, oldEnglish);
+  const languageDefinition = getLanguagePattern(SupportedLanguage.OLD_ENGLISH);
+  return getNameMeaning(name, languageDefinition);
 }
 
