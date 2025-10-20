@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { generateNamesWithMeaningsForLanguage, SupportedLanguage, getLanguageDisplayName, getSupportedLanguages } from '../lib/patterns/patterns';
+import { generateNamesWithMeaningsForLanguage, SupportedLanguage, getLanguageDisplayName, getSupportedLanguages } from '../lib/patterns/generations';
 
 // Create dynamic language mapping from all supported languages
 const createLanguageMapping = () => {
