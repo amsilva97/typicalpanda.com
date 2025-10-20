@@ -39,7 +39,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* CTA Button */}
+          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
             <Link
               href="/name-generator"
@@ -48,6 +48,16 @@ export default function Home() {
               ✨ Forge Names Now
               <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+            
+            <Link
+              href="/name-analyzer"
+              className="panda-button-secondary inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-lg transition-colors duration-200 shadow-lg"
+            >
+              🔍 Decode Names
+              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </Link>
             
