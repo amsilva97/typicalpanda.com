@@ -1,3 +1,9 @@
+import { 
+  MaxLoopsExceededError, 
+  NoValidContinuationsError, 
+  PatternNotFoundError 
+} from '../exceptions/PatternGenerationError';
+
 // Old English fantasy name patterns
 // ^ marks the start of generation
 // $ marks the end of generation
@@ -118,13 +124,16 @@ export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LEN
   while (loops < maxLoops) {
     loops++;
     
+    // Check if pattern exists in dictionary
+    if (!oldEnglishPatterns.hasOwnProperty(currentPattern)) {
+      throw new PatternNotFoundError(currentPattern, generatedName, loops);
+    }
+    
     // Get possible continuations for current pattern
     const possibilities = oldEnglishPatterns[currentPattern];
     
     if (!possibilities || possibilities.length === 0) {
-      // No valid continuations, mark as failed and break
-      generatedName += "~";
-      break;
+      throw new NoValidContinuationsError(currentPattern, generatedName, loops);
     }
     
     // Filter possibilities based on current length vs target
@@ -164,9 +173,9 @@ export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LEN
     currentPattern = nextPattern;
   }
   
-  // If we hit the loop limit, mark as failed
-  if (loops >= maxLoops && !generatedName.endsWith("~")) {
-    generatedName += "~";
+  // If we hit the loop limit, throw error
+  if (loops >= maxLoops) {
+    throw new MaxLoopsExceededError(maxLoops, generatedName, currentPattern);
   }
   
   // Capitalize first letter
@@ -177,7 +186,36 @@ export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LEN
 export function generateOldEnglishNames(count: number = 10, minLength: number = LENGTH_CONFIG.MIN_LENGTH, maxLength: number = LENGTH_CONFIG.MAX_LENGTH): string[] {
   const names: string[] = [];
   for (let i = 0; i < count; i++) {
-    names.push(generateOldEnglishName(minLength, maxLength));
+    try {
+      names.push(generateOldEnglishName(minLength, maxLength));
+    } catch (error) {
+      if (error instanceof MaxLoopsExceededError) {
+        console.error('Pattern generation error - Max loops exceeded:', {
+          errorCode: error.errorCode,
+          context: error.context,
+          message: error.message
+        });
+        names.push(error.context.generatedName + "~");
+      } else if (error instanceof NoValidContinuationsError) {
+        console.error('Pattern generation error - No valid continuations:', {
+          errorCode: error.errorCode,
+          context: error.context,
+          message: error.message
+        });
+        names.push(error.context.generatedName + "~");
+      } else if (error instanceof PatternNotFoundError) {
+        console.error('Pattern generation error - Pattern not found:', {
+          errorCode: error.errorCode,
+          context: error.context,
+          message: error.message
+        });
+        names.push(error.context.generatedName + "~");
+      } else {
+        // Unknown error, re-throw it
+        console.error('Unknown pattern generation error:', error);
+        throw error;
+      }
+    }
   }
   return names;
 }
