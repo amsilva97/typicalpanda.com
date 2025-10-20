@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { generateOldEnglishNamesWithMeanings } from '../lib/patterns/oldEnglish';
+import { generateOldEnglishNamesWithMeanings } from '../lib/patterns/patterns';
 
 const fantasyLanguages = {
   'Old English': 'oldEnglish'

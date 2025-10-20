@@ -1,5 +1,4 @@
 import { LanguageDefinition } from './LanguageDefinition';
-import { generateName, generateNames, generateNamesWithMeanings, getNameMeaning } from './patterns';
 
 /**
  * Old English language definition
@@ -237,20 +236,3 @@ export const oldEnglish: LanguageDefinition = {
   }
 };
 
-// Old English specific convenience functions
-export function generateOldEnglishName(minLength?: number, maxLength?: number): string {
-  return generateName(oldEnglish, minLength, maxLength);
-}
-
-export function generateOldEnglishNames(count: number = 10, minLength?: number, maxLength?: number): string[] {
-  return generateNames(oldEnglish, count, minLength, maxLength);
-}
-
-export function generateOldEnglishNamesWithMeanings(count: number = 10, minLength?: number, maxLength?: number): Array<{ name: string, meaning: string }> {
-  return generateNamesWithMeanings(oldEnglish, count, minLength, maxLength);
-}
-
-// Helper function to get meaning for an existing name
-export function getOldEnglishNameMeaning(name: string): string {
-  return getNameMeaning(name, oldEnglish);
-}
