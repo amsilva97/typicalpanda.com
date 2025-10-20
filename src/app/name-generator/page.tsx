@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { generateOldEnglishNamesWithMeanings } from '../lib/patterns/patterns';
+import { generateNamesWithMeaningsForLanguage, SupportedLanguage, getLanguageDisplayName } from '../lib/patterns/patterns';
 
 const fantasyLanguages = {
-  'Old English': 'oldEnglish'
+  [getLanguageDisplayName(SupportedLanguage.OLD_ENGLISH)]: SupportedLanguage.OLD_ENGLISH
 };
 
 interface NameWithMeaning {
@@ -15,7 +15,7 @@ interface NameWithMeaning {
 }
 
 export default function NameGenerator() {
-  const [selectedLanguage, setSelectedLanguage] = useState<keyof typeof fantasyLanguages>('Old English');
+  const [selectedLanguage, setSelectedLanguage] = useState<keyof typeof fantasyLanguages>(getLanguageDisplayName(SupportedLanguage.OLD_ENGLISH));
   const [generatedNames, setGeneratedNames] = useState<NameWithMeaning[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const router = useRouter();
@@ -27,9 +27,10 @@ export default function NameGenerator() {
     setTimeout(() => {
       let names: NameWithMeaning[] = [];
       
-      // For now, we only have Old English patterns implemented
-      if (selectedLanguage === 'Old English') {
-        names = generateOldEnglishNamesWithMeanings(15); // Generate 15 names with meanings
+      // Get the language enum value from the selected language
+      const selectedLanguageEnum = fantasyLanguages[selectedLanguage];
+      if (selectedLanguageEnum) {
+        names = generateNamesWithMeaningsForLanguage(selectedLanguageEnum, 15); // Generate 15 names with meanings
       }
       
       setGeneratedNames(names);
@@ -207,7 +208,7 @@ export default function NameGenerator() {
                 })}
               </div>
               <p className="text-sm panda-text-muted mt-4 text-center">
-                Hover over names to reveal copy and analyze buttons • Generated using linguistic pattern algorithms with authentic Old English meanings
+                Hover over names to reveal copy and analyze buttons • Generated using linguistic pattern algorithms with authentic meanings
               </p>
             </div>
           )}

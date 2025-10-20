@@ -828,26 +828,5 @@ export function generateNamesWithMeanings(language: LanguageDefinition, count: n
 
   return namesWithMeanings;
 }
-// Old English specific convenience functions
 
-export function generateOldEnglishName(minLength?: number, maxLength?: number): string {
-  const languageDefinition = getLanguagePattern(SupportedLanguage.OLD_ENGLISH);
-  return generateName(languageDefinition, minLength, maxLength);
-}
-
-export function generateOldEnglishNames(count: number = 10, minLength?: number, maxLength?: number): string[] {
-  const languageDefinition = getLanguagePattern(SupportedLanguage.OLD_ENGLISH);
-  return generateNames(languageDefinition, count, minLength, maxLength);
-}
-
-export function generateOldEnglishNamesWithMeanings(count: number = 10, minLength?: number, maxLength?: number): Array<{ name: string; meaning: string; }> {
-  const languageDefinition = getLanguagePattern(SupportedLanguage.OLD_ENGLISH);
-  return generateNamesWithMeanings(languageDefinition, count, minLength, maxLength);
-}
-
-// Helper function to get meaning for an existing name
-export function getOldEnglishNameMeaning(name: string): string {
-  const languageDefinition = getLanguagePattern(SupportedLanguage.OLD_ENGLISH);
-  return getNameMeaning(name, languageDefinition);
-}
 
