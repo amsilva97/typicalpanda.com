@@ -453,7 +453,20 @@ export function isNameAnalyzable(name: string, language: LanguageDefinition): bo
 }
 
 /**
- * Old English specific convenience function
+ * Generic name analyzer that automatically selects the appropriate language
+ * Currently defaults to Old English, but can be extended to detect language or use preferences
+ */
+export function analyzeNameGeneric(inputName: string): AnalysisResult {
+  // For now, default to Old English
+  // In the future, this could:
+  // - Auto-detect the language based on patterns
+  // - Use user preferences
+  // - Accept a language parameter from URL/settings
+  return analyzeName(inputName, oldEnglish);
+}
+
+/**
+ * Old English specific convenience function (legacy)
  */
 export function analyzeOldEnglishName(inputName: string): AnalysisResult {
   return analyzeName(inputName, oldEnglish);
