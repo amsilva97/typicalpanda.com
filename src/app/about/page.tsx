@@ -17,10 +17,12 @@ export default function About() {
           </Link>
           
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
-            About Name Generator
+            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              About Fantasy Name Generator
+            </span>
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Learn more about our name generation process and how we help you find the perfect name
+            Discover the linguistic algorithms behind our pattern-based fantasy name generation
           </p>
         </div>
 
@@ -29,14 +31,26 @@ export default function About() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                How It Works
+                🔮 How Pattern Magic Works
               </h2>
               
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Our name generator uses carefully curated lists and intelligent algorithms to create 
-                names that are both unique and meaningful. Whether you're starting a business, 
-                creating a character, or naming a project, we've got you covered.
+                Our fantasy name generator uses sophisticated pattern-based algorithms derived from 
+                historical linguistic structures. Each language pattern is a network of phonetic 
+                possibilities that creates authentic-sounding names through recursive generation.
               </p>
+
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-xl mb-6">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                  🏛️ Pattern Structure
+                </h4>
+                <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                  <li><code className="bg-purple-100 dark:bg-purple-800 px-2 py-1 rounded">^</code> - Marks generation start points</li>
+                  <li><code className="bg-purple-100 dark:bg-purple-800 px-2 py-1 rounded">$</code> - Marks valid termination points</li>
+                  <li><code className="bg-red-100 dark:bg-red-800 px-2 py-1 rounded">~</code> - Indicates 20-loop complexity limit reached</li>
+                  <li>Each pattern node contains weighted phonetic continuations</li>
+                </ul>
+              </div>
 
               <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
                 Features
