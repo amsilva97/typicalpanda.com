@@ -1,3 +1,4 @@
+//#region Language Definition and Supported Languages
 /**
  * Generic language definition interface
  */
@@ -13,3 +14,22 @@ export interface LanguageDefinition {
     maxLoops: number;
   };
 }
+
+/**
+ * Supported languages enumeration
+ */
+export enum SupportedLanguage {
+  OLD_ENGLISH = 'Old English'
+}
+
+/**
+ * Get list of supported languages
+ */
+export const getSupportedLanguages = (): SupportedLanguage[] => {
+  return Object.values(SupportedLanguage);
+}
+//#endregion
+
+//#region Name Generation Functions
+
+//#endregion
