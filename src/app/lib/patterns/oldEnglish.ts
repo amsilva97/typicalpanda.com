@@ -99,12 +99,21 @@ export const oldEnglishPatterns: { [key: string]: string[] } = {
   "tr": ["a", "e", "i", "o", "u", "$"]
 };
 
-// Helper function to generate a single name using the pattern with degrader system
-export function generateOldEnglishName(): string {
+// Configurable length settings
+export const LENGTH_CONFIG = {
+  MIN_LENGTH: 4,
+  MAX_LENGTH: 10
+};
+
+// Helper function to generate a single name using the pattern with length control
+export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LENGTH, maxLength: number = LENGTH_CONFIG.MAX_LENGTH): string {
+  // Choose target length between min and max
+  const targetLength = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+  
   let currentPattern = "^";
   let generatedName = "";
   let loops = 0;
-  const maxLoops = 20;
+  const maxLoops = 30;
   
   while (loops < maxLoops) {
     loops++;
@@ -118,41 +127,32 @@ export function generateOldEnglishName(): string {
       break;
     }
     
-    // Create a weighted array based on name length (degrader system)
-    const weightedPossibilities: string[] = [];
-    const nameLength = generatedName.length;
+    // Filter possibilities based on current length vs target
+    const currentLength = generatedName.length;
+    let filteredPossibilities: string[] = [];
     
-    for (const possibility of possibilities) {
-      if (possibility === "$") {
-        // Add multiple $ entries based on name length to increase termination probability
-        // Short names (0-2 chars): 1x chance to end
-        // Medium names (3-5 chars): 3x chance to end  
-        // Longer names (6+ chars): 5x+ chance to end
-        let endWeight = 1;
-        if (nameLength >= 3) endWeight = 3;
-        if (nameLength >= 6) endWeight = 5;
-        if (nameLength >= 8) endWeight = 8;
-        if (nameLength >= 10) endWeight = 12;
-        
-        for (let i = 0; i < endWeight; i++) {
-          weightedPossibilities.push("$");
-        }
+    if (currentLength < targetLength) {
+      // We haven't reached target length yet - re-pick any $ (skip endings)
+      filteredPossibilities = possibilities.filter(p => p !== "$");
+      
+      // If no non-ending possibilities, we must use what we have
+      if (filteredPossibilities.length === 0) {
+        filteredPossibilities = possibilities;
+      }
+    } else {
+      // We've reached or exceeded target length - automatically take next $ if available
+      const hasEndOption = possibilities.includes("$");
+      if (hasEndOption) {
+        // Immediately exit with $
+        break;
       } else {
-        // Regular patterns get single weight, but reduce weight for very long names
-        const continueWeight = nameLength >= 10 ? 0.5 : 1;
-        if (Math.random() < continueWeight) {
-          weightedPossibilities.push(possibility);
-        }
+        // No ending available, continue with any option
+        filteredPossibilities = possibilities;
       }
     }
     
-    // If no valid continuations after weighting, force end
-    if (weightedPossibilities.length === 0) {
-      break;
-    }
-    
-    // Pick a random continuation from weighted array
-    const nextPattern = weightedPossibilities[Math.floor(Math.random() * weightedPossibilities.length)];
+    // Pick a random continuation from filtered array
+    const nextPattern = filteredPossibilities[Math.floor(Math.random() * filteredPossibilities.length)];
     
     // If we hit the end marker, we're done
     if (nextPattern === "$") {
@@ -174,10 +174,10 @@ export function generateOldEnglishName(): string {
 }
 
 // Generate multiple names
-export function generateOldEnglishNames(count: number = 10): string[] {
+export function generateOldEnglishNames(count: number = 10, minLength: number = LENGTH_CONFIG.MIN_LENGTH, maxLength: number = LENGTH_CONFIG.MAX_LENGTH): string[] {
   const names: string[] = [];
   for (let i = 0; i < count; i++) {
-    names.push(generateOldEnglishName());
+    names.push(generateOldEnglishName(minLength, maxLength));
   }
   return names;
 }
