@@ -87,7 +87,7 @@ export function analyzeNameGeneric(inputName: string): AnalysisResult {
 }
 
 /**
- * Generate a single name using a language definition with backtracking
+ * Generate a single name using a language definition with strict length constraints and backtracking
  * @throws {PatternNotFoundError} When no starting patterns found
  * @throws {NoValidContinuationsError} When no valid continuations exist after backtracking
  * @throws {MaxLoopsExceededError} When maximum generation loops are exceeded
@@ -100,7 +100,6 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
 
   const actualMinLength = minLength ?? language.options.minLength;
   const actualMaxLength = maxLength ?? language.options.maxLength;
-  const targetLength = Math.floor(Math.random() * (actualMaxLength - actualMinLength + 1)) + actualMinLength;
 
   // Backtracking state
   interface GenerationStep {
@@ -113,7 +112,7 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
   let name = '';
   let currentPattern = language.options.startMarker;
   let loops = 0;
-  const maxLoops = language.options.maxLoops * 3; // Allow more loops for backtracking
+  const maxLoops = language.options.maxLoops * 5; // Allow more loops for stricter backtracking
 
   // Initialize first step
   generationStack.push({
@@ -122,7 +121,7 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
     usedChoices: new Set()
   });
 
-  while (loops < maxLoops && name.length < targetLength) {
+  while (loops < maxLoops) {
     loops++;
     
     if (generationStack.length === 0) {
@@ -143,29 +142,37 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
       continue;
     }
     
-    // Smart length filtering based on current position relative to target
+    // Strict length constraint filtering
     let filteredPossibilities = possibilities;
     
-    if (currentStep.name.length < actualMinLength) {
-      // Below minimum length - filter out end markers to prevent going below min
-      filteredPossibilities = possibilities.filter(p => p !== language.options.endMarker);
-      if (filteredPossibilities.length === 0) {
-        filteredPossibilities = possibilities; // Fallback if no other options
+    // Filter out choices that would violate length constraints
+    filteredPossibilities = possibilities.filter(pattern => {
+      if (pattern === language.options.endMarker) {
+        // Can only use end marker if we're at or above minimum length
+        return currentStep.name.length >= actualMinLength;
+      } else {
+        // Can only use non-end patterns if they won't exceed maximum length
+        return (currentStep.name.length + pattern.length) <= actualMaxLength;
       }
-    } else if (currentStep.name.length >= targetLength) {
-      // At or above target length - prefer end marker if available
-      const endMarkerOptions = possibilities.filter(p => p === language.options.endMarker);
-      if (endMarkerOptions.length > 0) {
-        filteredPossibilities = endMarkerOptions; // Force end if we've reached target
+    });
+
+    // If we're below minimum length and only have end marker available, backtrack
+    if (currentStep.name.length < actualMinLength && filteredPossibilities.every(p => p === language.options.endMarker)) {
+      // Force backtrack - we can't end yet
+      generationStack.pop();
+      if (generationStack.length > 0) {
+        const previousStep = generationStack[generationStack.length - 1];
+        name = previousStep.name;
+        currentPattern = previousStep.currentPattern;
       }
+      continue;
     }
-    // If between min and target, use all possibilities (normal behavior)
 
     // Filter out already used choices at this step
     const availableChoices = filteredPossibilities.filter(p => !currentStep.usedChoices.has(p));
     
     if (availableChoices.length === 0) {
-      // No more choices at this step - backtrack
+      // No more valid choices at this step - backtrack
       generationStack.pop();
       if (generationStack.length > 0) {
         const previousStep = generationStack[generationStack.length - 1];
@@ -182,7 +189,19 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
     currentStep.usedChoices.add(nextPattern);
     
     if (nextPattern === language.options.endMarker) {
-      break;
+      // Check if we meet minimum length requirement before ending
+      if (currentStep.name.length >= actualMinLength) {
+        break;
+      } else {
+        // This shouldn't happen due to filtering above, but safety check
+        continue;
+      }
+    }
+    
+    // Check if adding this pattern would exceed maximum length
+    if (currentStep.name.length + nextPattern.length > actualMaxLength) {
+      // This shouldn't happen due to filtering above, but safety check - backtrack
+      continue;
     }
     
     // Move forward
@@ -199,6 +218,11 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
 
   if (loops >= maxLoops) {
     throw new MaxLoopsExceededError(maxLoops, name, currentPattern);
+  }
+
+  // Final validation
+  if (name.length < actualMinLength || name.length > actualMaxLength) {
+    throw new NoValidContinuationsError(currentPattern, name, loops);
   }
 
   return name.charAt(0).toUpperCase() + name.slice(1);

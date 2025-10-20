@@ -228,7 +228,7 @@ export const oldEnglish: LanguageDefinition = {
 
   options: {
     name: "Old English",
-    minLength: 99,
+    minLength: 4,
     maxLength: 99,
     startMarker: "^",
     endMarker: "$",
