@@ -5,10 +5,10 @@ export default function About() {
     <div className="min-h-screen panda-bg-primary">
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <Link 
             href="/"
-            className="panda-link inline-flex items-center text-sm mb-4"
+            className="panda-link inline-flex items-center text-sm mb-3"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -16,7 +16,7 @@ export default function About() {
             Back to Home
           </Link>
           
-          <h1 className="text-4xl md:text-6xl font-bold panda-text-primary mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold panda-text-primary mb-3">
             <span className="panda-text-gradient-silver">
               About Fantasy Name Generator
             </span>
@@ -28,23 +28,23 @@ export default function About() {
 
         <div className="max-w-4xl mx-auto">
           {/* Main Content */}
-          <div className="panda-card p-8 mb-8">
+          <div className="panda-card p-6 mb-6">
             <div className="prose prose-lg dark:prose-invert max-w-none">
-              <h2 className="text-3xl font-bold panda-text-primary mb-6">
+              <h2 className="text-3xl font-bold panda-text-primary mb-4">
                 🔮 How Pattern Magic Works
               </h2>
               
-              <p className="panda-text-secondary mb-6">
+              <p className="panda-text-secondary mb-4">
                 Our fantasy name generator uses sophisticated pattern-based algorithms derived from 
                 historical linguistic structures. Each language pattern is a network of phonetic 
                 possibilities that creates authentic-sounding names through recursive generation.
               </p>
 
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-xl mb-6">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg mb-4">
+                <h4 className="font-semibold panda-text-primary mb-2">
                   🏛️ Pattern Structure
                 </h4>
-                <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                <ul className="text-sm panda-text-secondary space-y-1">
                   <li><code className="bg-purple-100 dark:bg-purple-800 px-2 py-1 rounded">^</code> - Marks generation start points</li>
                   <li><code className="bg-purple-100 dark:bg-purple-800 px-2 py-1 rounded">$</code> - Marks valid termination points</li>
                   <li><code className="bg-red-100 dark:bg-red-800 px-2 py-1 rounded">~</code> - Indicates 20-loop complexity limit reached</li>
@@ -52,53 +52,53 @@ export default function About() {
                 </ul>
               </div>
 
-              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-2xl font-semibold panda-text-primary mb-3">
                 Features
               </h3>
 
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <div className="panda-card p-4">
+                  <h4 className="font-semibold panda-text-primary mb-2">
                     🎯 Category-Specific
                   </h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  <p className="panda-text-secondary text-sm">
                     Choose from business, character, project, or pet names, each with specialized styles.
                   </p>
                 </div>
 
-                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                <div className="panda-card p-4">
+                  <h4 className="font-semibold panda-text-primary mb-2">
                     ⚡ Instant Results
                   </h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  <p className="panda-text-secondary text-sm">
                     Get multiple name suggestions in seconds with our fast generation algorithm.
                   </p>
                 </div>
 
-                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                <div className="panda-card p-4">
+                  <h4 className="font-semibold panda-text-primary mb-2">
                     📋 Easy Copy
                   </h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  <p className="panda-text-secondary text-sm">
                     Click any generated name to instantly copy it to your clipboard.
                   </p>
                 </div>
 
-                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                <div className="panda-card p-4">
+                  <h4 className="font-semibold panda-text-primary mb-2">
                     🎨 Style Options
                   </h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  <p className="panda-text-secondary text-sm">
                     Refine results with style preferences like Tech, Fantasy, Modern, and more.
                   </p>
                 </div>
               </div>
 
-              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-2xl font-semibold panda-text-primary mb-3">
                 Use Cases
               </h3>
 
-              <ul className="space-y-3 text-gray-600 dark:text-gray-300 mb-8">
+              <ul className="space-y-2 panda-text-secondary mb-6">
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2">•</span>
                   <strong>Business Names:</strong> Create professional, memorable names for startups, companies, or products
@@ -123,7 +123,7 @@ export default function About() {
           <div className="text-center">
             <Link
               href="/name-generator"
-              className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 rounded-full hover:from-green-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-xl"
+              className="panda-button-primary text-lg px-6 py-3"
             >
               Try the Generator
               <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

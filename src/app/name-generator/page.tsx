@@ -62,11 +62,11 @@ export default function NameGenerator() {
 
         <div className="max-w-4xl mx-auto">
           {/* Controls */}
-          <div className="panda-card p-8 mb-8">
-            <div className="mb-6">
+          <div className="panda-card p-6 mb-6">
+            <div className="mb-4">
               {/* Language Selection */}
               <div className="max-w-md mx-auto">
-                <label className="block text-sm font-medium panda-text-primary mb-3 text-center">
+                <label className="block text-sm font-medium panda-text-primary mb-2 text-center">
                   🏛️ Language Pattern
                 </label>
                 <div className="grid gap-2">
@@ -77,7 +77,7 @@ export default function NameGenerator() {
                         setSelectedLanguage(language as keyof typeof fantasyLanguages);
                         setGeneratedNames([]);
                       }}
-                      className={`p-4 rounded-lg text-sm font-medium transition-colors ${
+                      className={`p-3 rounded-lg text-sm font-medium transition-colors ${
                         selectedLanguage === language
                           ? 'panda-selected'
                           : 'panda-unselected'
@@ -94,7 +94,7 @@ export default function NameGenerator() {
             <button
               onClick={generateNames}
               disabled={isGenerating}
-              className="w-full panda-button-primary py-4 px-6 rounded-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
+              className="w-full panda-button-primary py-3 px-5 rounded-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
             >
               {isGenerating ? (
                 <div className="flex items-center justify-center">
@@ -109,11 +109,11 @@ export default function NameGenerator() {
 
           {/* Results */}
           {generatedNames.length > 0 && (
-            <div className="panda-card p-8">
-              <h2 className="text-2xl font-bold panda-text-primary mb-4">
+            <div className="panda-card p-6">
+              <h2 className="text-2xl font-bold panda-text-primary mb-3">
                 🏰 Generated {selectedLanguage} Names
               </h2>
-              <p className="text-sm panda-text-muted mb-6">
+              <p className="text-sm panda-text-muted mb-4">
                 Names marked with <span className="font-mono bg-red-600 text-white px-2 py-1 rounded">~</span> reached the 20-loop complexity limit
               </p>
               
@@ -154,7 +154,7 @@ export default function NameGenerator() {
                   );
                 })}
               </div>
-              <p className="text-sm panda-text-muted mt-6 text-center">
+              <p className="text-sm panda-text-muted mt-4 text-center">
                 Click on any name to copy it to your clipboard • Generated using linguistic pattern algorithms
               </p>
             </div>

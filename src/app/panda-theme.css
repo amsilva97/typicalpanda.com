@@ -105,20 +105,20 @@ body {
 .panda-card {
   background: var(--panda-dark);
   border: 1px solid var(--panda-silver);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
 }
 
 .panda-card:hover {
   border-color: var(--panda-gold);
-  box-shadow: 0 6px 30px rgba(212, 175, 55, 0.1);
+  box-shadow: 0 3px 18px rgba(212, 175, 55, 0.1);
 }
 
 .panda-card-highlight {
   background: var(--panda-darker);
   border: 2px solid var(--panda-gold);
-  border-radius: 12px;
-  box-shadow: 0 6px 25px rgba(212, 175, 55, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 3px 15px rgba(212, 175, 55, 0.15);
 }
 
 /* Input Elements */
@@ -126,8 +126,8 @@ body {
   background: var(--panda-darker);
   border: 2px solid var(--panda-silver);
   color: var(--panda-white);
-  border-radius: 8px;
-  padding: 12px 16px;
+  border-radius: 6px;
+  padding: 10px 14px;
   transition: all 0.3s ease;
 }
 
@@ -169,8 +169,8 @@ body {
 .panda-name-card {
   background: var(--panda-dark);
   border: 1px solid var(--panda-silver);
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 6px;
+  padding: 12px;
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -179,7 +179,7 @@ body {
   background: var(--panda-darker);
   border-color: var(--panda-gold);
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+  box-shadow: 0 2px 10px rgba(212, 175, 55, 0.1);
 }
 
 .panda-name-card-failed {
@@ -256,26 +256,26 @@ body {
 .panda-feature-card {
   background: var(--panda-dark);
   border: 1px solid var(--panda-silver);
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 10px;
+  padding: 20px;
   transition: all 0.3s ease;
 }
 
 .panda-feature-card:hover {
   background: var(--panda-darker);
   border-color: var(--panda-gold);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .panda-card {
-    border-radius: 8px;
+    border-radius: 6px;
   }
   
   .panda-feature-card {
     padding: 16px;
-    border-radius: 12px;
+    border-radius: 8px;
   }
 }
