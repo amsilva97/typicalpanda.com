@@ -36,7 +36,7 @@ export function getLanguageDefinition(language: SupportedLanguage): LanguageDefi
   switch (language) {
     case SupportedLanguage.OLD_ENGLISH:
       // Lazy load to avoid circular dependencies
-      const { oldEnglish } = require('./oldEnglish');
+      const { oldEnglish } = require('./languages/oldEnglish');
       return oldEnglish;
     default:
       throw new Error(`Unsupported language: ${language}`);
