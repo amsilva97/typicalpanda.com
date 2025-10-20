@@ -1,13 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { analyzeOldEnglishName, AnalysisResult, formatSegmentation } from '../lib/analyzer/oldEnglishAnalyzer';
 
 export default function NameAnalyzer() {
   const [inputName, setInputName] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const searchParams = useSearchParams();
+
+  // Check for name parameter from URL and auto-analyze
+  useEffect(() => {
+    const nameFromUrl = searchParams.get('name');
+    if (nameFromUrl) {
+      setInputName(nameFromUrl);
+      // Auto-analyze the name
+      setIsAnalyzing(true);
+      setTimeout(() => {
+        const result = analyzeOldEnglishName(nameFromUrl);
+        setAnalysisResult(result);
+        setIsAnalyzing(false);
+      }, 600);
+    }
+  }, [searchParams]);
 
   const analyzeName = () => {
     if (!inputName.trim()) return;

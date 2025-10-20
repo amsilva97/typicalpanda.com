@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { generateOldEnglishNamesWithMeanings } from '../lib/patterns/oldEnglish';
 
 const fantasyLanguages = {
@@ -17,6 +18,7 @@ export default function NameGenerator() {
   const [selectedLanguage, setSelectedLanguage] = useState<keyof typeof fantasyLanguages>('Old English');
   const [generatedNames, setGeneratedNames] = useState<NameWithMeaning[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const router = useRouter();
 
   const generateNames = () => {
     setIsGenerating(true);
@@ -38,6 +40,10 @@ export default function NameGenerator() {
   const copyToClipboard = (name: string) => {
     navigator.clipboard.writeText(name);
     // You could add a toast notification here
+  };
+
+  const analyzeInNameAnalyzer = (name: string) => {
+    router.push(`/name-analyzer?name=${encodeURIComponent(name)}`);
   };
 
   return (
@@ -131,12 +137,11 @@ export default function NameGenerator() {
                   return (
                     <div
                       key={index}
-                      className={`group transition-all transform hover:scale-[1.02] cursor-pointer ${
+                      className={`group transition-all transform hover:scale-[1.02] ${
                         isFailed
                           ? 'panda-name-card-failed'
                           : 'panda-name-card'
                       }`}
-                      onClick={() => copyToClipboard(displayName)}
                     >
                       <div className="flex flex-col">
                         <div className="flex items-center justify-between mb-1">
@@ -148,14 +153,42 @@ export default function NameGenerator() {
                             {displayName}
                             {isFailed && <span className="text-red-400 ml-1">~</span>}
                           </span>
-                          <svg 
-                            className="w-4 h-4 panda-text-muted group-hover:panda-accent-gold opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
+                          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                copyToClipboard(displayName);
+                              }}
+                              className="p-1 rounded hover:bg-gray-700/50 transition-colors"
+                              title="Copy to clipboard"
+                            >
+                              <svg 
+                                className="w-4 h-4 panda-text-muted hover:panda-accent-gold flex-shrink-0"
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                analyzeInNameAnalyzer(displayName);
+                              }}
+                              className="p-1 rounded hover:bg-gray-700/50 transition-colors"
+                              title="Analyze this name"
+                            >
+                              <svg 
+                                className="w-4 h-4 panda-text-muted hover:panda-accent-gold flex-shrink-0"
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
                         {meaning && (
                           <div className={`text-sm italic ${
@@ -174,7 +207,7 @@ export default function NameGenerator() {
                 })}
               </div>
               <p className="text-sm panda-text-muted mt-4 text-center">
-                Click on any name to copy it to your clipboard • Generated using linguistic pattern algorithms with authentic Old English meanings
+                Hover over names to reveal copy and analyze buttons • Generated using linguistic pattern algorithms with authentic Old English meanings
               </p>
             </div>
           )}
