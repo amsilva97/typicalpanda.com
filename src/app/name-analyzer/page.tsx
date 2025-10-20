@@ -28,6 +28,11 @@ export default function NameAnalyzer() {
     }
   };
 
+  const copyToClipboard = (name: string) => {
+    navigator.clipboard.writeText(name);
+    // You could add a toast notification here
+  };
+
   return (
     <div className="min-h-screen panda-bg-primary">
       <div className="container mx-auto px-6 py-8">
@@ -45,11 +50,11 @@ export default function NameAnalyzer() {
           
           <h1 className="text-4xl md:text-6xl font-bold panda-text-primary mb-4">
             <span className="panda-text-gradient-gold">
-              Name Analyzer
+              Name Improver
             </span>
           </h1>
           <p className="text-lg panda-text-secondary max-w-2xl mx-auto">
-            Decode any name into its Old English components. Discover all possible ways to break down names into meaningful linguistic patterns.
+            Transform any name into authentic Old English alternatives. Get better versions that are generatable by our system with meaningful components.
           </p>
         </div>
 
@@ -94,44 +99,108 @@ export default function NameAnalyzer() {
               <div className="panda-card p-6">
                 <div className="text-center">
                   <h2 className="text-2xl font-bold panda-text-primary mb-2">
-                    Analysis: "{analysisResult.name}"
+                    Analysis: "{analysisResult.originalName}"
                   </h2>
                   
                   <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium mb-4 ${
                     analysisResult.isGeneratable 
                       ? 'bg-green-900/30 text-green-300 border border-green-700' 
-                      : 'bg-red-900/30 text-red-300 border border-red-700'
+                      : 'bg-yellow-900/30 text-yellow-300 border border-yellow-700'
                   }`}>
                     {analysisResult.isGeneratable ? (
                       <>
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        Generatable by our system
+                        Already perfect! But we found alternatives
                       </>
                     ) : (
                       <>
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.734 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                         </svg>
-                        Not generatable by our system
+                        Can be improved - see suggestions below
                       </>
                     )}
                   </div>
                   
-                  {analysisResult.isGeneratable && (
-                    <p className="panda-text-secondary">
-                      Found {analysisResult.totalCombinations} valid segmentation{analysisResult.totalCombinations !== 1 ? 's' : ''}
-                    </p>
-                  )}
+                  <p className="panda-text-secondary">
+                    {analysisResult.suggestions.length} suggestion{analysisResult.suggestions.length !== 1 ? 's' : ''} found
+                    {analysisResult.isGeneratable && ` • ${analysisResult.totalCombinations} valid pattern${analysisResult.totalCombinations !== 1 ? 's' : ''}`}
+                  </p>
                 </div>
               </div>
 
-              {/* Segmentations */}
+              {/* Suggestions */}
+              {analysisResult.suggestions.length > 0 && (
+                <div className="panda-card p-6">
+                  <h3 className="text-xl font-bold panda-text-primary mb-4">
+                    ✨ Suggested Improvements
+                  </h3>
+                  
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {analysisResult.suggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="panda-name-card p-4 transition-all hover:scale-[1.02] cursor-pointer"
+                        onClick={() => copyToClipboard(suggestion.name)}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-lg font-bold panda-text-primary">
+                            {suggestion.name}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs bg-green-900/30 text-green-300 px-2 py-1 rounded-full">
+                              {suggestion.similarity}% match
+                            </span>
+                            <svg 
+                              className="w-4 h-4 panda-text-muted group-hover:panda-accent-gold opacity-0 hover:opacity-100 transition-opacity"
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                        </div>
+                        
+                        <div className="text-sm italic panda-text-secondary mb-2">
+                          {suggestion.segments.map((segment, segIndex) => {
+                            const meaning = suggestion.meanings[segIndex];
+                            if (suggestion.segments.length === 1) {
+                              return `${segment}: ${meaning}`;
+                            } else if (segIndex === 0) {
+                              return `${segment}-: ${meaning}`;
+                            } else if (segIndex === suggestion.segments.length - 1) {
+                              return `-${segment}: ${meaning}`;
+                            } else {
+                              return `-${segment}-: ${meaning}`;
+                            }
+                          }).join('\n').split('\n').map((line, lineIndex) => (
+                            <div key={lineIndex}>{line}</div>
+                          ))}
+                        </div>
+                        
+                        <div className="text-xs panda-text-muted">
+                          {suggestion.reason}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-6 text-center">
+                    <p className="text-sm panda-text-muted">
+                      Click any suggestion to copy it • All suggestions are generatable by our system
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Original Segmentations (if valid) */}
               {analysisResult.isGeneratable && analysisResult.segmentations.length > 0 && (
                 <div className="panda-card p-6">
                   <h3 className="text-xl font-bold panda-text-primary mb-4">
-                    🧩 Possible Segmentations
+                    🧩 Current Name Breakdown
                   </h3>
                   
                   <div className="grid gap-4 md:grid-cols-2">
@@ -142,7 +211,7 @@ export default function NameAnalyzer() {
                       >
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-sm font-medium panda-text-primary">
-                            Option {index + 1}
+                            Pattern {index + 1}
                           </span>
                           <span className="text-xs panda-text-muted">
                             {segmentation.segments.length} part{segmentation.segments.length !== 1 ? 's' : ''}
@@ -160,7 +229,7 @@ export default function NameAnalyzer() {
                   
                   <div className="mt-6 text-center">
                     <p className="text-sm panda-text-muted">
-                      All segmentations follow valid Old English pattern rules and can be generated by our system
+                      Your name is already valid! These show how it breaks down into Old English elements
                     </p>
                   </div>
                 </div>

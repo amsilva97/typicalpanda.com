@@ -90,7 +90,7 @@ export const oldEnglishPatterns: { [key: string]: string[] } = {
   "ead": ["mund", "ric", "ward", "wyn", "$"],
   "ed": ["mund", "ric", "ward", "wyn", "$"],
   "god": ["ric", "mund", "wyn", "$"],
-  "hild": ["a", "e", "red", "ric", "$"],
+  "hild": ["a", "e", "red", "ric", "helm", "$"],
   "leod": ["ric", "mund", "gar", "$"],
   "ost": ["ric", "mund", "gar", "$"],
   "raed": ["mund", "ric", "wyn", "$"],

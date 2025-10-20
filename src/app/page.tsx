@@ -55,9 +55,9 @@ export default function Home() {
               href="/name-analyzer"
               className="panda-button-secondary inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-lg transition-colors duration-200 shadow-lg"
             >
-              🔍 Decode Names
+              ✨ Improve Names
               <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </Link>
             
