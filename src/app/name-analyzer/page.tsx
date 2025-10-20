@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { analyzeNameGeneric, AnalysisResult } from '../lib/analyzer/oldEnglishAnalyzer';
+import { analyzeNameGeneric, AnalysisResult } from '../lib/patterns';
 
 export default function NameAnalyzer() {
   const [nameFromGenerator, setNameFromGenerator] = useState<string | null>(null);
