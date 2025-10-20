@@ -2,13 +2,13 @@ import Link from 'next/link';
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen panda-bg-primary">
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
         <div className="text-center mb-12">
           <Link 
             href="/"
-            className="inline-flex items-center text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white mb-4"
+            className="panda-link inline-flex items-center text-sm mb-4"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -16,25 +16,25 @@ export default function About() {
             Back to Home
           </Link>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
-            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-bold panda-text-primary mb-4">
+            <span className="panda-text-gradient-silver">
               About Fantasy Name Generator
             </span>
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg panda-text-secondary max-w-3xl mx-auto">
             Discover the linguistic algorithms behind our pattern-based fantasy name generation
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
           {/* Main Content */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
+          <div className="panda-card p-8 mb-8">
             <div className="prose prose-lg dark:prose-invert max-w-none">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-3xl font-bold panda-text-primary mb-6">
                 🔮 How Pattern Magic Works
               </h2>
               
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
+              <p className="panda-text-secondary mb-6">
                 Our fantasy name generator uses sophisticated pattern-based algorithms derived from 
                 historical linguistic structures. Each language pattern is a network of phonetic 
                 possibilities that creates authentic-sounding names through recursive generation.

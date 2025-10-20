@@ -4,184 +4,102 @@
 // Keys represent pattern nodes, values are arrays of possible continuations
 
 export const oldEnglishPatterns: { [key: string]: string[] } = {
-  // Starting patterns
+  // Starting patterns - favor complete syllables and consonant clusters
   "^": [
-    "ae", "al", "ar", "el", "th", "ga", "br", "dr", "fr", "gr",
-    "bl", "cl", "fl", "gl", "kr", "pr", "tr", "st", "sk", "sp",
-    "a", "e", "i", "o", "u", "y"
+    "ael", "ard", "bel", "ber", "dra", "dun", "gal", "gar", "kel", "mor", 
+    "tha", "thor", "wil", "wyn", "cael", "dael", "fael", "hael",
+    "br", "dr", "fr", "gr", "bl", "cl", "fl", "gl", "pr", "tr", "th"
   ],
   
-  // Vowel continuations
+  // Vowel continuations - heavily favor consonants, avoid vowel chains
   "a": [
-    "r", "l", "n", "th", "nd", "st", "mb", "dh", "gn", "ld",
-    "e", "i", "o", "u", "$"
+    "r", "l", "n", "d", "s", "t", "m", "th", "nd", "st", "ld", "rd", 
+    "dh", "gn", "mb", "$"
   ],
   "e": [
-    "l", "r", "n", "th", "nd", "st", "mb", "ld", "rd", "dh",
-    "a", "i", "o", "u", "$"
+    "l", "r", "n", "d", "s", "t", "th", "nd", "st", "ld", "rd", "mb",
+    "dh", "$"
   ],
   "i": [
-    "n", "r", "l", "th", "nd", "st", "mb", "ld", "rd", "gn",
-    "a", "e", "o", "u", "$"
+    "n", "r", "l", "s", "t", "d", "th", "nd", "st", "ld", "rd", "gn",
+    "mb", "$"
   ],
   "o": [
-    "r", "n", "l", "th", "nd", "st", "mb", "ld", "rd", "dh",
-    "a", "e", "i", "u", "$"
+    "r", "n", "l", "s", "t", "d", "th", "nd", "st", "ld", "rd", "mb",
+    "dh", "$"
   ],
   "u": [
-    "l", "r", "n", "th", "nd", "st", "mb", "ld", "rd", "gn",
-    "a", "e", "i", "o", "$"
+    "l", "r", "n", "s", "t", "d", "th", "nd", "st", "ld", "rd", "gn",
+    "mb", "$"
   ],
   "y": [
-    "r", "n", "l", "th", "nd", "st", "mb", "ld", "rd", "dh",
-    "a", "e", "i", "o", "u", "$"
+    "r", "n", "l", "s", "t", "d", "th", "nd", "st", "ld", "rd", "$"
   ],
   
-  // Consonant clusters and continuations
-  "th": [
-    "a", "e", "i", "o", "u", "y", "r", "an", "el", "or", "$"
-  ],
-  "nd": [
-    "a", "e", "i", "o", "u", "y", "r", "an", "el", "or", "$"
-  ],
-  "st": [
-    "a", "e", "i", "o", "u", "y", "r", "an", "el", "or", "$"
-  ],
-  "ld": [
-    "a", "e", "i", "o", "u", "y", "r", "an", "el", "or", "$"
-  ],
-  "rd": [
-    "a", "e", "i", "o", "u", "y", "an", "el", "or", "$"
-  ],
-  "mb": [
-    "a", "e", "i", "o", "u", "y", "r", "an", "el", "or", "$"
-  ],
-  "gn": [
-    "a", "e", "i", "o", "u", "y", "r", "an", "el", "or", "$"
-  ],
-  "dh": [
-    "a", "e", "i", "o", "u", "y", "r", "an", "el", "or", "$"
-  ],
+  // Consonant clusters - lead to vowels or endings
+  "th": ["a", "e", "i", "o", "u", "an", "or", "$"],
+  "nd": ["a", "e", "i", "o", "u", "or", "$"],
+  "st": ["a", "e", "i", "o", "u", "or", "$"],
+  "ld": ["a", "e", "i", "o", "u", "or", "$"],
+  "rd": ["a", "e", "i", "o", "u", "or", "$"],
+  "mb": ["a", "e", "i", "o", "u", "or", "$"],
+  "gn": ["a", "e", "i", "o", "u", "or", "$"],
+  "dh": ["a", "e", "i", "o", "u", "or", "$"],
   
-  // Single consonants
-  "r": [
-    "a", "e", "i", "o", "u", "y", "th", "an", "el", "or", "ic", "ed", "$"
-  ],
-  "l": [
-    "a", "e", "i", "o", "u", "y", "th", "an", "el", "or", "ic", "ed", "$"
-  ],
-  "n": [
-    "a", "e", "i", "o", "u", "y", "th", "d", "g", "or", "el", "$"
-  ],
-  "d": [
-    "a", "e", "i", "o", "u", "y", "r", "h", "or", "el", "$"
-  ],
-  "g": [
-    "a", "e", "i", "o", "u", "y", "r", "h", "or", "el", "$"
-  ],
-  "b": [
-    "a", "e", "i", "o", "u", "y", "r", "l", "or", "el", "$"
-  ],
-  "c": [
-    "a", "e", "i", "o", "u", "y", "h", "k", "or", "el", "$"
-  ],
-  "f": [
-    "a", "e", "i", "o", "u", "y", "r", "l", "or", "el", "$"
-  ],
-  "h": [
-    "a", "e", "i", "o", "u", "y", "or", "el", "$"
-  ],
-  "k": [
-    "a", "e", "i", "o", "u", "y", "r", "or", "el", "$"
-  ],
-  "m": [
-    "a", "e", "i", "o", "u", "y", "or", "el", "$"
-  ],
-  "p": [
-    "a", "e", "i", "o", "u", "y", "h", "r", "or", "el", "$"
-  ],
-  "s": [
-    "a", "e", "i", "o", "u", "y", "h", "t", "or", "el", "$"
-  ],
-  "t": [
-    "a", "e", "i", "o", "u", "y", "h", "r", "or", "el", "$"
-  ],
-  "v": [
-    "a", "e", "i", "o", "u", "y", "or", "el", "$"
-  ],
-  "w": [
-    "a", "e", "i", "o", "u", "y", "or", "el", "$"
-  ],
+  // Single consonants - can continue or end
+  "r": ["a", "e", "i", "o", "u", "an", "or", "$"],
+  "l": ["a", "e", "i", "o", "u", "an", "or", "$"],
+  "n": ["a", "e", "i", "o", "u", "$"],
+  "d": ["a", "e", "i", "o", "u", "$"],
+  "s": ["a", "e", "i", "o", "u", "$"],
+  "t": ["a", "e", "i", "o", "u", "$"],
+  "m": ["a", "e", "i", "o", "u", "$"],
+  "g": ["a", "e", "i", "o", "u", "$"],
+  "k": ["a", "e", "i", "o", "u", "$"],
+  "p": ["a", "e", "i", "o", "u", "$"],
+  "f": ["a", "e", "i", "o", "u", "$"],
+  "h": ["a", "e", "i", "o", "u", "$"],
+  "v": ["a", "e", "i", "o", "u", "$"],
+  "w": ["a", "e", "i", "o", "u", "$"],
   
   // Common endings
-  "an": [
-    "a", "e", "d", "s", "t", "$"
-  ],
-  "el": [
-    "a", "d", "s", "t", "f", "$"
-  ],
-  "or": [
-    "a", "e", "d", "s", "t", "n", "$"
-  ],
-  "ic": [
-    "a", "e", "k", "s", "$"
-  ],
-  "ed": [
-    "a", "e", "s", "t", "$"
-  ],
+  "an": ["a", "d", "s", "t", "$"],
+  "or": ["a", "d", "s", "t", "n", "$"],
   
-  // Starting clusters
-  "ae": [
-    "l", "r", "n", "d", "th", "$"
-  ],
-  "al": [
-    "a", "e", "i", "d", "f", "r", "ic", "$"
-  ],
-  "ar": [
-    "a", "e", "i", "n", "d", "th", "ic", "$"
-  ],
-  "br": [
-    "a", "e", "i", "o", "u", "y", "an", "$"
-  ],
-  "dr": [
-    "a", "e", "i", "o", "u", "y", "an", "$"
-  ],
-  "fr": [
-    "a", "e", "i", "o", "u", "y", "an", "$"
-  ],
-  "gr": [
-    "a", "e", "i", "o", "u", "y", "an", "$"
-  ],
-  "bl": [
-    "a", "e", "i", "o", "u", "y", "$"
-  ],
-  "cl": [
-    "a", "e", "i", "o", "u", "y", "$"
-  ],
-  "fl": [
-    "a", "e", "i", "o", "u", "y", "$"
-  ],
-  "gl": [
-    "a", "e", "i", "o", "u", "y", "$"
-  ],
-  "kr": [
-    "a", "e", "i", "o", "u", "y", "$"
-  ],
-  "pr": [
-    "a", "e", "i", "o", "u", "y", "$"
-  ],
-  "tr": [
-    "a", "e", "i", "o", "u", "y", "$"
-  ],
-  "sk": [
-    "a", "e", "i", "o", "u", "y", "$"
-  ],
-  "sp": [
-    "a", "e", "i", "o", "u", "y", "$"
-  ]
+  // Starting syllables - complete units that often end
+  "ael": ["d", "f", "r", "$"],
+  "ard": ["a", "e", "i", "$"],
+  "bel": ["a", "d", "f", "$"],
+  "ber": ["a", "d", "n", "t", "$"],
+  "dra": ["g", "k", "n", "$"],
+  "dun": ["a", "c", "$"],
+  "gal": ["a", "d", "$"],
+  "gar": ["a", "d", "n", "$"],
+  "kel": ["a", "d", "$"],
+  "mor": ["a", "d", "g", "$"],
+  "tha": ["l", "n", "r", "$"],
+  "thor": ["a", "d", "n", "$"],
+  "wil": ["a", "d", "$"],
+  "wyn": ["a", "d", "$"],
+  "cael": ["a", "d", "$"],
+  "dael": ["a", "d", "$"],
+  "fael": ["a", "d", "$"],
+  "hael": ["a", "d", "$"],
+  
+  // Consonant cluster starters
+  "br": ["a", "e", "i", "o", "u", "$"],
+  "dr": ["a", "e", "i", "o", "u", "$"],
+  "fr": ["a", "e", "i", "o", "u", "$"],
+  "gr": ["a", "e", "i", "o", "u", "$"],
+  "bl": ["a", "e", "i", "o", "u", "$"],
+  "cl": ["a", "e", "i", "o", "u", "$"],
+  "fl": ["a", "e", "i", "o", "u", "$"],
+  "gl": ["a", "e", "i", "o", "u", "$"],
+  "pr": ["a", "e", "i", "o", "u", "$"],
+  "tr": ["a", "e", "i", "o", "u", "$"]
 };
 
-// Helper function to generate a single name using the pattern
+// Helper function to generate a single name using the pattern with degrader system
 export function generateOldEnglishName(): string {
   let currentPattern = "^";
   let generatedName = "";
@@ -200,8 +118,41 @@ export function generateOldEnglishName(): string {
       break;
     }
     
-    // Pick a random continuation
-    const nextPattern = possibilities[Math.floor(Math.random() * possibilities.length)];
+    // Create a weighted array based on name length (degrader system)
+    const weightedPossibilities: string[] = [];
+    const nameLength = generatedName.length;
+    
+    for (const possibility of possibilities) {
+      if (possibility === "$") {
+        // Add multiple $ entries based on name length to increase termination probability
+        // Short names (0-2 chars): 1x chance to end
+        // Medium names (3-5 chars): 3x chance to end  
+        // Longer names (6+ chars): 5x+ chance to end
+        let endWeight = 1;
+        if (nameLength >= 3) endWeight = 3;
+        if (nameLength >= 6) endWeight = 5;
+        if (nameLength >= 8) endWeight = 8;
+        if (nameLength >= 10) endWeight = 12;
+        
+        for (let i = 0; i < endWeight; i++) {
+          weightedPossibilities.push("$");
+        }
+      } else {
+        // Regular patterns get single weight, but reduce weight for very long names
+        const continueWeight = nameLength >= 10 ? 0.5 : 1;
+        if (Math.random() < continueWeight) {
+          weightedPossibilities.push(possibility);
+        }
+      }
+    }
+    
+    // If no valid continuations after weighting, force end
+    if (weightedPossibilities.length === 0) {
+      break;
+    }
+    
+    // Pick a random continuation from weighted array
+    const nextPattern = weightedPossibilities[Math.floor(Math.random() * weightedPossibilities.length)];
     
     // If we hit the end marker, we're done
     if (nextPattern === "$") {
