@@ -3,14 +3,31 @@ import {
   NoValidContinuationsError, 
   PatternNotFoundError 
 } from '../exceptions/PatternGenerationError';
-import { generateNameWithMeaning, getNameMeaning } from '../meanings/oldEnglishMeanings';
 
-// Old English fantasy name patterns
-// ^ marks the start of generation
-// $ marks the end of generation
-// Keys represent pattern nodes, values are arrays of possible continuations
+/**
+ * Generic language definition interface
+ */
+export interface LanguageDefinition {
+  patterns: { [key: string]: string[] };
+  meanings: { [key: string]: string };
+  options: {
+    name: string;
+    minLength: number;
+    maxLength: number;
+    startMarker: string;
+    endMarker: string;
+    maxLoops: number;
+  };
+}
 
-export const oldEnglishPatterns: { [key: string]: string[] } = {
+/**
+ * Old English language definition
+ * ^ marks the start of generation
+ * $ marks the end of generation
+ * Keys represent pattern nodes, values are arrays of possible continuations
+ */
+export const oldEnglish: LanguageDefinition = {
+  patterns: {
   // Common Old English starting patterns
   "^": [
     // Classic Old English name elements
@@ -158,12 +175,85 @@ export const oldEnglishPatterns: { [key: string]: string[] } = {
   "id": ["$"],         // -id
   "od": ["$"],         // -od
   "ad": ["$"]          // -ad
-};
+  },
 
-// Configurable length settings
-export const LENGTH_CONFIG = {
-  MIN_LENGTH: 4,
-  MAX_LENGTH: 10
+  meanings: {
+    // Classic Old English name elements
+    "ael": "elf, supernatural being",
+    "aed": "fire, prosperity", 
+    "alf": "elf, wise counselor",
+    "aethel": "noble, nobility",
+    "beorn": "warrior, bear-like man",
+    "cyne": "royal, kingly",
+    "ead": "blessed, fortunate",
+    "ed": "blessed, wealth",
+    "god": "good, divine",
+    "hild": "battle, war",
+    "leod": "people, folk",
+    "ost": "divine, east",
+    "raed": "counsel, advice",
+    "sig": "victory, triumph",
+    "theod": "people, nation",
+    "wulf": "wolf",
+    "wyn": "joy, friend",
+
+    // Ending clusters with meanings
+    "ric": "ruler, king, powerful",
+    "wald": "rule, power, authority",
+    "mund": "protection, guardian",
+    "helm": "helmet, protector",
+    "bert": "bright, shining",
+    "fred": "peace, peaceful",
+    "win": "friend, beloved",
+    "red": "counsel, advisor", 
+    "grim": "fierce, masked warrior",
+    "bald": "bold, brave",
+    "stan": "stone, steadfast",
+    "weard": "guard, protector",
+    "wine": "friend, lord",
+    "thane": "servant, warrior",
+    "here": "army, host",
+    "flee": "refuge, sanctuary",
+    "geat": "gate, way",
+    "mon": "man, person",
+    "noth": "boldness, daring",
+    "hard": "hardy, strong",
+    "fast": "firm, steadfast",
+    "leof": "dear, beloved",
+    "maer": "famous, renowned",
+    "mod": "courage, spirit",
+    "wig": "war, battle",
+    "hun": "bear cub, young warrior",
+    "ulf": "wolf",
+    "ing": "meadow, descendant of",
+    "ton": "enclosure, settlement",
+    "ham": "home, village",
+    "ley": "meadow, clearing",
+    "ford": "river crossing",
+    "burg": "fortress, fortified town",
+    "wick": "village, dwelling place",
+    "eth": "noble heritage",
+    "en": "one who",
+    "ar": "honor, glory", 
+    "er": "honor, glory",
+    "el": "nobility",
+    "id": "time, season",
+    "od": "wealth, fortune",
+    "ad": "nobility, heritage",
+
+    // Additional elements that might appear
+    "ward": "guardian, protector",
+    "gar": "spear, warrior"
+  },
+
+  options: {
+    name: "Old English",
+    minLength: 4,
+    maxLength: 10,
+    startMarker: "^",
+    endMarker: "$",
+    maxLoops: 50
+  }
 };
 
 // Helper function to deep copy the patterns object to avoid modifying the original
@@ -175,13 +265,79 @@ function deepCopyPatterns(patterns: { [key: string]: string[] }): { [key: string
   return copy;
 }
 
+/**
+ * Attempts to break down a generated name into meaningful components
+ * and construct a semantic meaning with visible word parts
+ */
+function getNameMeaning(name: string, language: LanguageDefinition): string {
+  const lowercaseName = name.toLowerCase();
+  const meanings: string[] = [];
+  const parts: string[] = [];
+  let remainingName = lowercaseName;
+
+  // Try to find the longest matching elements first
+  const sortedElements = Object.keys(language.meanings).sort((a, b) => b.length - a.length);
+  
+  while (remainingName.length > 0) {
+    let foundMatch = false;
+    
+    // Look for matching elements starting from the beginning of remaining name
+    for (const element of sortedElements) {
+      if (remainingName.startsWith(element)) {
+        parts.push(element);
+        meanings.push(language.meanings[element]);
+        remainingName = remainingName.slice(element.length);
+        foundMatch = true;
+        break;
+      }
+    }
+    
+    // If no match found, skip one character and continue
+    if (!foundMatch) {
+      remainingName = remainingName.slice(1);
+    }
+  }
+
+  // Construct meaning with parts on separate lines
+  if (parts.length === 0) {
+    return "";
+  } else if (parts.length === 1) {
+    return `${parts[0]}: ${meanings[0]}`;
+  } else {
+    // Format each part with prefix/suffix notation
+    const formattedParts = parts.map((part, index) => {
+      if (index === 0) {
+        return `${part}-: ${meanings[index]}`;
+      } else if (index === parts.length - 1) {
+        return `-${part}: ${meanings[index]}`;
+      } else {
+        return `-${part}-: ${meanings[index]}`;
+      }
+    });
+    
+    return formattedParts.join('\n');
+  }
+}
+
+/**
+ * Extended function that returns both name and meaning
+ */
+function generateNameWithMeaning(name: string, language: LanguageDefinition): { name: string, meaning: string } {
+  return {
+    name: name,
+    meaning: getNameMeaning(name, language)
+  };
+}
+
 // Helper function to generate a single name using the pattern with length control and backtracking
-export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LENGTH, maxLength: number = LENGTH_CONFIG.MAX_LENGTH): string {
+export function generateName(language: LanguageDefinition, minLength?: number, maxLength?: number): string {
+  const actualMinLength = minLength ?? language.options.minLength;
+  const actualMaxLength = maxLength ?? language.options.maxLength;
   // Choose target length between min and max
-  const targetLength = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+  const targetLength = Math.floor(Math.random() * (actualMaxLength - actualMinLength + 1)) + actualMinLength;
   
   // Create a deep copy of patterns to track failed paths
-  const workingPatterns = deepCopyPatterns(oldEnglishPatterns);
+  const workingPatterns = deepCopyPatterns(language.patterns);
   
   // Track generation state for backtracking
   interface GenerationState {
@@ -191,10 +347,10 @@ export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LEN
   }
   
   const history: GenerationState[] = [];
-  let currentPattern = "^";
+  let currentPattern = language.options.startMarker;
   let generatedName = "";
   let loops = 0;
-  const maxLoops = 50; // Increased for backtracking
+  const maxLoops = language.options.maxLoops;
   
   while (loops < maxLoops) {
     loops++;
@@ -264,18 +420,18 @@ export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LEN
     let filteredPossibilities: string[] = [];
     
     if (currentLength < targetLength) {
-      // We haven't reached target length yet - re-pick any $ (skip endings)
-      filteredPossibilities = possibilities.filter(p => p !== "$");
+      // We haven't reached target length yet - skip endings
+      filteredPossibilities = possibilities.filter(p => p !== language.options.endMarker);
       
       // If no non-ending possibilities, we must use what we have
       if (filteredPossibilities.length === 0) {
         filteredPossibilities = possibilities;
       }
     } else {
-      // We've reached or exceeded target length - automatically take next $ if available
-      const hasEndOption = possibilities.includes("$");
+      // We've reached or exceeded target length - automatically take next end marker if available
+      const hasEndOption = possibilities.includes(language.options.endMarker);
       if (hasEndOption) {
-        // Immediately exit with $
+        // Immediately exit with end marker
         break;
       } else {
         // No ending available, continue with any option
@@ -309,7 +465,7 @@ export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LEN
     const nextPattern = filteredPossibilities[Math.floor(Math.random() * filteredPossibilities.length)];
     
     // If we hit the end marker, we're done
-    if (nextPattern === "$") {
+    if (nextPattern === language.options.endMarker) {
       break;
     }
     
@@ -327,12 +483,12 @@ export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LEN
   return generatedName.charAt(0).toUpperCase() + generatedName.slice(1);
 }
 
-// Generate multiple names
-export function generateOldEnglishNames(count: number = 10, minLength: number = LENGTH_CONFIG.MIN_LENGTH, maxLength: number = LENGTH_CONFIG.MAX_LENGTH): string[] {
+// Generate multiple names with a language definition
+export function generateNames(language: LanguageDefinition, count: number = 10, minLength?: number, maxLength?: number): string[] {
   const names: string[] = [];
   for (let i = 0; i < count; i++) {
     try {
-      names.push(generateOldEnglishName(minLength, maxLength));
+      names.push(generateName(language, minLength, maxLength));
     } catch (error) {
       if (error instanceof MaxLoopsExceededError) {
         console.error('Pattern generation error - Max loops exceeded:', {
@@ -365,14 +521,14 @@ export function generateOldEnglishNames(count: number = 10, minLength: number = 
   return names;
 }
 
-// Generate names with meanings
-export function generateOldEnglishNamesWithMeanings(count: number = 10, minLength: number = LENGTH_CONFIG.MIN_LENGTH, maxLength: number = LENGTH_CONFIG.MAX_LENGTH): Array<{name: string, meaning: string}> {
+// Generate names with meanings using a language definition
+export function generateNamesWithMeanings(language: LanguageDefinition, count: number = 10, minLength?: number, maxLength?: number): Array<{name: string, meaning: string}> {
   const namesWithMeanings: Array<{name: string, meaning: string}> = [];
   
   for (let i = 0; i < count; i++) {
     try {
-      const name = generateOldEnglishName(minLength, maxLength);
-      namesWithMeanings.push(generateNameWithMeaning(name));
+      const name = generateName(language, minLength, maxLength);
+      namesWithMeanings.push(generateNameWithMeaning(name, language));
     } catch (error) {
       if (error instanceof MaxLoopsExceededError) {
         console.error('Pattern generation error - Max loops exceeded:', {
@@ -415,7 +571,20 @@ export function generateOldEnglishNamesWithMeanings(count: number = 10, minLengt
   return namesWithMeanings;
 }
 
+// Old English specific convenience functions
+export function generateOldEnglishName(minLength?: number, maxLength?: number): string {
+  return generateName(oldEnglish, minLength, maxLength);
+}
+
+export function generateOldEnglishNames(count: number = 10, minLength?: number, maxLength?: number): string[] {
+  return generateNames(oldEnglish, count, minLength, maxLength);
+}
+
+export function generateOldEnglishNamesWithMeanings(count: number = 10, minLength?: number, maxLength?: number): Array<{name: string, meaning: string}> {
+  return generateNamesWithMeanings(oldEnglish, count, minLength, maxLength);
+}
+
 // Helper function to get meaning for an existing name
 export function getOldEnglishNameMeaning(name: string): string {
-  return getNameMeaning(name);
+  return getNameMeaning(name, oldEnglish);
 }
