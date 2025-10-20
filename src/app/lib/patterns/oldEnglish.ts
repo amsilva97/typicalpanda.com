@@ -20,19 +20,19 @@ export const oldEnglishPatterns: { [key: string]: string[] } = {
   // Vowel continuations - heavily favor consonants, avoid vowel chains
   "a": [
     "r", "l", "n", "d", "s", "t", "m", "th", "nd", "st", "ld", "rd", 
-    "dh", "gn", "mb", "$"
+    "dh", "gn", "mb", "wyn", "ric", "wald", "mund", "helm", "bert", "$"
   ],
   "e": [
     "l", "r", "n", "d", "s", "t", "th", "nd", "st", "ld", "rd", "mb",
-    "dh", "$"
+    "dh", "wyn", "ric", "wald", "mund", "helm", "bert", "fred", "eth", "$"
   ],
   "i": [
     "n", "r", "l", "s", "t", "d", "th", "nd", "st", "ld", "rd", "gn",
-    "mb", "$"
+    "mb", "wyn", "ric", "mund", "helm", "grim", "$"
   ],
   "o": [
     "r", "n", "l", "s", "t", "d", "th", "nd", "st", "ld", "rd", "mb",
-    "dh", "$"
+    "dh", "wyn", "ric", "wald", "mund", "helm", "$"
   ],
   "u": [
     "l", "r", "n", "s", "t", "d", "th", "nd", "st", "ld", "rd", "gn",
@@ -53,20 +53,21 @@ export const oldEnglishPatterns: { [key: string]: string[] } = {
   "dh": ["a", "e", "i", "o", "u", "or", "$"],
   
   // Single consonants - can continue or end
-  "r": ["a", "e", "i", "o", "u", "an", "or", "$"],
-  "l": ["a", "e", "i", "o", "u", "an", "or", "$"],
-  "n": ["a", "e", "i", "o", "u", "$"],
-  "d": ["a", "e", "i", "o", "u", "$"],
-  "s": ["a", "e", "i", "o", "u", "$"],
-  "t": ["a", "e", "i", "o", "u", "$"],
-  "m": ["a", "e", "i", "o", "u", "$"],
-  "g": ["a", "e", "i", "o", "u", "$"],
+  "r": ["a", "e", "i", "o", "u", "an", "or", "wyn", "ic", "ed", "$"],
+  "l": ["a", "e", "i", "o", "u", "an", "or", "wyn", "m", "d", "f", "$"],
+  "n": ["a", "e", "i", "o", "u", "wyn", "$"],
+  "d": ["a", "e", "i", "o", "u", "wyn", "$"],
+  "s": ["a", "e", "i", "o", "u", "tan", "$"],
+  "t": ["a", "e", "i", "o", "u", "an", "$"],
+  "m": ["a", "e", "i", "o", "u", "und", "$"],
+  "g": ["a", "e", "i", "o", "u", "rim", "$"],
   "k": ["a", "e", "i", "o", "u", "$"],
   "p": ["a", "e", "i", "o", "u", "$"],
-  "f": ["a", "e", "i", "o", "u", "$"],
-  "h": ["a", "e", "i", "o", "u", "$"],
+  "f": ["a", "e", "i", "o", "u", "red", "$"],
+  "h": ["a", "e", "i", "o", "u", "elm", "$"],
   "v": ["a", "e", "i", "o", "u", "$"],
-  "w": ["a", "e", "i", "o", "u", "$"],
+  "w": ["a", "e", "i", "o", "u", "ulf", "in", "ald", "$"],
+  "c": ["a", "e", "i", "o", "u", "$"],
   
   // Common endings
   "an": ["a", "d", "s", "t", "$"],
@@ -102,7 +103,23 @@ export const oldEnglishPatterns: { [key: string]: string[] } = {
   "fl": ["a", "e", "i", "o", "u", "$"],
   "gl": ["a", "e", "i", "o", "u", "$"],
   "pr": ["a", "e", "i", "o", "u", "$"],
-  "tr": ["a", "e", "i", "o", "u", "$"]
+  "tr": ["a", "e", "i", "o", "u", "$"],
+  
+  // Classic Old English ending clusters
+  "ric": ["$"],        // -ric (ruler, king)
+  "wald": ["$"],       // -wald (rule, power)
+  "mund": ["$"],       // -mund (protection)
+  "helm": ["$"],       // -helm (helmet, protection)
+  "bert": ["$"],       // -bert (bright)
+  "fred": ["$"],       // -fred (peace)
+  "wulf": ["$"],       // -wulf (wolf)
+  "eth": ["$"],        // -eth (common ending)
+  "hed": ["$"],        // -hed (head, chief)
+  "win": ["$"],        // -win (friend)
+  "red": ["$"],        // -red (counsel)
+  "grim": ["$"],       // -grim (mask, fierce)
+  "bald": ["$"],       // -bald (bold)
+  "stan": ["$"]        // -stan (stone)
 };
 
 // Configurable length settings
@@ -111,29 +128,97 @@ export const LENGTH_CONFIG = {
   MAX_LENGTH: 10
 };
 
-// Helper function to generate a single name using the pattern with length control
+// Helper function to deep copy the patterns object to avoid modifying the original
+function deepCopyPatterns(patterns: { [key: string]: string[] }): { [key: string]: string[] } {
+  const copy: { [key: string]: string[] } = {};
+  for (const key in patterns) {
+    copy[key] = [...patterns[key]];
+  }
+  return copy;
+}
+
+// Helper function to generate a single name using the pattern with length control and backtracking
 export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LENGTH, maxLength: number = LENGTH_CONFIG.MAX_LENGTH): string {
   // Choose target length between min and max
   const targetLength = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
   
+  // Create a deep copy of patterns to track failed paths
+  const workingPatterns = deepCopyPatterns(oldEnglishPatterns);
+  
+  // Track generation state for backtracking
+  interface GenerationState {
+    currentPattern: string;
+    generatedName: string;
+    usedPath: string[];
+  }
+  
+  const history: GenerationState[] = [];
   let currentPattern = "^";
   let generatedName = "";
   let loops = 0;
-  const maxLoops = 30;
+  const maxLoops = 50; // Increased for backtracking
   
   while (loops < maxLoops) {
     loops++;
     
-    // Check if pattern exists in dictionary
-    if (!oldEnglishPatterns.hasOwnProperty(currentPattern)) {
-      throw new PatternNotFoundError(currentPattern, generatedName, loops);
+    // Save current state to history for potential backtracking
+    history.push({
+      currentPattern,
+      generatedName,
+      usedPath: [currentPattern]
+    });
+    
+    // Check if pattern exists in working patterns
+    if (!workingPatterns.hasOwnProperty(currentPattern)) {
+      // Pattern not found - backtrack
+      if (history.length <= 1) {
+        // Can't backtrack further, this is a fundamental pattern issue
+        throw new PatternNotFoundError(currentPattern, generatedName, loops);
+      }
+      
+      // Remove the failed choice from the previous state
+      const currentState = history.pop()!; // Remove current state
+      const previousState = history[history.length - 1]; // Get previous state
+      
+      // Remove the failed pattern from previous state's possibilities
+      if (workingPatterns[previousState.currentPattern]) {
+        workingPatterns[previousState.currentPattern] = workingPatterns[previousState.currentPattern].filter(
+          p => p !== currentPattern
+        );
+      }
+      
+      // Restore to previous state
+      currentPattern = previousState.currentPattern;
+      generatedName = previousState.generatedName;
+      
+      continue; // Try again from previous state
     }
     
     // Get possible continuations for current pattern
-    const possibilities = oldEnglishPatterns[currentPattern];
+    const possibilities = workingPatterns[currentPattern];
     
     if (!possibilities || possibilities.length === 0) {
-      throw new NoValidContinuationsError(currentPattern, generatedName, loops);
+      // No valid continuations - backtrack
+      if (history.length <= 1) {
+        throw new NoValidContinuationsError(currentPattern, generatedName, loops);
+      }
+      
+      // Remove current state and go back
+      const currentState = history.pop()!;
+      const previousState = history[history.length - 1];
+      
+      // Mark this pattern as exhausted in the previous state
+      if (workingPatterns[previousState.currentPattern]) {
+        workingPatterns[previousState.currentPattern] = workingPatterns[previousState.currentPattern].filter(
+          p => p !== currentPattern
+        );
+      }
+      
+      // Restore to previous state
+      currentPattern = previousState.currentPattern;
+      generatedName = previousState.generatedName;
+      
+      continue;
     }
     
     // Filter possibilities based on current length vs target
@@ -158,6 +243,28 @@ export function generateOldEnglishName(minLength: number = LENGTH_CONFIG.MIN_LEN
         // No ending available, continue with any option
         filteredPossibilities = possibilities;
       }
+    }
+    
+    // If no valid filtered possibilities, backtrack
+    if (filteredPossibilities.length === 0) {
+      if (history.length <= 1) {
+        throw new NoValidContinuationsError(currentPattern, generatedName, loops);
+      }
+      
+      const currentState = history.pop()!;
+      const previousState = history[history.length - 1];
+      
+      // Mark this path as failed
+      if (workingPatterns[previousState.currentPattern]) {
+        workingPatterns[previousState.currentPattern] = workingPatterns[previousState.currentPattern].filter(
+          p => p !== currentPattern
+        );
+      }
+      
+      currentPattern = previousState.currentPattern;
+      generatedName = previousState.generatedName;
+      
+      continue;
     }
     
     // Pick a random continuation from filtered array
