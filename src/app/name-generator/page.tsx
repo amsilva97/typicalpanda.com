@@ -2,15 +2,20 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { generateOldEnglishNames } from '../lib/patterns/oldEnglish';
+import { generateOldEnglishNamesWithMeanings } from '../lib/patterns/oldEnglish';
 
 const fantasyLanguages = {
   'Old English': 'oldEnglish'
 };
 
+interface NameWithMeaning {
+  name: string;
+  meaning: string;
+}
+
 export default function NameGenerator() {
   const [selectedLanguage, setSelectedLanguage] = useState<keyof typeof fantasyLanguages>('Old English');
-  const [generatedNames, setGeneratedNames] = useState<string[]>([]);
+  const [generatedNames, setGeneratedNames] = useState<NameWithMeaning[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generateNames = () => {
@@ -18,11 +23,11 @@ export default function NameGenerator() {
     
     // Simulate a small delay for better UX
     setTimeout(() => {
-      let names: string[] = [];
+      let names: NameWithMeaning[] = [];
       
       // For now, we only have Old English patterns implemented
       if (selectedLanguage === 'Old English') {
-        names = generateOldEnglishNames(15); // Generate 15 names
+        names = generateOldEnglishNamesWithMeanings(15); // Generate 15 names with meanings
       }
       
       setGeneratedNames(names);
@@ -114,48 +119,62 @@ export default function NameGenerator() {
                 🏰 Generated {selectedLanguage} Names
               </h2>
               <p className="text-sm panda-text-muted mb-4">
-                Names marked with <span className="font-mono bg-red-600 text-white px-2 py-1 rounded">~</span> reached the 20-loop complexity limit
+                Names marked with <span className="font-mono bg-red-600 text-white px-2 py-1 rounded">~</span> reached the complexity limit • <em>Meanings shown in italics</em>
               </p>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {generatedNames.map((name, index) => {
-                  const isFailed = name.endsWith('~');
-                  const displayName = isFailed ? name.slice(0, -1) : name;
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {generatedNames.map((nameObj, index) => {
+                  const isFailed = nameObj.name.endsWith('~');
+                  const displayName = isFailed ? nameObj.name.slice(0, -1) : nameObj.name;
+                  const meaning = nameObj.meaning;
                   
                   return (
                     <div
                       key={index}
-                      className={`group transition-all transform hover:scale-[1.02] ${
+                      className={`group transition-all transform hover:scale-[1.02] cursor-pointer ${
                         isFailed
                           ? 'panda-name-card-failed'
                           : 'panda-name-card'
                       }`}
                       onClick={() => copyToClipboard(displayName)}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className={`font-medium ${
-                          isFailed 
-                            ? 'text-red-300' 
-                            : 'panda-text-primary'
-                        }`}>
-                          {displayName}
-                          {isFailed && <span className="text-red-400 ml-1">~</span>}
-                        </span>
-                        <svg 
-                          className="w-4 h-4 panda-text-muted group-hover:panda-accent-gold opacity-0 group-hover:opacity-100 transition-opacity"
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
+                      <div className="flex flex-col">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`font-medium text-lg ${
+                            isFailed 
+                              ? 'text-red-300' 
+                              : 'panda-text-primary'
+                          }`}>
+                            {displayName}
+                            {isFailed && <span className="text-red-400 ml-1">~</span>}
+                          </span>
+                          <svg 
+                            className="w-4 h-4 panda-text-muted group-hover:panda-accent-gold opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        {meaning && (
+                          <div className={`text-sm italic ${
+                            isFailed 
+                              ? 'text-red-400' 
+                              : 'panda-text-secondary'
+                          }`}>
+                            {meaning.split('\n').map((line, lineIndex) => (
+                              <div key={lineIndex}>{line}</div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
                 })}
               </div>
               <p className="text-sm panda-text-muted mt-4 text-center">
-                Click on any name to copy it to your clipboard • Generated using linguistic pattern algorithms
+                Click on any name to copy it to your clipboard • Generated using linguistic pattern algorithms with authentic Old English meanings
               </p>
             </div>
           )}

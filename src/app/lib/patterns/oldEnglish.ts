@@ -3,6 +3,7 @@ import {
   NoValidContinuationsError, 
   PatternNotFoundError 
 } from '../exceptions/PatternGenerationError';
+import { generateNameWithMeaning, getNameMeaning } from '../meanings/oldEnglishMeanings';
 
 // Old English fantasy name patterns
 // ^ marks the start of generation
@@ -362,4 +363,59 @@ export function generateOldEnglishNames(count: number = 10, minLength: number = 
     }
   }
   return names;
+}
+
+// Generate names with meanings
+export function generateOldEnglishNamesWithMeanings(count: number = 10, minLength: number = LENGTH_CONFIG.MIN_LENGTH, maxLength: number = LENGTH_CONFIG.MAX_LENGTH): Array<{name: string, meaning: string}> {
+  const namesWithMeanings: Array<{name: string, meaning: string}> = [];
+  
+  for (let i = 0; i < count; i++) {
+    try {
+      const name = generateOldEnglishName(minLength, maxLength);
+      namesWithMeanings.push(generateNameWithMeaning(name));
+    } catch (error) {
+      if (error instanceof MaxLoopsExceededError) {
+        console.error('Pattern generation error - Max loops exceeded:', {
+          errorCode: error.errorCode,
+          context: error.context,
+          message: error.message
+        });
+        namesWithMeanings.push({
+          name: error.context.generatedName + "~",
+          meaning: "generation incomplete"
+        });
+      } else if (error instanceof NoValidContinuationsError) {
+        console.error('Pattern generation error - No valid continuations:', {
+          errorCode: error.errorCode,
+          context: error.context,
+          message: error.message
+        });
+        namesWithMeanings.push({
+          name: error.context.generatedName + "~",
+          meaning: "generation incomplete"
+        });
+      } else if (error instanceof PatternNotFoundError) {
+        console.error('Pattern generation error - Pattern not found:', {
+          errorCode: error.errorCode,
+          context: error.context,
+          message: error.message
+        });
+        namesWithMeanings.push({
+          name: error.context.generatedName + "~",
+          meaning: "generation incomplete"
+        });
+      } else {
+        // Unknown error, re-throw it
+        console.error('Unknown pattern generation error:', error);
+        throw error;
+      }
+    }
+  }
+  
+  return namesWithMeanings;
+}
+
+// Helper function to get meaning for an existing name
+export function getOldEnglishNameMeaning(name: string): string {
+  return getNameMeaning(name);
 }
