@@ -1,4 +1,6 @@
 //#region Language Definition and Supported Languages
+import { PatternGenerationError, MaxLoopsExceededError, NoValidContinuationsError, PatternNotFoundError } from '../exceptions/PatternGenerationError';
+
 /**
  * Generic language definition interface
  */
@@ -85,47 +87,118 @@ export function analyzeNameGeneric(inputName: string): AnalysisResult {
 }
 
 /**
- * Generate a single name using a language definition
+ * Generate a single name using a language definition with backtracking
+ * @throws {PatternNotFoundError} When no starting patterns found
+ * @throws {NoValidContinuationsError} When no valid continuations exist after backtracking
+ * @throws {MaxLoopsExceededError} When maximum generation loops are exceeded
  */
 export function generateName(language: LanguageDefinition, minLength?: number, maxLength?: number): string {
-  // Simple name generation logic
   const startingPatterns = language.patterns[language.options.startMarker] || [];
   if (startingPatterns.length === 0) {
-    throw new Error('No starting patterns found');
+    throw new PatternNotFoundError(language.options.startMarker, '', 0);
   }
 
   const actualMinLength = minLength ?? language.options.minLength;
   const actualMaxLength = maxLength ?? language.options.maxLength;
   const targetLength = Math.floor(Math.random() * (actualMaxLength - actualMinLength + 1)) + actualMinLength;
 
+  // Backtracking state
+  interface GenerationStep {
+    name: string;
+    currentPattern: string;
+    usedChoices: Set<string>; // Track used choices at this step
+  }
+
+  const generationStack: GenerationStep[] = [];
   let name = '';
   let currentPattern = language.options.startMarker;
   let loops = 0;
-  const maxLoops = language.options.maxLoops;
+  const maxLoops = language.options.maxLoops * 3; // Allow more loops for backtracking
+
+  // Initialize first step
+  generationStack.push({
+    name: '',
+    currentPattern: language.options.startMarker,
+    usedChoices: new Set()
+  });
 
   while (loops < maxLoops && name.length < targetLength) {
     loops++;
-    const possibilities = language.patterns[currentPattern] || [];
     
-    if (possibilities.length === 0) break;
-    
-    // Filter out end markers if we haven't reached minimum length
-    let filteredPossibilities = possibilities;
-    if (name.length < actualMinLength) {
-      filteredPossibilities = possibilities.filter(p => p !== language.options.endMarker);
-      if (filteredPossibilities.length === 0) {
-        filteredPossibilities = possibilities;
-      }
+    if (generationStack.length === 0) {
+      throw new NoValidContinuationsError(currentPattern, name, loops);
     }
 
-    const nextPattern = filteredPossibilities[Math.floor(Math.random() * filteredPossibilities.length)];
+    const currentStep = generationStack[generationStack.length - 1];
+    const possibilities = language.patterns[currentStep.currentPattern] || [];
+    
+    if (possibilities.length === 0) {
+      // Dead end - backtrack
+      generationStack.pop();
+      if (generationStack.length > 0) {
+        const previousStep = generationStack[generationStack.length - 1];
+        name = previousStep.name;
+        currentPattern = previousStep.currentPattern;
+      }
+      continue;
+    }
+    
+    // Smart length filtering based on current position relative to target
+    let filteredPossibilities = possibilities;
+    
+    if (currentStep.name.length < actualMinLength) {
+      // Below minimum length - filter out end markers to prevent going below min
+      filteredPossibilities = possibilities.filter(p => p !== language.options.endMarker);
+      if (filteredPossibilities.length === 0) {
+        filteredPossibilities = possibilities; // Fallback if no other options
+      }
+    } else if (currentStep.name.length >= targetLength) {
+      // At or above target length - prefer end marker if available
+      const endMarkerOptions = possibilities.filter(p => p === language.options.endMarker);
+      if (endMarkerOptions.length > 0) {
+        filteredPossibilities = endMarkerOptions; // Force end if we've reached target
+      }
+    }
+    // If between min and target, use all possibilities (normal behavior)
+
+    // Filter out already used choices at this step
+    const availableChoices = filteredPossibilities.filter(p => !currentStep.usedChoices.has(p));
+    
+    if (availableChoices.length === 0) {
+      // No more choices at this step - backtrack
+      generationStack.pop();
+      if (generationStack.length > 0) {
+        const previousStep = generationStack[generationStack.length - 1];
+        name = previousStep.name;
+        currentPattern = previousStep.currentPattern;
+      }
+      continue;
+    }
+
+    // Choose a random pattern from available choices
+    const nextPattern = availableChoices[Math.floor(Math.random() * availableChoices.length)];
+    
+    // Mark this choice as used
+    currentStep.usedChoices.add(nextPattern);
     
     if (nextPattern === language.options.endMarker) {
       break;
     }
     
-    name += nextPattern;
+    // Move forward
+    name = currentStep.name + nextPattern;
     currentPattern = nextPattern;
+    
+    // Add new step to stack
+    generationStack.push({
+      name: name,
+      currentPattern: nextPattern,
+      usedChoices: new Set()
+    });
+  }
+
+  if (loops >= maxLoops) {
+    throw new MaxLoopsExceededError(maxLoops, name, currentPattern);
   }
 
   return name.charAt(0).toUpperCase() + name.slice(1);
@@ -140,7 +213,16 @@ export function generateNames(language: LanguageDefinition, count: number = 10, 
     try {
       names.push(generateName(language, minLength, maxLength));
     } catch (error) {
-      names.push(`Name${i + 1}`); // Fallback
+      if (error instanceof PatternGenerationError) {
+        // Use the partial name from the error context, if available
+        const partialName = error.context.generatedName || '';
+        const nameWithError = partialName.length > 0 
+          ? `${partialName.charAt(0).toUpperCase()}${partialName.slice(1)}~`
+          : `Name${i + 1}~`;
+        names.push(nameWithError);
+      } else {
+        names.push(`Name${i + 1}~`); // Fallback for other errors
+      }
     }
   }
   return names;
@@ -207,10 +289,22 @@ export function generateNamesWithMeanings(language: LanguageDefinition, count: n
       const meaning = getNameMeaning(name, language);
       namesWithMeanings.push({ name, meaning });
     } catch (error) {
-      namesWithMeanings.push({
-        name: `Name${i + 1}`,
-        meaning: "generation failed"
-      });
+      if (error instanceof PatternGenerationError) {
+        // Use the partial name from the error context, if available
+        const partialName = error.context.generatedName || '';
+        const nameWithError = partialName.length > 0 
+          ? `${partialName.charAt(0).toUpperCase()}${partialName.slice(1)}~`
+          : `Name${i + 1}~`;
+        namesWithMeanings.push({
+          name: nameWithError,
+          meaning: `Generation failed: ${error.message}`
+        });
+      } else {
+        namesWithMeanings.push({
+          name: `Name${i + 1}~`,
+          meaning: "Generation failed"
+        });
+      }
     }
   }
 
