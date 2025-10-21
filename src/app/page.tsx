@@ -16,7 +16,7 @@ export default function Home() {
       id: 'name-generator',
       title: 'Fantasy Name Generator',
       description: 'Create authentic fantasy names using advanced linguistic patterns and historical language structures.',
-      icon: '⚔️',
+      icon: '',
       href: '/name-generator',
       status: 'Live',
       features: ['Pattern-based Generation', 'Multiple Languages', 'Name Analysis', 'Meaning Generation']
@@ -25,7 +25,7 @@ export default function Home() {
       id: 'coming-soon-1',
       title: 'Project Two',
       description: 'An exciting new project is coming soon. Stay tuned for more innovative tools and experiences.',
-      icon: '🚀',
+      icon: '',
       href: '#',
       status: 'Coming Soon',
       features: ['Feature A', 'Feature B', 'Feature C', 'Feature D']
@@ -34,7 +34,7 @@ export default function Home() {
       id: 'coming-soon-2',
       title: 'Project Three',
       description: 'Another amazing project in development. We\'re working hard to bring you something special.',
-      icon: '💎',
+      icon: '',
       href: '#',
       status: 'Coming Soon',
       features: ['Innovation', 'Quality', 'Performance', 'Design']
@@ -43,7 +43,7 @@ export default function Home() {
       id: 'coming-soon-3',
       title: 'Project Four',
       description: 'More exciting projects are on the horizon. Each one crafted with attention to detail.',
-      icon: '🌟',
+      icon: '',
       href: '#',
       status: 'In Development',
       features: ['Creative Tools', 'User Experience', 'Modern Tech', 'Accessibility']

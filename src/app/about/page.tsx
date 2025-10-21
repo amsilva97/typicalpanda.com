@@ -31,7 +31,7 @@ export default function About() {
           <div className="panda-card p-6 mb-6">
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <h2 className="text-3xl font-bold panda-text-primary mb-4">
-                🔮 How Pattern Magic Works
+                How Pattern Magic Works
               </h2>
               
               <p className="panda-text-secondary mb-4">
@@ -42,7 +42,7 @@ export default function About() {
 
               <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg mb-4">
                 <h4 className="font-semibold panda-text-primary mb-2">
-                  🏛️ Pattern Structure
+                  Pattern Structure
                 </h4>
                 <ul className="text-sm panda-text-secondary space-y-1">
                   <li><code className="bg-purple-100 dark:bg-purple-800 px-2 py-1 rounded">^</code> - Marks generation start points</li>
@@ -59,7 +59,7 @@ export default function About() {
               <div className="grid md:grid-cols-2 gap-4 mb-6">
                 <div className="panda-card p-4">
                   <h4 className="font-semibold panda-text-primary mb-2">
-                    🎯 Category-Specific
+                    Category-Specific
                   </h4>
                   <p className="panda-text-secondary text-sm">
                     Choose from business, character, project, or pet names, each with specialized styles.
@@ -77,7 +77,7 @@ export default function About() {
 
                 <div className="panda-card p-4">
                   <h4 className="font-semibold panda-text-primary mb-2">
-                    📋 Easy Copy
+                    Easy Copy
                   </h4>
                   <p className="panda-text-secondary text-sm">
                     Click any generated name to instantly copy it to your clipboard.
@@ -86,7 +86,7 @@ export default function About() {
 
                 <div className="panda-card p-4">
                   <h4 className="font-semibold panda-text-primary mb-2">
-                    🎨 Style Options
+                    Style Options
                   </h4>
                   <p className="panda-text-secondary text-sm">
                     Refine results with style preferences like Tech, Fantasy, Modern, and more.

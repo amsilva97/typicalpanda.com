@@ -89,7 +89,7 @@ export default function NameGenerator() {
               {/* Language Selection */}
               <div className="max-w-md mx-auto">
                 <label className="block text-sm font-medium panda-text-primary mb-2 text-center">
-                  🏛️ Language Pattern
+                  Language Pattern
                 </label>
                 <select
                   value={selectedLanguage}
@@ -119,7 +119,7 @@ export default function NameGenerator() {
                   Weaving Names from Ancient Patterns...
                 </div>
               ) : (
-                '✨ Generate Fantasy Names'
+                'Generate Fantasy Names'
               )}
             </button>
           </div>
@@ -128,7 +128,7 @@ export default function NameGenerator() {
           {generatedNames.length > 0 && (
             <div className="panda-card p-6">
               <h2 className="text-2xl font-bold panda-text-primary mb-3">
-                🏰 Generated {selectedLanguage} Names
+                Generated {selectedLanguage} Names
               </h2>
               <p className="text-sm panda-text-muted mb-4">
                 Names marked with <span className="font-mono bg-red-600 text-white px-2 py-1 rounded">~</span> reached the complexity limit • <em>Meanings shown in italics</em> • Click any name to analyze it
