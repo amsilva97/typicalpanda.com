@@ -228,13 +228,13 @@ export const oldEnglish: LanguageDefinition = {
 
   options: {
     name: "Old English",
-    minLength: 4,
-    maxLength: 15,
+    minLength: 5,          // Old English names tend to be longer
+    maxLength: 18,         // Allow for compound names like Aethelred, Leofdaeg
     startMarker: "^",
     endMarker: "$",
-    maxLoops: 50,
-    singleLetterLimiter: 2, // Allow max 2 consecutive single letters
-    clusterLimiter: 1 // Allow max 1 use of same cluster (3+ letters) per name
+    maxLoops: 60,          // More loops for complex compound names
+    singleLetterLimiter: 1, // Stricter on single letters (Old English favors clusters)
+    clusterLimiter: 2      // Allow more clusters for authentic compound elements
   }
 };
 

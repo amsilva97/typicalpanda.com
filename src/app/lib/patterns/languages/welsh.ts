@@ -288,12 +288,12 @@ export const welsh: LanguageDefinition = {
 
   options: {
     name: "Welsh",
-    minLength: 4,
-    maxLength: 15,
+    minLength: 4,          // Welsh names can be shorter
+    maxLength: 12,         // Welsh names are typically more compact
     startMarker: "^",
     endMarker: "$",
-    maxLoops: 50,
-    singleLetterLimiter: 2, // Allow max 2 consecutive single letters
-    clusterLimiter: 1 // Allow max 1 use of same cluster (3+ letters) per name
+    maxLoops: 45,          // Moderate complexity
+    singleLetterLimiter: 3, // Allow more single letters (Welsh has many vowels)
+    clusterLimiter: 2      // Allow Welsh double letters (ll, dd, ff, etc.)
   }
 };
