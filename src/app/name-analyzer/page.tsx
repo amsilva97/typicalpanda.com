@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { analyzeName } from '../lib/patterns/analyzer';
 import { generateNameVariations, NameVariation } from '../lib/patterns/regeneration';
-import { getLanguageDefinition } from '../lib/patterns/core';
 import { getSupportedLanguages } from '../lib/patterns/core';
 import { SupportedLanguage } from '../lib/patterns/core';
 
@@ -46,7 +45,7 @@ export default function NameAnalyzer() {
 
   return (
     <div className="min-h-screen panda-bg-primary">
-      <div className="container mx-auto px-6 py-8 max-w-7xl">
+      <div className="px-6 py-8">
         <div className="text-center mb-8">
           <Link 
             href="/"
@@ -113,107 +112,107 @@ export default function NameAnalyzer() {
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Results Section */}
-          {analysisResults.length > 0 && (
-            <div className="w-full mt-8">
-              <div className="panda-card p-6">
-                <h3 className="text-xl font-bold panda-text-primary mb-4">
-                  Analysis Results for "{inputName}"
-                </h3>
-                <div className="space-y-6">
-                  {analysisResults.map((path, index) => (
-                    <div key={index} className="border-b border-gray-600 pb-6 last:border-b-0">
-                      {/* Path Header */}
-                      <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-700/50 mb-4">
-                        <span className="text-sm font-bold panda-text-secondary w-8">
-                          #{index + 1}
-                        </span>
-                        <div className="flex flex-wrap gap-2">
-                          {path.map((segment, segIndex) => (
-                            <span 
-                              key={segIndex}
-                              className="px-2 py-1 bg-blue-600 text-white text-sm rounded font-mono"
+        {/* Results Section */}
+        {analysisResults.length > 0 && (
+          <div className="w-full">
+            <div className="panda-card p-6">
+              <h3 className="text-xl font-bold panda-text-primary mb-4">
+                Analysis Results for "{inputName}"
+              </h3>
+              <div className="space-y-6">
+                {analysisResults.map((path, index) => (
+                  <div key={index} className="border-b border-gray-600 pb-6 last:border-b-0">
+                    {/* Path Header */}
+                    <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-700/50 mb-4">
+                      <span className="text-sm font-bold panda-text-secondary w-8">
+                        #{index + 1}
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {path.map((segment, segIndex) => (
+                          <span 
+                            key={segIndex}
+                            className="px-2 py-1 bg-blue-600 text-white text-sm rounded font-mono"
+                          >
+                            {segment}
+                          </span>
+                        ))}
+                      </div>
+                      <span className="text-xs panda-text-secondary ml-auto">
+                        {path.length} segment{path.length !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    {/* Variations */}
+                    {nameVariations[index] && (
+                      <div>
+                        <h4 className="text-lg font-semibold panda-text-primary mb-3">
+                          Generated Variations
+                        </h4>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                          {nameVariations[index].map((variation, varIndex) => (
+                            <div
+                              key={varIndex}
+                              className={`p-3 rounded-lg border transition-all ${
+                                variation.type === 'original'
+                                  ? 'bg-green-900/30 border-green-600'
+                                  : variation.isValid
+                                  ? 'bg-blue-900/30 border-blue-600 hover:bg-blue-900/50'
+                                  : 'bg-red-900/30 border-red-600'
+                              }`}
                             >
-                              {segment}
-                            </span>
+                              <div className="flex items-center justify-between mb-2">
+                                <span className={`font-medium ${
+                                  variation.type === 'original'
+                                    ? 'text-green-300'
+                                    : variation.isValid
+                                    ? 'panda-text-primary'
+                                    : 'text-red-300'
+                                }`}>
+                                  {variation.name}
+                                </span>
+                                <span className={`text-xs px-2 py-1 rounded ${
+                                  variation.type === 'original'
+                                    ? 'bg-green-600 text-white'
+                                    : variation.type === 'remove'
+                                    ? 'bg-orange-600 text-white'
+                                    : variation.type === 'add'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-yellow-600 text-black'
+                                }`}>
+                                  {variation.type}
+                                </span>
+                              </div>
+                              <p className="text-xs panda-text-secondary mb-2">
+                                {variation.description}
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {variation.segments.map((segment, segIndex) => (
+                                  <span 
+                                    key={segIndex}
+                                    className="px-1 py-0.5 bg-gray-600 text-white text-xs rounded font-mono"
+                                  >
+                                    {segment}
+                                  </span>
+                                ))}
+                              </div>
+                              {!variation.isValid && variation.type !== 'original' && (
+                                <div className="mt-2 text-xs text-red-400">
+                                  ⚠️ Invalid pattern combination
+                                </div>
+                              )}
+                            </div>
                           ))}
                         </div>
-                        <span className="text-xs panda-text-secondary ml-auto">
-                          {path.length} segment{path.length !== 1 ? 's' : ''}
-                        </span>
                       </div>
-
-                      {/* Variations */}
-                      {nameVariations[index] && (
-                        <div>
-                          <h4 className="text-lg font-semibold panda-text-primary mb-3">
-                            Generated Variations
-                          </h4>
-                          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {nameVariations[index].map((variation, varIndex) => (
-                              <div
-                                key={varIndex}
-                                className={`p-3 rounded-lg border transition-all ${
-                                  variation.type === 'original'
-                                    ? 'bg-green-900/30 border-green-600'
-                                    : variation.isValid
-                                    ? 'bg-blue-900/30 border-blue-600 hover:bg-blue-900/50'
-                                    : 'bg-red-900/30 border-red-600'
-                                }`}
-                              >
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className={`font-medium ${
-                                    variation.type === 'original'
-                                      ? 'text-green-300'
-                                      : variation.isValid
-                                      ? 'panda-text-primary'
-                                      : 'text-red-300'
-                                  }`}>
-                                    {variation.name}
-                                  </span>
-                                  <span className={`text-xs px-2 py-1 rounded ${
-                                    variation.type === 'original'
-                                      ? 'bg-green-600 text-white'
-                                      : variation.type === 'remove'
-                                      ? 'bg-orange-600 text-white'
-                                      : variation.type === 'add'
-                                      ? 'bg-purple-600 text-white'
-                                      : 'bg-yellow-600 text-black'
-                                  }`}>
-                                    {variation.type}
-                                  </span>
-                                </div>
-                                <p className="text-xs panda-text-secondary mb-2">
-                                  {variation.description}
-                                </p>
-                                <div className="flex flex-wrap gap-1">
-                                  {variation.segments.map((segment, segIndex) => (
-                                    <span 
-                                      key={segIndex}
-                                      className="px-1 py-0.5 bg-gray-600 text-white text-xs rounded font-mono"
-                                    >
-                                      {segment}
-                                    </span>
-                                  ))}
-                                </div>
-                                {!variation.isValid && variation.type !== 'original' && (
-                                  <div className="mt-2 text-xs text-red-400">
-                                    ⚠️ Invalid pattern combination
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

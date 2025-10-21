@@ -61,7 +61,7 @@ export default function NameGenerator() {
 
   return (
     <div className="min-h-screen panda-bg-primary">
-      <div className="container mx-auto px-6 py-8">
+      <div className="px-6 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <Link 
@@ -79,12 +79,12 @@ export default function NameGenerator() {
               Fantasy Name Generator
             </span>
           </h1>
-          <p className="text-lg panda-text-secondary max-w-2xl mx-auto">
+          <p className="text-lg panda-text-secondary">
             Generate authentic fantasy names using pattern-based linguistic algorithms. Names ending with ~ indicate generation reached complexity limits.
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div>
           {/* Controls */}
           <div className="panda-card p-6 mb-6">
             <div className="mb-4">
