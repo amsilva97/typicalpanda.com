@@ -63,7 +63,6 @@ export default function NameAnalyzer() {
                 <select
                   value={selectedLanguage}
                   onChange={(e) => setSelectedLanguage(e.target.value as SupportedLanguage)}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 panda-text-primary focus:outline-none focus:border-blue-500"
                 >
                   {getSupportedLanguages().map(language => (
                     <option key={language} value={language}>

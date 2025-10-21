@@ -143,6 +143,7 @@ body {
 
 /* Select Dropdown Styling */
 select {
+  width: 100%;
   background: var(--panda-darker);
   border: 2px solid #4b5563;
   color: var(--panda-white);
