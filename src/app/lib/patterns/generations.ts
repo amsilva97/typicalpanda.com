@@ -46,6 +46,9 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
 
   const actualMinLength = minLength ?? language.options.minLength;
   const actualMaxLength = maxLength ?? language.options.maxLength;
+  
+  // Pick a target length between min and max for better distribution
+  const targetLength = Math.floor(Math.random() * (actualMaxLength - actualMinLength + 1)) + actualMinLength;
 
   // Backtracking state
   interface GenerationStep {
@@ -102,16 +105,31 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
       continue;
     }
 
-    // Strict length constraint filtering
+    // Strict length constraint filtering based on target length
     let filteredPossibilities = possibilities;
 
-    // Filter out choices that would violate length constraints
+    // Filter based on current name length vs target length
     filteredPossibilities = possibilities.filter(pattern => {
       if (pattern === language.options.endMarker) {
-        // Can only use end marker if we're at or above minimum length
+        // Allow end marker if we're at least at minimum length
+        // Prefer it strongly if we're at or above target
         return currentStep.name.length >= actualMinLength;
       } else {
-        // Can only use non-end patterns if they won't exceed maximum length
+        // Don't allow patterns if we're already at or above max length
+        if (currentStep.name.length >= actualMaxLength) {
+          return false;
+        }
+        
+        // If we're at or above target, only allow patterns that have end marker as next option
+        if (currentStep.name.length >= targetLength) {
+          // Check if this pattern can lead to an end marker
+          const nextPatternPossibilities = language.patterns[pattern] || [];
+          const canEnd = nextPatternPossibilities.includes(language.options.endMarker);
+          if (!canEnd) {
+            return false; // Don't use patterns that can't end soon
+          }
+        }
+        
         const lengthCheck = (currentStep.name.length + pattern.length) <= actualMaxLength;
 
         // Check single letter limiter if enabled
@@ -131,9 +149,8 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
       }
     });
 
-    // If we're below minimum length and only have end marker available, backtrack
-    if (currentStep.name.length < actualMinLength && filteredPossibilities.every(p => p === language.options.endMarker)) {
-      // Force backtrack - we can't end yet
+    // If we have no valid possibilities, backtrack
+    if (filteredPossibilities.length === 0) {
       generationStack.pop();
       if (generationStack.length > 0) {
         const previousStep = generationStack[generationStack.length - 1];
