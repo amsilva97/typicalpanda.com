@@ -22,31 +22,13 @@ export default function Home() {
       features: ['Pattern-based Generation', 'Multiple Languages', 'Name Analysis', 'Meaning Generation']
     },
     {
-      id: 'coming-soon-1',
-      title: 'Project Two',
-      description: 'An exciting new project is coming soon. Stay tuned for more innovative tools and experiences.',
+      id: 'future-projects',
+      title: 'More Projects Coming Soon',
+      description: 'Stay tuned for more exciting tools and applications designed to enhance your creative workflow.',
       icon: '',
       href: '#',
       status: 'Coming Soon',
-      features: ['Feature A', 'Feature B', 'Feature C', 'Feature D']
-    },
-    {
-      id: 'coming-soon-2',
-      title: 'Project Three',
-      description: 'Another amazing project in development. We\'re working hard to bring you something special.',
-      icon: '',
-      href: '#',
-      status: 'Coming Soon',
-      features: ['Innovation', 'Quality', 'Performance', 'Design']
-    },
-    {
-      id: 'coming-soon-3',
-      title: 'Project Four',
-      description: 'More exciting projects are on the horizon. Each one crafted with attention to detail.',
-      icon: '',
-      href: '#',
-      status: 'In Development',
-      features: ['Creative Tools', 'User Experience', 'Modern Tech', 'Accessibility']
+      features: ['Creative Tools', 'Innovative Designs', 'User-Centric', 'Cutting-Edge Technology']
     }
   ];
 
