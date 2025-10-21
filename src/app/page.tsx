@@ -10,28 +10,28 @@ interface Project {
   features: string[];
 }
 
-export default function Home() {
-  const projects: Project[] = [
-    {
-      id: 'name-generator',
-      title: 'Fantasy Name Generator',
-      description: 'Create authentic fantasy names using advanced linguistic patterns and historical language structures.',
-      icon: '',
-      href: '/fantasy-name-generator/name-generator',
-      status: 'Live',
-      features: ['Pattern-based Generation', 'Multiple Languages', 'Name Analysis', 'Meaning Generation']
-    },
-    {
-      id: 'future-projects',
-      title: 'More Projects Coming Soon',
-      description: 'Stay tuned for more exciting tools and applications designed to enhance your creative workflow.',
-      icon: '',
-      href: '#',
-      status: 'Coming Soon',
-      features: ['Creative Tools', 'Innovative Designs', 'User-Centric', 'Cutting-Edge Technology']
-    }
-  ];
+const projects: Project[] = [
+  {
+    id: 'name-generator',
+    title: 'Fantasy Name Generator',
+    description: 'Create authentic fantasy names using advanced linguistic patterns and historical language structures.',
+    icon: '',
+    href: '/fantasy-name-generator/name-generator',
+    status: 'Live',
+    features: ['Pattern-based Generation', 'Multiple Languages', 'Name Analysis', 'Meaning Generation']
+  },
+  {
+    id: 'future-projects',
+    title: 'More Projects Coming Soon',
+    description: 'Stay tuned for more exciting tools and applications designed to enhance your creative workflow.',
+    icon: '',
+    href: '#',
+    status: 'Coming Soon',
+    features: ['Creative Tools', 'Innovative Designs', 'User-Centric', 'Cutting-Edge Technology']
+  }
+];
 
+export default function Home() {
   return (
     <div className="min-h-screen panda-bg-primary">
       <div className="px-6 py-12">
@@ -42,9 +42,9 @@ export default function Home() {
               TypicalPanda
             </span>
           </h1>
-          
+
           <p className="text-xl md:text-2xl panda-text-secondary max-w-3xl mx-auto leading-relaxed">
-            A collection of creative tools and innovative projects. Explore my growing portfolio 
+            A collection of creative tools and innovative projects. Explore my growing portfolio
             of applications designed to enhance your creative workflow.
           </p>
         </div>
@@ -54,16 +54,15 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold panda-text-primary text-center mb-12">
             <span className="panda-text-gradient-gold">My Projects</span>
           </h2>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
             {projects.map((project) => (
               <div
                 key={project.id}
-                className={`panda-feature-card group relative overflow-hidden ${
-                  project.status === 'Live' 
-                    ? 'hover:scale-[1.02] transition-transform cursor-pointer' 
-                    : 'opacity-75'
-                }`}
+                className={`panda-feature-card group relative overflow-hidden ${project.status === 'Live'
+                  ? 'hover:scale-[1.02] transition-transform cursor-pointer'
+                  : 'opacity-75'
+                  }`}
               >
                 {project.status === 'Live' ? (
                   <Link href={project.href} className="block">
@@ -93,25 +92,24 @@ function ProjectCard({ project }: { project: Project }) {
     <div className="h-full">
       <div className="flex items-center justify-between mb-4">
         <div className="text-4xl">{project.icon}</div>
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-          project.status === 'Live' 
-            ? 'bg-green-600 text-white' 
-            : project.status === 'Coming Soon'
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${project.status === 'Live'
+          ? 'bg-green-600 text-white'
+          : project.status === 'Coming Soon'
             ? 'bg-yellow-600 text-black'
             : 'bg-blue-600 text-white'
-        }`}>
+          }`}>
           {project.status}
         </span>
       </div>
-      
+
       <h3 className="text-2xl font-bold panda-text-primary mb-3">
         {project.title}
       </h3>
-      
+
       <p className="panda-text-secondary mb-4 leading-relaxed">
         {project.description}
       </p>
-      
+
       <div className="space-y-2">
         <h4 className="font-semibold panda-text-primary text-sm">Features:</h4>
         <div className="grid grid-cols-2 gap-2">
@@ -123,7 +121,7 @@ function ProjectCard({ project }: { project: Project }) {
           ))}
         </div>
       </div>
-      
+
       {project.status === 'Live' && (
         <div className="mt-4 text-sm panda-text-primary font-medium group-hover:panda-accent-gold transition-colors">
           Launch Project →
