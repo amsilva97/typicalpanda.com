@@ -1,75 +1,152 @@
 import Link from "next/link";
 
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  href: string;
+  status: 'Live' | 'Coming Soon' | 'In Development';
+  features: string[];
+}
+
 export default function Home() {
+  const projects: Project[] = [
+    {
+      id: 'name-generator',
+      title: 'Fantasy Name Generator',
+      description: 'Create authentic fantasy names using advanced linguistic patterns and historical language structures.',
+      icon: '⚔️',
+      href: '/name-generator',
+      status: 'Live',
+      features: ['Pattern-based Generation', 'Multiple Languages', 'Name Analysis', 'Meaning Generation']
+    },
+    {
+      id: 'coming-soon-1',
+      title: 'Project Two',
+      description: 'An exciting new project is coming soon. Stay tuned for more innovative tools and experiences.',
+      icon: '🚀',
+      href: '#',
+      status: 'Coming Soon',
+      features: ['Feature A', 'Feature B', 'Feature C', 'Feature D']
+    },
+    {
+      id: 'coming-soon-2',
+      title: 'Project Three',
+      description: 'Another amazing project in development. We\'re working hard to bring you something special.',
+      icon: '💎',
+      href: '#',
+      status: 'Coming Soon',
+      features: ['Innovation', 'Quality', 'Performance', 'Design']
+    },
+    {
+      id: 'coming-soon-3',
+      title: 'Project Four',
+      description: 'More exciting projects are on the horizon. Each one crafted with attention to detail.',
+      icon: '🌟',
+      href: '#',
+      status: 'In Development',
+      features: ['Creative Tools', 'User Experience', 'Modern Tech', 'Accessibility']
+    }
+  ];
+
   return (
     <div className="min-h-screen panda-bg-primary">
-      <div className="container mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-screen">
-        <div className="text-center max-w-4xl">
-          {/* Hero Section */}
-          <h1 className="text-5xl md:text-7xl font-bold panda-text-primary mb-4">
-            Welcome to
+      <div className="px-6 py-12">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-6xl md:text-8xl font-bold panda-text-primary mb-6">
             <span className="panda-text-gradient-silver">
-              {" "}Fantasy Name Generator
+              TypicalPanda
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl panda-text-secondary mb-6 leading-relaxed">
-            Forge legendary names from ancient linguistic patterns. Our advanced pattern-based 
-            algorithms weave authentic fantasy names using historical language structures.
+          <p className="text-xl md:text-2xl panda-text-secondary max-w-3xl mx-auto leading-relaxed">
+            A collection of creative tools and innovative projects. Explore our growing portfolio 
+            of applications designed to enhance your creative workflow.
           </p>
+        </div>
 
-          {/* Features */}
-          <div className="grid md:grid-cols-3 gap-4 mb-8">
-            <div className="panda-feature-card">
-              <div className="text-3xl mb-3">🏛️</div>
-              <h3 className="text-lg font-semibold panda-text-primary mb-2">Linguistic Patterns</h3>
-              <p className="panda-text-secondary">Based on authentic historical language structures and phonetic rules</p>
-            </div>
-            
-            <div className="panda-feature-card">
-              <div className="text-3xl mb-3">⚔️</div>
-              <h3 className="text-lg font-semibold panda-text-primary mb-2">Fantasy Focused</h3>
-              <p className="panda-text-secondary">Specialized for characters, places, and titles in fantasy settings</p>
-            </div>
-            
-            <div className="panda-feature-card">
-              <div className="text-3xl mb-3">🔮</div>
-              <h3 className="text-lg font-semibold panda-text-primary mb-2">Algorithmic Magic</h3>
-              <p className="panda-text-secondary">Advanced pattern-weaving with complexity detection and failure handling</p>
-            </div>
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <Link
-              href="/name-generator"
-              className="panda-button-primary inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-lg transform hover:scale-105 transition-all duration-200 shadow-lg"
-            >
-              ✨ Forge Names Now
-              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Link>
-            
-            <Link
-              href="/name-analyzer"
-              className="panda-button-secondary inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-lg transition-colors duration-200 shadow-lg"
-            >
-              ✨ Improve Names
-              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </Link>
-            
-            <Link
-              href="/about"
-              className="panda-button-secondary inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-lg transition-colors duration-200 shadow-lg"
-            >
-              🏛️ Learn About Patterns
-            </Link>
+        {/* Projects Grid */}
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold panda-text-primary text-center mb-12">
+            <span className="panda-text-gradient-gold">My Projects</span>
+          </h2>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className={`panda-feature-card group relative overflow-hidden ${
+                  project.status === 'Live' 
+                    ? 'hover:scale-[1.02] transition-transform cursor-pointer' 
+                    : 'opacity-75'
+                }`}
+              >
+                {project.status === 'Live' ? (
+                  <Link href={project.href} className="block">
+                    <ProjectCard project={project} />
+                  </Link>
+                ) : (
+                  <ProjectCard project={project} />
+                )}
+              </div>
+            ))}
           </div>
         </div>
+
+        {/* Footer */}
+        <div className="text-center mt-16">
+          <p className="panda-text-secondary">
+            More projects coming soon. Follow our journey as we build amazing tools.
+          </p>
+        </div>
       </div>
+    </div>
+  );
+}
+
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <div className="h-full">
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-4xl">{project.icon}</div>
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+          project.status === 'Live' 
+            ? 'bg-green-600 text-white' 
+            : project.status === 'Coming Soon'
+            ? 'bg-yellow-600 text-black'
+            : 'bg-blue-600 text-white'
+        }`}>
+          {project.status}
+        </span>
+      </div>
+      
+      <h3 className="text-2xl font-bold panda-text-primary mb-3">
+        {project.title}
+      </h3>
+      
+      <p className="panda-text-secondary mb-4 leading-relaxed">
+        {project.description}
+      </p>
+      
+      <div className="space-y-2">
+        <h4 className="font-semibold panda-text-primary text-sm">Features:</h4>
+        <div className="grid grid-cols-2 gap-2">
+          {project.features.map((feature, index) => (
+            <div key={index} className="flex items-center text-xs panda-text-secondary">
+              <span className="w-1 h-1 bg-current rounded-full mr-2"></span>
+              {feature}
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {project.status === 'Live' && (
+        <div className="mt-4 text-sm panda-text-primary font-medium group-hover:panda-accent-gold transition-colors">
+          Launch Project →
+        </div>
+      )}
     </div>
   );
 }
