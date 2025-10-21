@@ -33,7 +33,7 @@ export interface NameAnalysis {
 /**
  * Analyze a name against a specific language
  */
-export function analyzeName(name: string, language: SupportedLanguage): NameAnalysis[] {
+export function analyzeName(name: string, language: SupportedLanguage): string[][] {
     const patternDefinition = getLanguageDefinition(language);
     const patterns = patternDefinition.patterns;
     const validPaths: string[][] = [];
@@ -64,9 +64,9 @@ export function analyzeName(name: string, language: SupportedLanguage): NameAnal
         }
     }
 
-    // Sort paths by segment count (highest first)
+    // Sort paths by segment count (longer paths first)
     const sortedPaths = validPaths.sort((a, b) => a.length - b.length);
     console.log(sortedPaths);
     
-    return [];
+    return sortedPaths;
 }
