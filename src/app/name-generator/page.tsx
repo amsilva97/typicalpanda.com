@@ -90,20 +90,27 @@ export default function NameGenerator() {
                 <label className="block text-sm font-medium panda-text-primary mb-2 text-center">
                   🏛️ Language Pattern
                 </label>
-                <select
-                  value={selectedLanguage}
-                  onChange={(e) => {
-                    setSelectedLanguage(e.target.value as keyof typeof fantasyLanguages);
-                    setGeneratedNames([]);
-                  }}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 panda-text-primary focus:outline-none focus:border-blue-500"
-                >
-                  {Object.keys(fantasyLanguages).map((language) => (
-                    <option key={language} value={language}>
-                      {language}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative group">
+                  <select
+                    value={selectedLanguage}
+                    onChange={(e) => {
+                      setSelectedLanguage(e.target.value as keyof typeof fantasyLanguages);
+                      setGeneratedNames([]);
+                    }}
+                    className="w-full px-4 py-3 pr-10 rounded-lg border border-gray-600 bg-gray-800 panda-text-primary focus:outline-none focus:border-blue-500 appearance-none cursor-pointer"
+                  >
+                    {Object.keys(fantasyLanguages).map((language) => (
+                      <option key={language} value={language}>
+                        {language}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400 group-hover:text-yellow-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
             </div>
 
