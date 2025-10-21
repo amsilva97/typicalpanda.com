@@ -29,9 +29,14 @@ export default function NameGenerator() {
   const [selectedLanguage, setSelectedLanguage] = useState<keyof typeof fantasyLanguages>(defaultLanguage);
   const [generatedNames, setGeneratedNames] = useState<NameWithMeaning[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const rows = 5;
+  const cols = 5;
 
   const generateNames = () => {
     setIsGenerating(true);
+    
+    // Calculate total names needed
+    const totalNames = rows * cols;
     
     // Simulate a small delay for better UX
     setTimeout(() => {
@@ -40,7 +45,7 @@ export default function NameGenerator() {
       // Get the language enum value from the selected language
       const selectedLanguageEnum = fantasyLanguages[selectedLanguage];
       if (selectedLanguageEnum) {
-        names = generateNamesWithMeaningsForLanguage(selectedLanguageEnum, 15); // Generate 15 names with meanings
+        names = generateNamesWithMeaningsForLanguage(selectedLanguageEnum, totalNames);
       }
       
       setGeneratedNames(names);
@@ -129,7 +134,7 @@ export default function NameGenerator() {
                 Names marked with <span className="font-mono bg-red-600 text-white px-2 py-1 rounded">~</span> reached the complexity limit • <em>Meanings shown in italics</em> • Click any name to analyze it
               </p>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className={`grid gap-4`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
                 {generatedNames.map((nameObj, index) => {
                   const isFailed = nameObj.name.endsWith('~');
                   const displayName = isFailed ? nameObj.name.slice(0, -1) : nameObj.name;
