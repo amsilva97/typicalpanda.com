@@ -233,7 +233,8 @@ export const oldEnglish: LanguageDefinition = {
     startMarker: "^",
     endMarker: "$",
     maxLoops: 50,
-    singleLetterLimiter: 2 // Allow max 2 consecutive single letters
+    singleLetterLimiter: 2, // Allow max 2 consecutive single letters
+    clusterLimiter: 1 // Allow max 1 use of same cluster (3+ letters) per name
   }
 };
 

@@ -15,6 +15,7 @@ export interface LanguageDefinition {
     endMarker: string;
     maxLoops: number;
     singleLetterLimiter: number; // -1 = disabled, 0+ = max consecutive single letters allowed
+    clusterLimiter: number; // -1 = disabled, 0+ = max times same cluster (3+ letters) can be used
   };
 }
 
@@ -108,6 +109,7 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
     currentPattern: string;
     usedChoices: Set<string>; // Track used choices at this step
     consecutiveSingleLetters: number; // Track consecutive single letter patterns
+    usedClusters: Map<string, number>; // Track cluster usage counts (pattern -> count)
   }
 
   const generationStack: GenerationStep[] = [];
@@ -121,12 +123,18 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
     return pattern.length === 1 && /^[a-zA-Z]$/.test(pattern);
   };
 
+  // Helper function to check if a pattern is a cluster (3+ letters)
+  const isCluster = (pattern: string): boolean => {
+    return pattern.length >= 3 && pattern !== language.options.endMarker;
+  };
+
   // Initialize first step
   generationStack.push({
     name: '',
     currentPattern: language.options.startMarker,
     usedChoices: new Set(),
-    consecutiveSingleLetters: 0
+    consecutiveSingleLetters: 0,
+    usedClusters: new Map()
   });
 
   while (loops < maxLoops) {
@@ -165,7 +173,14 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
         // Check single letter limiter if enabled
         if (language.options.singleLetterLimiter >= 0 && isSingleLetter(pattern)) {
           const singleLetterCheck = currentStep.consecutiveSingleLetters < language.options.singleLetterLimiter;
-          return lengthCheck && singleLetterCheck;
+          if (!lengthCheck || !singleLetterCheck) return false;
+        }
+
+        // Check cluster limiter if enabled
+        if (language.options.clusterLimiter >= 0 && isCluster(pattern)) {
+          const currentClusterCount = currentStep.usedClusters.get(pattern) || 0;
+          const clusterCheck = currentClusterCount < language.options.clusterLimiter;
+          if (!clusterCheck) return false;
         }
         
         return lengthCheck;
@@ -228,13 +243,21 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
     const newConsecutiveCount = isSingleLetter(nextPattern) 
       ? currentStep.consecutiveSingleLetters + 1 
       : 0;
+
+    // Update cluster usage map
+    const newUsedClusters = new Map(currentStep.usedClusters);
+    if (isCluster(nextPattern)) {
+      const currentCount = newUsedClusters.get(nextPattern) || 0;
+      newUsedClusters.set(nextPattern, currentCount + 1);
+    }
     
     // Add new step to stack
     generationStack.push({
       name: name,
       currentPattern: nextPattern,
       usedChoices: new Set(),
-      consecutiveSingleLetters: newConsecutiveCount
+      consecutiveSingleLetters: newConsecutiveCount,
+      usedClusters: newUsedClusters
     });
   }
 
