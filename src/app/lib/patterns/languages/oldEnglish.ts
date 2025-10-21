@@ -1,4 +1,4 @@
-import { LanguageDefinition } from '../generations';
+import { LanguageDefinition } from '../core';
 
 /**
  * Old English language definition

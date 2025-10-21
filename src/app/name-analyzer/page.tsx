@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { analyzeName } from '../lib/patterns/analyzer';
-import { SupportedLanguage, getSupportedLanguages, getLanguageDefinition } from '../lib/patterns/generations';
+import { getLanguageDefinition } from '../lib/patterns/core';
+import { getSupportedLanguages } from '../lib/patterns/core';
+import { SupportedLanguage } from '../lib/patterns/core';
 
 export default function NameAnalyzer() {
   const searchParams = useSearchParams();

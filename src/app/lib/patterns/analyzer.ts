@@ -1,4 +1,5 @@
-import { LanguageDefinition, SupportedLanguage, getLanguageDefinition } from './generations';
+import { getLanguageDefinition } from './core';
+import { SupportedLanguage } from './core';
 
 /**
  * Represents a single step in a generation path
@@ -42,20 +43,20 @@ export function analyzeName(name: string, language: SupportedLanguage): string[]
     while (pathsToCheck.length > 0) {
         const currentItem = pathsToCheck.pop();
         if (!currentItem) continue;
-        
+
         const { segments, remaining } = currentItem;
-        
+
         // If no remaining text, we found a complete path
         if (remaining === '') {
             validPaths.push([...segments]);
             continue;
         }
-        
+
         // Try different segment lengths from the remaining text
         for (let i = 1; i <= remaining.length; i++) {
             const segment = remaining.slice(0, i);
             const newRemaining = remaining.slice(i);
-            
+
             if (patterns[segment]) {
                 // Create new path with this segment added
                 const newSegments = [...segments, segment];
@@ -67,6 +68,6 @@ export function analyzeName(name: string, language: SupportedLanguage): string[]
     // Sort paths by segment count (longer paths first)
     const sortedPaths = validPaths.sort((a, b) => a.length - b.length);
     console.log(sortedPaths);
-    
+
     return sortedPaths;
 }
