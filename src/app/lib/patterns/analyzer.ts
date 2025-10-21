@@ -32,6 +32,7 @@ export interface NameAnalysis {
 
 /**
  * Find all possible generation paths that could have produced the given name
+ * Only returns paths with 100% completion rate (complete matches)
  */
 export function findAllGenerationPaths(name: string, language: LanguageDefinition): GenerationPath[] {
   const paths: GenerationPath[] = [];
@@ -52,7 +53,8 @@ export function findAllGenerationPaths(name: string, language: LanguageDefinitio
     paths
   );
 
-  return paths;
+  // Filter to only return paths with 100% completion rate
+  return paths.filter(path => path.completionRate === 1.0 && path.isValid);
 }
 
 /**
@@ -121,54 +123,33 @@ function findPathsRecursive(
     }
   }
 
-  // If we didn't find any valid continuations and haven't reached the end,
-  // this is a partial path
-  if (currentPosition < targetName.length && currentPosition > 0) {
-    const completionRate = currentPosition / targetName.length;
-    if (completionRate > 0.3) { // Only include paths that cover at least 30% of the name
-      foundPaths.push({
-        steps: [...steps],
-        isValid: false,
-        completionRate: completionRate
-      });
-    }
-  }
+  // We only care about complete matches, so no need to track partial paths
 }
 
 /**
  * Analyze a name against a specific language to find how it could have been generated
+ * Only returns complete matches (100% completion rate)
  */
 export function analyzeNameForLanguage(name: string, language: SupportedLanguage): NameAnalysis {
   const languageDefinition = getLanguageDefinition(language);
   const possiblePaths = findAllGenerationPaths(name, languageDefinition);
   
-  // Find the best path (highest completion rate among valid paths, or best partial path)
+  // Since we only get complete matches, all paths are valid with 100% completion
   let bestPath: GenerationPath | null = null;
   
-  // First, look for complete valid paths
-  const validPaths = possiblePaths.filter(p => p.isValid);
-  if (validPaths.length > 0) {
-    bestPath = validPaths.reduce((best, current) => 
-      current.completionRate > best.completionRate ? current : best
-    );
-  } else {
-    // If no valid paths, find the best partial path
-    const partialPaths = possiblePaths.filter(p => !p.isValid);
-    if (partialPaths.length > 0) {
-      bestPath = partialPaths.reduce((best, current) => 
-        current.completionRate > best.completionRate ? current : best
-      );
-    }
+  if (possiblePaths.length > 0) {
+    // All paths are equally valid (100% completion), so just pick the first one
+    bestPath = possiblePaths[0];
   }
 
-  // Calculate confidence score
+  // Calculate confidence score - either 1.0 (complete match) or 0 (no match)
   let confidence = 0;
-  if (bestPath) {
-    confidence = bestPath.completionRate * (bestPath.isValid ? 1.0 : 0.7);
+  if (possiblePaths.length > 0) {
+    confidence = 1.0; // All matches are complete matches
     
     // Bonus for having multiple valid paths (indicates name fits pattern well)
-    if (validPaths.length > 1) {
-      confidence = Math.min(1.0, confidence + 0.1);
+    if (possiblePaths.length > 1) {
+      confidence = Math.min(1.0, confidence + 0.05 * (possiblePaths.length - 1));
     }
   }
 

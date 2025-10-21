@@ -44,10 +44,10 @@ export default function NameAnalyzer() {
       <div key={index} className="border border-gray-600 rounded-lg p-4 mb-4">
         <div className="flex justify-between items-center mb-2">
           <h5 className="text-sm font-bold panda-text-primary">
-            Path {index + 1} {path.isValid ? '✅' : '⚠️'}
+            Generation Path {index + 1} ✅
           </h5>
           <span className="text-xs panda-text-secondary">
-            {(path.completionRate * 100).toFixed(1)}% coverage
+            Complete Match
           </span>
         </div>
         
@@ -176,9 +176,8 @@ export default function NameAnalyzer() {
                           🎯 Best Match: {analysisResults[0].language.replace('_', ' ').toUpperCase()}
                         </h4>
                         <p className="panda-text-secondary">
-                          {(analysisResults[0].confidence * 100).toFixed(1)}% confidence - 
-                          This name most likely comes from {analysisResults[0].language.replace('_', ' ')} patterns
-                          {analysisResults[0].bestPath?.isValid ? ' and can be fully reconstructed' : ' but may be partially modified'}
+                          100% Complete Match - This name can be fully reconstructed using {analysisResults[0].language.replace('_', ' ')} patterns
+                          {analysisResults[0].possiblePaths.length > 1 && ` with ${analysisResults[0].possiblePaths.length} different generation paths`}
                         </p>
                       </div>
                     )}
@@ -201,11 +200,11 @@ export default function NameAnalyzer() {
                     {analysisResults.every(analysis => analysis.confidence === 0) && (
                       <div className="panda-card p-4 border-l-4 border-red-500">
                         <h4 className="text-lg font-bold panda-text-primary mb-2">
-                          ❌ No Generation Paths Found
+                          ❌ No Complete Generation Paths Found
                         </h4>
                         <p className="panda-text-secondary">
-                          This name doesn't appear to follow any of the supported language patterns. 
-                          It may be from a different language system or created manually.
+                          This name cannot be completely reconstructed using any of the supported language patterns. 
+                          It may be from a different language system, a modified name, or created manually.
                         </p>
                       </div>
                     )}
