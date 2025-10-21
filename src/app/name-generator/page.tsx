@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { generateNamesWithMeaningsForLanguage } from '../lib/patterns/generations';
 import { getLanguageDisplayName } from '../lib/patterns/core';
 import { getSupportedLanguages } from '../lib/patterns/core';
@@ -30,7 +29,6 @@ export default function NameGenerator() {
   const [selectedLanguage, setSelectedLanguage] = useState<keyof typeof fantasyLanguages>(defaultLanguage);
   const [generatedNames, setGeneratedNames] = useState<NameWithMeaning[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const router = useRouter();
 
   const generateNames = () => {
     setIsGenerating(true);
@@ -54,11 +52,6 @@ export default function NameGenerator() {
     navigator.clipboard.writeText(name);
     // You could add a toast notification here
   };
-
-  const analyzeInNameAnalyzer = (name: string) => {
-    router.push(`/name-analyzer?name=${encodeURIComponent(name)}`);
-  };
-
   return (
     <div className="min-h-screen panda-bg-primary">
       <div className="px-6 py-8">
@@ -145,7 +138,6 @@ export default function NameGenerator() {
                   return (
                     <div
                       key={index}
-                      onClick={() => analyzeInNameAnalyzer(displayName)}
                       className={`group transition-all transform hover:scale-[1.02] cursor-pointer ${
                         isFailed
                           ? 'panda-name-card-failed'
@@ -178,23 +170,6 @@ export default function NameGenerator() {
                                 viewBox="0 0 24 24"
                               >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                              </svg>
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                analyzeInNameAnalyzer(displayName);
-                              }}
-                              className="p-1 rounded hover:bg-gray-700/50 transition-colors"
-                              title="Analyze this name"
-                            >
-                              <svg 
-                                className="w-4 h-4 panda-text-muted hover:panda-accent-gold flex-shrink-0"
-                                fill="none" 
-                                stroke="currentColor" 
-                                viewBox="0 0 24 24"
-                              >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                               </svg>
                             </button>
                           </div>
