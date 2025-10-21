@@ -90,24 +90,20 @@ export default function NameGenerator() {
                 <label className="block text-sm font-medium panda-text-primary mb-2 text-center">
                   🏛️ Language Pattern
                 </label>
-                <div className="grid gap-2">
+                <select
+                  value={selectedLanguage}
+                  onChange={(e) => {
+                    setSelectedLanguage(e.target.value as keyof typeof fantasyLanguages);
+                    setGeneratedNames([]);
+                  }}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 panda-text-primary focus:outline-none focus:border-blue-500"
+                >
                   {Object.keys(fantasyLanguages).map((language) => (
-                    <button
-                      key={language}
-                      onClick={() => {
-                        setSelectedLanguage(language as keyof typeof fantasyLanguages);
-                        setGeneratedNames([]);
-                      }}
-                      className={`p-3 rounded-lg text-sm font-medium transition-colors ${
-                        selectedLanguage === language
-                          ? 'panda-selected'
-                          : 'panda-unselected'
-                      }`}
-                    >
+                    <option key={language} value={language}>
                       {language}
-                    </button>
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
             </div>
 
