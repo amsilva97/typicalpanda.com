@@ -22,7 +22,8 @@ export interface LanguageDefinition {
  */
 export enum SupportedLanguage {
     OLD_ENGLISH = 'Old English',
-    WELSH = 'Welsh'
+    WELSH = 'Welsh',
+    FINNISH = 'Finnish'
 }
 
 /**
@@ -45,6 +46,10 @@ export function getLanguageDefinition(language: SupportedLanguage): LanguageDefi
             // Lazy load to avoid circular dependencies
             const { welsh } = require('./languages/welsh');
             return welsh;
+        case SupportedLanguage.FINNISH:
+            // Lazy load to avoid circular dependencies
+            const { finnish } = require('./languages/finnish');
+            return finnish;
         default:
             throw new Error(`Unsupported language: ${language}`);
     }
