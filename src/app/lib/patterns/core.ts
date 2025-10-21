@@ -24,7 +24,8 @@ export enum SupportedLanguage {
     OLD_ENGLISH = 'Old English',
     WELSH = 'Welsh',
     FINNISH = 'Finnish',
-    TOLKIEN_ELVISH = 'Tolkien Elvish'
+    TOLKIEN_ELVISH = 'Tolkien Elvish',
+    CUSTOM_EXPERIMENTAL = 'Custom Experimental'
 }
 
 /**
@@ -55,6 +56,10 @@ export function getLanguageDefinition(language: SupportedLanguage): LanguageDefi
             // Lazy load to avoid circular dependencies
             const { tolkienElvish } = require('./languages/tolkienElvish');
             return tolkienElvish;
+        case SupportedLanguage.CUSTOM_EXPERIMENTAL:
+            // Lazy load to avoid circular dependencies
+            const { customExperimental } = require('./languages/customExperimental');
+            return customExperimental;
         default:
             throw new Error(`Unsupported language: ${language}`);
     }
