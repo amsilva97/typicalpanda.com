@@ -17,7 +17,7 @@ export default function Home() {
       title: 'Fantasy Name Generator',
       description: 'Create authentic fantasy names using advanced linguistic patterns and historical language structures.',
       icon: '',
-      href: '/name-generator',
+      href: '/fantasy-name-generator/name-generator',
       status: 'Live',
       features: ['Pattern-based Generation', 'Multiple Languages', 'Name Analysis', 'Meaning Generation']
     },

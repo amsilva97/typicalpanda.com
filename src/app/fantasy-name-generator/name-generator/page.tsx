@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { generateNamesWithMeaningsForLanguage } from '../lib/patterns/generations';
-import { getLanguageDisplayName } from '../lib/patterns/core';
-import { getSupportedLanguages } from '../lib/patterns/core';
-import { SupportedLanguage } from '../lib/patterns/core';
+import { generateNamesWithMeaningsForLanguage } from '../../lib/patterns/generations';
+import { getLanguageDisplayName } from '../../lib/patterns/core';
+import { getSupportedLanguages } from '../../lib/patterns/core';
+import { SupportedLanguage } from '../../lib/patterns/core';
 
 // Create dynamic language mapping from all supported languages
 const createLanguageMapping = () => {
