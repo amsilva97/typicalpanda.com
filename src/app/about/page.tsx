@@ -22,7 +22,7 @@ export default function About() {
             </span>
           </h1>
           <p className="text-lg panda-text-secondary max-w-3xl mx-auto">
-            Discover the linguistic algorithms behind our pattern-based fantasy name generation
+            Discover the linguistic algorithms behind my pattern-based fantasy name generation
           </p>
         </div>
 
@@ -35,7 +35,7 @@ export default function About() {
               </h2>
               
               <p className="panda-text-secondary mb-4">
-                Our fantasy name generator uses sophisticated pattern-based algorithms derived from 
+                My fantasy name generator uses sophisticated pattern-based algorithms derived from 
                 historical linguistic structures. Each language pattern is a network of phonetic 
                 possibilities that creates authentic-sounding names through recursive generation.
               </p>
@@ -71,7 +71,7 @@ export default function About() {
                     ⚡ Instant Results
                   </h4>
                   <p className="panda-text-secondary text-sm">
-                    Get multiple name suggestions in seconds with our fast generation algorithm.
+                    Get multiple name suggestions in seconds with my fast generation algorithm.
                   </p>
                 </div>
 

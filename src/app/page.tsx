@@ -62,7 +62,7 @@ export default function Home() {
           </h1>
           
           <p className="text-xl md:text-2xl panda-text-secondary max-w-3xl mx-auto leading-relaxed">
-            A collection of creative tools and innovative projects. Explore our growing portfolio 
+            A collection of creative tools and innovative projects. Explore my growing portfolio 
             of applications designed to enhance your creative workflow.
           </p>
         </div>
@@ -98,7 +98,7 @@ export default function Home() {
         {/* Footer */}
         <div className="text-center mt-16">
           <p className="panda-text-secondary">
-            More projects coming soon. Follow our journey as we build amazing tools.
+            More projects coming soon. Follow my journey as we build amazing tools.
           </p>
         </div>
       </div>
