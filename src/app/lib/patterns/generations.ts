@@ -350,6 +350,14 @@ export function generateNamesWithMeaningsForLanguage(language: SupportedLanguage
 }
 
 /**
+ * Generate simple names without meanings for a specific supported language
+ */
+export function generateSimpleNamesForLanguage(language: SupportedLanguage, count: number = 10, minLength?: number, maxLength?: number): string[] {
+  const languageDefinition = getLanguageDefinition(language);
+  return generateNames(languageDefinition, count, minLength, maxLength);
+}
+
+/**
  * Check if a language is currently supported
  */
 export function isLanguageSupported(language: string): language is SupportedLanguage {

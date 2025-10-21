@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { generateNamesWithMeaningsForLanguage } from '../../lib/patterns/generations';
+import { generateSimpleNamesForLanguage } from '../../lib/patterns/generations';
 import { getLanguageDisplayName } from '../../lib/patterns/core';
 import { getSupportedLanguages } from '../../lib/patterns/core';
 import { SupportedLanguage } from '../../lib/patterns/core';
@@ -18,16 +18,16 @@ const createLanguageMapping = () => {
 
 const fantasyLanguages = createLanguageMapping();
 
-interface NameWithMeaning {
+// Simplified interface for names without meanings
+interface SimpleName {
   name: string;
-  meaning: string;
 }
 
 export default function NameGenerator() {
   // Get the first available language as default
   const defaultLanguage = getLanguageDisplayName(getSupportedLanguages()[0]);
   const [selectedLanguage, setSelectedLanguage] = useState<keyof typeof fantasyLanguages>(defaultLanguage);
-  const [generatedNames, setGeneratedNames] = useState<NameWithMeaning[]>([]);
+  const [generatedNames, setGeneratedNames] = useState<SimpleName[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const rows = 5;
   const cols = 5;
@@ -40,12 +40,13 @@ export default function NameGenerator() {
     
     // Simulate a small delay for better UX
     setTimeout(() => {
-      let names: NameWithMeaning[] = [];
+      let names: SimpleName[] = [];
       
       // Get the language enum value from the selected language
       const selectedLanguageEnum = fantasyLanguages[selectedLanguage];
       if (selectedLanguageEnum) {
-        names = generateNamesWithMeaningsForLanguage(selectedLanguageEnum, totalNames);
+        const nameStrings = generateSimpleNamesForLanguage(selectedLanguageEnum, totalNames);
+        names = nameStrings.map(name => ({ name }));
       }
       
       setGeneratedNames(names);
@@ -131,14 +132,13 @@ export default function NameGenerator() {
                 Generated {selectedLanguage} Names
               </h2>
               <p className="text-sm panda-text-muted mb-4">
-                Names marked with <span className="font-mono bg-red-600 text-white px-2 py-1 rounded">~</span> reached the complexity limit • <em>Meanings shown in italics</em> • Click any name to analyze it
+                Names marked with <span className="font-mono bg-red-600 text-white px-2 py-1 rounded">~</span> reached the complexity limit • Click any name to copy it
               </p>
               
               <div className={`grid gap-4`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
                 {generatedNames.map((nameObj, index) => {
                   const isFailed = nameObj.name.endsWith('~');
                   const displayName = isFailed ? nameObj.name.slice(0, -1) : nameObj.name;
-                  const meaning = nameObj.meaning;
                   
                   return (
                     <div
@@ -148,6 +148,7 @@ export default function NameGenerator() {
                           ? 'panda-name-card-failed'
                           : 'panda-name-card'
                       }`}
+                      onClick={() => copyToClipboard(displayName)}
                     >
                       <div className="flex flex-col">
                         <div className="flex items-center justify-between mb-1">
@@ -179,24 +180,14 @@ export default function NameGenerator() {
                             </button>
                           </div>
                         </div>
-                        {meaning && (
-                          <div className={`text-sm italic ${
-                            isFailed 
-                              ? 'text-red-400' 
-                              : 'panda-text-secondary'
-                          }`}>
-                            {meaning.split('\n').map((line, lineIndex) => (
-                              <div key={lineIndex}>{line}</div>
-                            ))}
-                          </div>
-                        )}
+
                       </div>
                     </div>
                   );
                 })}
               </div>
               <p className="text-sm panda-text-muted mt-4 text-center">
-                Click any name to analyze it • Hover over names to reveal copy and analyze buttons • Generated using linguistic pattern algorithms with authentic meanings
+                Click any name to copy it to clipboard • Generated using linguistic pattern algorithms
               </p>
             </div>
           )}
