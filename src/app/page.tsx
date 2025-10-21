@@ -80,7 +80,7 @@ export default function Home() {
         {/* Footer */}
         <div className="text-center mt-16">
           <p className="panda-text-secondary">
-            More projects coming soon. Follow my journey as we build amazing tools.
+            More projects coming soon. Follow my journey as I build amazing tools.
           </p>
         </div>
       </div>
