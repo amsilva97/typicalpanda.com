@@ -1,13 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { analyzeName } from '../lib/patterns/analyzer';
 import { SupportedLanguage, getSupportedLanguages, getLanguageDefinition } from '../lib/patterns/generations';
 
 export default function NameAnalyzer() {
+  const searchParams = useSearchParams();
   const [inputName, setInputName] = useState<string>('');
   const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>(getSupportedLanguages()[0]);
   const [analysisResults, setAnalysisResults] = useState<string[][]>([]);
+
+  // Handle URL parameters
+  useEffect(() => {
+    const nameFromUrl = searchParams.get('name');
+    if (nameFromUrl) {
+      setInputName(nameFromUrl);
+      // Auto-analyze if name is provided via URL
+      setTimeout(() => {
+        const results = analyzeName(nameFromUrl, selectedLanguage);
+        setAnalysisResults(results);
+      }, 100);
+    }
+  }, [searchParams, selectedLanguage]);
 
   const handleAnalyze = () => {
     if (!inputName.trim()) return;
@@ -19,9 +35,19 @@ export default function NameAnalyzer() {
     <div className="min-h-screen panda-bg-primary">
       <div className="container mx-auto px-6 py-8">
         <div className="text-center mb-8">
+          <Link 
+            href="/"
+            className="panda-link inline-flex items-center text-sm mb-4"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Home
+          </Link>
+          
           <h1 className="text-4xl md:text-6xl font-bold panda-text-primary mb-4">
             <span className="panda-text-gradient-gold">
-              Name Analyzer Test
+              Name Analyzer
             </span>
           </h1>
         </div>

@@ -135,7 +135,7 @@ export default function NameGenerator() {
                 🏰 Generated {selectedLanguage} Names
               </h2>
               <p className="text-sm panda-text-muted mb-4">
-                Names marked with <span className="font-mono bg-red-600 text-white px-2 py-1 rounded">~</span> reached the complexity limit • <em>Meanings shown in italics</em>
+                Names marked with <span className="font-mono bg-red-600 text-white px-2 py-1 rounded">~</span> reached the complexity limit • <em>Meanings shown in italics</em> • Click any name to analyze it
               </p>
               
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -147,7 +147,8 @@ export default function NameGenerator() {
                   return (
                     <div
                       key={index}
-                      className={`group transition-all transform hover:scale-[1.02] ${
+                      onClick={() => analyzeInNameAnalyzer(displayName)}
+                      className={`group transition-all transform hover:scale-[1.02] cursor-pointer ${
                         isFailed
                           ? 'panda-name-card-failed'
                           : 'panda-name-card'
@@ -217,7 +218,7 @@ export default function NameGenerator() {
                 })}
               </div>
               <p className="text-sm panda-text-muted mt-4 text-center">
-                Hover over names to reveal copy and analyze buttons • Generated using linguistic pattern algorithms with authentic meanings
+                Click any name to analyze it • Hover over names to reveal copy and analyze buttons • Generated using linguistic pattern algorithms with authentic meanings
               </p>
             </div>
           )}
