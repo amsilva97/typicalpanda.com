@@ -229,10 +229,11 @@ export const oldEnglish: LanguageDefinition = {
   options: {
     name: "Old English",
     minLength: 4,
-    maxLength: 99,
+    maxLength: 15,
     startMarker: "^",
     endMarker: "$",
-    maxLoops: 50
+    maxLoops: 50,
+    singleLetterLimiter: 2 // Allow max 2 consecutive single letters
   }
 };
 

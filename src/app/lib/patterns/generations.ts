@@ -14,6 +14,7 @@ export interface LanguageDefinition {
     startMarker: string;
     endMarker: string;
     maxLoops: number;
+    singleLetterLimiter: number; // -1 = disabled, 0+ = max consecutive single letters allowed
   };
 }
 
@@ -106,6 +107,7 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
     name: string;
     currentPattern: string;
     usedChoices: Set<string>; // Track used choices at this step
+    consecutiveSingleLetters: number; // Track consecutive single letter patterns
   }
 
   const generationStack: GenerationStep[] = [];
@@ -114,11 +116,17 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
   let loops = 0;
   const maxLoops = language.options.maxLoops * 5; // Allow more loops for stricter backtracking
 
+  // Helper function to check if a pattern is a single letter
+  const isSingleLetter = (pattern: string): boolean => {
+    return pattern.length === 1 && /^[a-zA-Z]$/.test(pattern);
+  };
+
   // Initialize first step
   generationStack.push({
     name: '',
     currentPattern: language.options.startMarker,
-    usedChoices: new Set()
+    usedChoices: new Set(),
+    consecutiveSingleLetters: 0
   });
 
   while (loops < maxLoops) {
@@ -152,7 +160,15 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
         return currentStep.name.length >= actualMinLength;
       } else {
         // Can only use non-end patterns if they won't exceed maximum length
-        return (currentStep.name.length + pattern.length) <= actualMaxLength;
+        const lengthCheck = (currentStep.name.length + pattern.length) <= actualMaxLength;
+        
+        // Check single letter limiter if enabled
+        if (language.options.singleLetterLimiter >= 0 && isSingleLetter(pattern)) {
+          const singleLetterCheck = currentStep.consecutiveSingleLetters < language.options.singleLetterLimiter;
+          return lengthCheck && singleLetterCheck;
+        }
+        
+        return lengthCheck;
       }
     });
 
@@ -208,11 +224,17 @@ export function generateName(language: LanguageDefinition, minLength?: number, m
     name = currentStep.name + nextPattern;
     currentPattern = nextPattern;
     
+    // Calculate new consecutive single letter count
+    const newConsecutiveCount = isSingleLetter(nextPattern) 
+      ? currentStep.consecutiveSingleLetters + 1 
+      : 0;
+    
     // Add new step to stack
     generationStack.push({
       name: name,
       currentPattern: nextPattern,
-      usedChoices: new Set()
+      usedChoices: new Set(),
+      consecutiveSingleLetters: newConsecutiveCount
     });
   }
 
