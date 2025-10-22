@@ -35,13 +35,13 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
     clusterCount: {}
   });
 
-  let maxLoops = 60; // Maximum depth for backtracking stack
-  while (stack.length > 0 && maxLoops > 0) {
+  let maxIterations = 1000; // Total iterations allowed
+  while (stack.length > 0 && maxIterations > 0) {
     // Check for timeout
     if (Date.now() - startTime > timeoutMs) {
       throw new PatternError(`Generation timed out after ${timeoutMs}ms`);
     }
-    maxLoops--;
+    maxIterations--;
 
     // Get the current step and valid options
     const currentStep = stack[stack.length - 1];
@@ -98,11 +98,18 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
       newClusterCount[nextOption] = (newClusterCount[nextOption] || 0) + 1;
     }
 
+    // Before pushing new step, check for dead ends
+    const nextPatterns = languageDefinitionPatterns[nextOption] || [];
+    if (nextPatterns.length === 0) {
+      // Dead end - don't push, continue to try next option
+      continue;
+    }
+
     // Build the new full name
     stack.push({
       fullName: currentStep.fullName + nextOption,
       currentPattern: nextOption,
-      availableOptions: [...(languageDefinitionPatterns[nextOption] || [])],
+      availableOptions: [...nextPatterns],
       singleLetterCount: newSingleLetterCount,
       clusterCount: newClusterCount
     });
