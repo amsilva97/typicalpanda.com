@@ -52,6 +52,18 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
     if (currentStep.fullName.length < targetLength) {
       // still need to add more pieces, don't allow end marker yet
       validOptions = availableOptions.filter(option => option !== languageDefinitionOptions.endMarker);
+
+      // Check single letter limiter
+      if (currentStep.singleLetterCount > languageDefinitionOptions.singleLetterLimiter) {
+        validOptions = validOptions.filter(option => option.length > 1);
+      }
+
+      // Check cluster limiter
+      for (const cluster in currentStep.clusterCount) {
+        if (currentStep.clusterCount[cluster] > languageDefinitionOptions.clusterLimiter) {
+          validOptions = validOptions.filter(option => option !== cluster);
+        }
+      }
     } else {
       // reached or exceeded target length, allow ending
       validOptions = availableOptions.filter(option => option === languageDefinitionOptions.endMarker);
@@ -78,9 +90,7 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
     }
 
     // Check single letter limiter
-    const newSingleLetterCount = nextOption.length === 1 ?
-      currentStep.singleLetterCount + 1 :
-      currentStep.singleLetterCount;
+    const newSingleLetterCount = nextOption.length === 1 ? currentStep.singleLetterCount + 1 : 0;
 
     // Check cluster limiter
     const newClusterCount = { ...currentStep.clusterCount };
