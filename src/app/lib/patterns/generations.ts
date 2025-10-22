@@ -89,6 +89,13 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
       return currentStep.fullName;
     }
 
+    // Check if adding this option would make the name too long
+    const newFullName = currentStep.fullName + nextOption;
+    if (newFullName.length > languageDefinitionOptions.maxLength) {
+      // This option would make the name too long, skip it
+      continue;
+    }
+
     // Check single letter limiter
     const newSingleLetterCount = nextOption.length === 1 ? currentStep.singleLetterCount + 1 : 0;
 
@@ -107,7 +114,7 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
 
     // Build the new full name
     stack.push({
-      fullName: currentStep.fullName + nextOption,
+      fullName: newFullName,
       currentPattern: nextOption,
       availableOptions: [...nextPatterns],
       singleLetterCount: newSingleLetterCount,
