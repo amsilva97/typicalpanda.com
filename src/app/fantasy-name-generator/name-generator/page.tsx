@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { generateSimpleNamesForLanguage } from '../../lib/patterns/generations';
+import { generateNamesForLanguage } from '../../lib/patterns/generations';
 import { getLanguageDisplayName } from '../../lib/patterns/core';
 import { getSupportedLanguages } from '../../lib/patterns/core';
 import { SupportedLanguage } from '../../lib/patterns/core';
@@ -45,7 +45,7 @@ export default function NameGenerator() {
       // Get the language enum value from the selected language
       const selectedLanguageEnum = fantasyLanguages[selectedLanguage];
       if (selectedLanguageEnum) {
-        const nameStrings = generateSimpleNamesForLanguage(selectedLanguageEnum, totalNames);
+        const nameStrings = generateNamesForLanguage(selectedLanguageEnum, totalNames);
         names = nameStrings.map(name => ({ name }));
       }
       

@@ -11,7 +11,6 @@ export interface LanguageDefinition {
         maxLength: number;
         startMarker: string;
         endMarker: string;
-        maxLoops: number;
         singleLetterLimiter: number; // -1 = disabled, 0+ = max consecutive single letters allowed
         clusterLimiter: number; // -1 = disabled, 0+ = max times same cluster (3+ letters) can be used
     };
@@ -21,11 +20,7 @@ export interface LanguageDefinition {
  * Supported languages enumeration
  */
 export enum SupportedLanguage {
-    OLD_ENGLISH = 'Old English',
-    WELSH = 'Welsh',
-    FINNISH = 'Finnish',
-    TOLKIEN_ELVISH = 'Tolkien Elvish',
-    CUSTOM_EXPERIMENTAL = 'Custom Experimental'
+    OLD_ENGLISH = 'Old English'
 }
 
 /**
@@ -44,22 +39,6 @@ export function getLanguageDefinition(language: SupportedLanguage): LanguageDefi
             // Lazy load to avoid circular dependencies
             const { oldEnglish } = require('./languages/oldEnglish');
             return oldEnglish;
-        case SupportedLanguage.WELSH:
-            // Lazy load to avoid circular dependencies
-            const { welsh } = require('./languages/welsh');
-            return welsh;
-        case SupportedLanguage.FINNISH:
-            // Lazy load to avoid circular dependencies
-            const { finnish } = require('./languages/finnish');
-            return finnish;
-        case SupportedLanguage.TOLKIEN_ELVISH:
-            // Lazy load to avoid circular dependencies
-            const { tolkienElvish } = require('./languages/tolkienElvish');
-            return tolkienElvish;
-        case SupportedLanguage.CUSTOM_EXPERIMENTAL:
-            // Lazy load to avoid circular dependencies
-            const { customExperimental } = require('./languages/customExperimental');
-            return customExperimental;
         default:
             throw new Error(`Unsupported language: ${language}`);
     }
