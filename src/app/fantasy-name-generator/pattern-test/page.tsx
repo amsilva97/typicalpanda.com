@@ -29,7 +29,7 @@ export default function PatternTest() {
         diversityScore
       });
       
-      console.log(`Test complete! Generated ${nameCount} names, ${uniquePercentage.toFixed(1)}% unique, diversity score: ${diversityScore.toFixed(2)}`);
+      console.log(`Test complete! Generated ${nameCount} names, ${uniquePercentage.toFixed(2)}% unique, diversity score: ${diversityScore.toFixed(2)}`);
       
     } catch (error) {
       console.error('Test failed:', error);
@@ -165,7 +165,7 @@ export default function PatternTest() {
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div className="text-center">
                 <div className="text-3xl font-bold panda-text-primary mb-2">
-                  {testResults.nameCount === -1 ? 'No Failure' : testResults.nameCount}
+                  {testResults.nameCount === -1 ? 'No Failure' : testResults.nameCount.toFixed(2)}
                 </div>
                 <div className="text-sm panda-text-secondary">Failure Point</div>
                 <div className="text-xs panda-text-secondary mt-1">
@@ -175,7 +175,7 @@ export default function PatternTest() {
               
               <div className="text-center">
                 <div className="text-3xl font-bold panda-text-primary mb-2">
-                  {testResults.uniquePercentage.toFixed(1)}%
+                  {testResults.uniquePercentage.toFixed(2)}%
                 </div>
                 <div className="text-sm panda-text-secondary">Final Uniqueness</div>
                 <div className="text-xs panda-text-secondary mt-1">
