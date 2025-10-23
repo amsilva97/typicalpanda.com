@@ -53,9 +53,20 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
       // still need to add more pieces, don't allow end marker yet
       validOptions = availableOptions.filter(option => option !== languageDefinitionOptions.endMarker);
 
-      // If single letter limiter is exceeded, filter those out
-      if (languageDefinitionOptions.singleLetterLimiter >= currentStep.singleLetterCount) {
+      // Filter out single letters if we've reached the limit
+      if (languageDefinitionOptions.consecutiveSingleLetterLimit >= 0 && currentStep.singleLetterCount >= languageDefinitionOptions.consecutiveSingleLetterLimit) {
         validOptions = validOptions.filter(option => option.length > 1);
+      }
+
+      // Filter out clusters that have exceeded their limit
+      if (languageDefinitionOptions.duplicateClusterLimit >= 0) {
+        validOptions = validOptions.filter(option => {
+          if (option.length >= 2) { // Check multi-letter patterns
+            const currentUsage = currentStep.clusterCount[option] || 0;
+            return currentUsage < languageDefinitionOptions.duplicateClusterLimit;
+          }
+          return true; // Single letters are handled above
+        });
       }
     } else {
       // reached or exceeded target length, allow ending

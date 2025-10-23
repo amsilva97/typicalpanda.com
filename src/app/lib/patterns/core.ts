@@ -11,8 +11,8 @@ export interface LanguageDefinition {
         maxLength: number;
         startMarker: string;
         endMarker: string;
-        singleLetterLimiter: number; // -1 = disabled, 0+ = max consecutive single letters allowed
-        clusterLimiter: number; // -1 = disabled, 0+ = max times same cluster (3+ letters) can be used
+        consecutiveSingleLetterLimit: number; // -1 = disabled, 0+ = max consecutive single letters allowed
+        duplicateClusterLimit: number; // -1 = disabled, 0+ = max times same cluster (3+ letters) can be used
     };
 }
 
