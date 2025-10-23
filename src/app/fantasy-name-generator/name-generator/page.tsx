@@ -64,13 +64,13 @@ export default function NameGenerator() {
         {/* Header */}
         <div className="text-center mb-8">
           <Link 
-            href="/"
+            href="/fantasy-name-generator"
             className="panda-link inline-flex items-center text-sm mb-4"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back to Home
+            Back to Fantasy Name Generator
           </Link>
           
           <h1 className="text-4xl md:text-6xl font-bold panda-text-primary mb-4">

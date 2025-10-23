@@ -9,15 +9,9 @@ export default function FantasyNameGeneratorHome() {
       status: 'Live' as const
     },
     {
-      title: 'Name Analyzer', 
-      description: 'Analyze names and generate variations',
-      href: '/name-analyzer',
-      status: 'Live' as const
-    },
-    {
-      title: 'About',
-      description: 'Learn how the pattern magic works',
-      href: '/about', 
+      title: 'Pattern Test',
+      description: 'Analyze and validate the Old English pattern structure',
+      href: '/fantasy-name-generator/pattern-test',
       status: 'Live' as const
     }
   ];
@@ -70,7 +64,7 @@ export default function FantasyNameGeneratorHome() {
 
         {/* Main Content - Feature Overview */}
         <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
             {pages.map((page) => (
               <Link
                 key={page.href}
@@ -78,7 +72,11 @@ export default function FantasyNameGeneratorHome() {
                 className="panda-feature-card group hover:scale-105 transition-transform"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-medium">
+                  <span className={`px-2 py-1 rounded text-xs font-medium ${
+                    page.status === 'Live' 
+                      ? 'bg-green-600 text-white' 
+                      : 'bg-orange-500 text-white'
+                  }`}>
                     {page.status}
                   </span>
                 </div>
@@ -92,7 +90,7 @@ export default function FantasyNameGeneratorHome() {
                 </p>
                 
                 <div className="text-sm panda-text-primary font-medium group-hover:panda-accent-gold transition-colors">
-                  Open Tool →
+                  {page.status === 'Live' ? 'Open Tool →' : 'Coming Soon'}
                 </div>
               </Link>
             ))}
@@ -104,34 +102,34 @@ export default function FantasyNameGeneratorHome() {
               Quick Start Guide
             </h2>
             
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="bg-blue-100 dark:bg-blue-900 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-blue-600 dark:text-blue-400 font-bold">1</span>
                 </div>
                 <h3 className="font-semibold panda-text-primary mb-2">Generate</h3>
                 <p className="text-sm panda-text-secondary">
-                  Start with the Name Generator to create authentic fantasy names using linguistic patterns.
-                </p>
-              </div>
-              
-              <div className="text-center">
-                <div className="bg-purple-100 dark:bg-purple-900 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-purple-600 dark:text-purple-400 font-bold">2</span>
-                </div>
-                <h3 className="font-semibold panda-text-primary mb-2">Analyze</h3>
-                <p className="text-sm panda-text-secondary">
-                  Use the Name Analyzer to break down names into segments and generate variations.
+                  Start with the Name Generator to create authentic Old English names using Markov chains.
                 </p>
               </div>
               
               <div className="text-center">
                 <div className="bg-green-100 dark:bg-green-900 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-green-600 dark:text-green-400 font-bold">3</span>
+                  <span className="text-green-600 dark:text-green-400 font-bold">2</span>
                 </div>
-                <h3 className="font-semibold panda-text-primary mb-2">Learn</h3>
+                <h3 className="font-semibold panda-text-primary mb-2">Validate Patterns</h3>
                 <p className="text-sm panda-text-secondary">
-                  Check the About page to understand the linguistic algorithms behind the magic.
+                  Check the Pattern Test to ensure authentic Old English linguistic structures.
+                </p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-orange-100 dark:bg-orange-900 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-orange-600 dark:text-orange-400 font-bold">3</span>
+                </div>
+                <h3 className="font-semibold panda-text-primary mb-2">Analyze & Learn</h3>
+                <p className="text-sm panda-text-secondary">
+                  Explore the algorithm internals and understand the linguistic patterns behind the names.
                 </p>
               </div>
             </div>
