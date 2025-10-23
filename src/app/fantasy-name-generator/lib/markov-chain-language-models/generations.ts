@@ -6,6 +6,7 @@ interface GenerationStep {
   fullName: string;
   currentPattern: string;
   availableOptions: string[];
+  nodeCount: number;
 }
 
 /**
@@ -28,6 +29,7 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
     fullName: '',
     currentPattern: languageDefinitionOptions.startMarker,
     availableOptions: initialPatterns,
+    nodeCount: 0,
   });
 
   let maxIterations = 1000; // Total iterations allowed
@@ -41,7 +43,14 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
     // Get the current step and valid options
     const currentStep = stack[stack.length - 1];
     let availableOptions = currentStep.availableOptions;
-    let validOptions: string[] = availableOptions.filter(option => true);
+    let validOptions: string[] = availableOptions;
+
+    // Enforce minimum nodes constraint
+    if (languageDefinitionOptions.minNodes !== -1 && currentStep.nodeCount < languageDefinitionOptions.minNodes)
+      validOptions = availableOptions.filter(option => option !== languageDefinitionOptions.endMarker);
+
+    if (languageDefinitionOptions.maxNodes !== -1 && currentStep.nodeCount >= languageDefinitionOptions.maxNodes)
+      validOptions = availableOptions.filter(option => option === languageDefinitionOptions.endMarker);
 
     // If there are no valid options, backtrack
     if (validOptions.length === 0) {
@@ -83,6 +92,7 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
       fullName: newFullName,
       currentPattern: nextOption,
       availableOptions: [...nextPatterns],
+      nodeCount: currentStep.nodeCount + 1,
     });
   }
 

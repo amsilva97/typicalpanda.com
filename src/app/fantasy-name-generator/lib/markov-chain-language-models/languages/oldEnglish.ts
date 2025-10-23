@@ -10,18 +10,26 @@ export const oldEnglish: LanguageDefinition = {
     // === STARTING PATTERNS ===
     // Most common Old English name beginnings (historically authentic)
     "^": [
-      // Tier 1: Most common authentic starts (80% of generated names should use these)
+      // Tier 1: Most common authentic starts (60% of generated names should use these)
       "ael", "ael", "ael",           // "noble, elf" - very common
       "aethel", "aethel",            // "noble" - royal names
       "ead", "ead", "ed", "ed",      // "blessed, wealth" - very common
       "god", "god", "god",           // "good, divine" - extremely common
       "wulf", "wulf",                // "wolf" - warrior names
 
-      // Tier 2: Common authentic starts (15% of names)
+      // Tier 2: Common authentic starts (25% of names)
       "alf", "beorn", "cyne", "hild", "leod", "osw", "raed", "sig", "theod",
+      "ber", "cuth", "dun", "earl", "hun", "mil", "ord", "stan", "wil",
 
-      // Tier 3: Less common but authentic (5% of names)
-      "ber", "cuth", "dun", "earl", "hun", "mil", "ord", "stan", "wil"
+      // Tier 3: Single letter starts (10% of names) - authentic Old English initials
+      "a", "b", "c", "d", "e", "f", "g", "h", "l", "m", "n", "o", "r", "s", "t", "w",
+
+      // Tier 4: Double letter starts (5% of names) - common Old English pairs
+      "ae", "al", "an", "ar", "as", "be", "br", "bu", "cy", "de", "dr", "du", 
+      "ea", "ec", "el", "er", "es", "fl", "fr", "ge", "gi", "gr", "gu", 
+      "ha", "he", "hi", "hr", "hu", "le", "li", "ma", "me", "ni", "no", 
+      "or", "ra", "re", "ri", "ro", "sa", "se", "si", "st", "th", "tr", 
+      "ul", "un", "ur", "wa", "we", "wi", "wy"
     ],
 
     // === MAJOR NAME ELEMENTS ===
@@ -106,12 +114,82 @@ export const oldEnglish: LanguageDefinition = {
     "stanlow": ["ley", "ford", "$"],                 // "stone" - renamed to avoid duplicate
     "wil": ["fred", "ric", "helm", "$"],             // "will, desire"
 
+    // === SINGLE LETTER ELEMENTS ===
+    // Single letters that can build into larger patterns
+    "a": ["l", "n", "ld", "nd", "el", "red", "ric", "$"],          // Vowel starter
+    "b": ["e", "a", "i", "ern", "ert", "eorn", "ald", "$"],        // Consonant starter
+    "c": ["y", "u", "yne", "uth", "eol", "ric", "$"],              // Hard consonant
+    "d": ["u", "a", "e", "un", "ead", "ric", "mund", "$"],         // Consonant starter
+    "e": ["l", "r", "n", "ld", "nd", "ad", "ric", "mund", "$"],    // Vowel starter
+    "f": ["r", "l", "red", "ric", "ord", "$"],                     // Consonant starter
+    "g": ["a", "e", "i", "od", "ar", "rim", "ric", "$"],           // Consonant starter
+    "h": ["i", "a", "e", "ild", "ard", "elm", "un", "$"],          // Aspirated starter
+    "l": ["e", "i", "eod", "eof", "ric", "mund", "$"],             // Liquid consonant
+    "m": ["i", "a", "e", "il", "ild", "ric", "und", "$"],          // Nasal consonant
+    "n": ["o", "i", "ic", "ric", "mund", "$"],                     // Nasal consonant
+    "o": ["r", "s", "ld", "sw", "ric", "$"],                       // Vowel starter
+    "r": ["a", "e", "i", "aed", "ic", "ed", "$"],                  // Liquid consonant
+    "s": ["i", "a", "e", "ig", "tan", "ric", "$"],                 // Sibilant starter
+    "t": ["h", "i", "a", "hur", "heod", "ric", "$"],               // Stop consonant
+    "w": ["i", "a", "e", "ulf", "ine", "ald", "ric", "$"],         // Consonant starter
+
+    // === DOUBLE LETTER ELEMENTS ===
+    // Common Old English letter pairs that form authentic patterns
+    "ae": ["l", "s", "t", "thel", "sc", "ric", "$"],               // Ash vowel pair
+    "al": ["f", "d", "red", "ric", "bert", "$"],                   // Liquid combination
+    "an": ["d", "t", "ric", "mund", "$"],                          // Nasal combination
+    "ar": ["e", "i", "nold", "thur", "ric", "$"],                  // Liquid combination
+    "as": ["c", "t", "ric", "mund", "$"],                          // Sibilant combination
+    "be": ["orn", "ald", "rt", "rht", "ric", "$"],                 // Consonant start
+    "br": ["and", "yni", "ict", "ric", "$"],                       // Consonant cluster
+    "bu": ["rh", "rg", "ric", "$"],                                // Consonant start
+    "cy": ["ne", "ric", "mund", "$"],                              // Royal element
+    "de": ["or", "ric", "mund", "$"],                              // Consonant start
+    "dr": ["ed", "ric", "mund", "$"],                              // Consonant cluster
+    "du": ["n", "nn", "ric", "$"],                                 // Consonant start
+    "ea": ["d", "l", "rl", "dric", "lred", "mund", "$"],           // Vowel combination
+    "ec": ["g", "bert", "ric", "$"],                               // Consonant start
+    "el": ["f", "m", "d", "red", "ric", "mund", "$"],              // Liquid combination
+    "er": ["ic", "man", "ric", "mund", "$"],                       // Liquid combination
+    "es": ["t", "ric", "mund", "$"],                               // Sibilant combination
+    "fl": ["ed", "ow", "ric", "$"],                                // Consonant cluster
+    "fr": ["ed", "ith", "ric", "$"],                               // Consonant cluster
+    "ge": ["ard", "off", "ric", "$"],                              // Consonant start
+    "gi": ["s", "fu", "ric", "$"],                                 // Consonant start
+    "gr": ["im", "ant", "ric", "$"],                               // Consonant cluster
+    "gu": ["n", "th", "ric", "$"],                                 // Consonant start
+    "ha": ["rd", "l", "lla", "ric", "$"],                          // Aspirated start
+    "he": ["ard", "lm", "nry", "ric", "$"],                        // Aspirated start
+    "hi": ["ld", "lda", "ric", "$"],                               // Aspirated start
+    "hr": ["oth", "ric", "$"],                                     // Consonant cluster
+    "hu": ["n", "bert", "ric", "$"],                               // Aspirated start
+    "le": ["od", "of", "ric", "mund", "$"],                        // Liquid start
+    "li": ["n", "lian", "ric", "$"],                               // Liquid start
+    "ma": ["r", "gn", "ric", "mund", "$"],                         // Nasal start
+    "me": ["l", "rc", "ric", "mund", "$"],                         // Nasal start
+    "ni": ["c", "ht", "ric", "$"],                                 // Nasal start
+    "no": ["r", "th", "ric", "$"],                                 // Nasal start
+    "or": ["d", "ic", "ric", "$"],                                 // Vowel start
+    "ra": ["ed", "nd", "ven", "ric", "$"],                         // Liquid start
+    "re": ["d", "gin", "x", "ric", "$"],                           // Liquid start
+    "ri": ["c", "chard", "ric", "$"],                              // Liquid start
+    "ro": ["d", "bert", "ric", "$"],                               // Liquid start
+    "sa": ["x", "ric", "mund", "$"],                               // Sibilant start
+    "se": ["l", "ward", "ric", "$"],                               // Sibilant start
+    "si": ["g", "ward", "ric", "$"],                               // Sibilant start
+    "st": ["an", "orm", "ric", "$"],                               // Consonant cluster
+    "th": ["ur", "eod", "omas", "ric", "$"],                       // Fricative start
+    "tr": ["uth", "ric", "$"],                                     // Consonant cluster
+    "ul": ["f", "ric", "$"],                                       // Vowel start
+    "un": ["a", "ric", "mund", "$"],                               // Vowel start
+    "ur": ["ic", "ry", "ric", "$"],                                // Vowel start
+    "wa": ["l", "ld", "lter", "ric", "$"],                         // Consonant start
+    "we": ["a", "ald", "ric", "$"],                                // Consonant start
+    "wi": ["l", "ne", "fred", "ric", "$"],                         // Consonant start
+    "wy": ["n", "nn", "ric", "$"],                                 // Consonant start
+
     // === INTERMEDIATE CONNECTORS ===
     // These help build longer, more complex names
-    "a": ["l", "n", "ld", "nd", "$"],                // Short vowel connectors
-    "e": ["l", "r", "n", "ld", "nd", "$"],
-    "i": ["n", "ng", "ld", "$"],
-    "o": ["r", "ld", "$"],
 
     // === ENDING PATTERNS ===
     // These are the classic Old English name endings that terminate names
@@ -142,9 +220,6 @@ export const oldEnglish: LanguageDefinition = {
     "ng": ["$"],                  // consonant cluster ending
     "ld": ["$"],                  // consonant cluster ending  
     "nd": ["$"],                  // consonant cluster ending
-    "l": ["$"],                   // simple consonant ending
-    "n": ["$"],                   // simple consonant ending
-    "r": ["$"],                   // simple consonant ending
 
     // Place-name endings (less common in personal names)
     "ford": ["$"],     // "river crossing"
@@ -158,5 +233,10 @@ export const oldEnglish: LanguageDefinition = {
     name: "Old English",
     startMarker: "^",
     endMarker: "$",
+    minNodes: 4,
+    maxNodes: -1,
+    consecutiveSingleLetterLimit: -1,
+    nonConsecutiveSingleLetterLimit: -1,
+    duplicateClusterLimit: -1
   }
 };
