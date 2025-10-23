@@ -53,16 +53,9 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
       // still need to add more pieces, don't allow end marker yet
       validOptions = availableOptions.filter(option => option !== languageDefinitionOptions.endMarker);
 
-      // Check single letter limiter
-      if (currentStep.singleLetterCount > languageDefinitionOptions.singleLetterLimiter) {
+      // If single letter limiter is exceeded, filter those out
+      if (languageDefinitionOptions.singleLetterLimiter >= currentStep.singleLetterCount) {
         validOptions = validOptions.filter(option => option.length > 1);
-      }
-
-      // Check cluster limiter
-      for (const cluster in currentStep.clusterCount) {
-        if (currentStep.clusterCount[cluster] > languageDefinitionOptions.clusterLimiter) {
-          validOptions = validOptions.filter(option => option !== cluster);
-        }
       }
     } else {
       // reached or exceeded target length, allow ending
@@ -104,12 +97,12 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
       continue;
     }
 
-    // Check single letter limiter
+    // Check single letter limiter (track consecutive single letters)
     const newSingleLetterCount = nextOption.length === 1 ? currentStep.singleLetterCount + 1 : 0;
 
-    // Check cluster limiter
+    // Check cluster limiter (track usage of multi-letter patterns)
     const newClusterCount = { ...currentStep.clusterCount };
-    if (nextOption.length >= 3) {
+    if (nextOption.length >= 2) { // Track 2+ letter patterns, not just 3+
       newClusterCount[nextOption] = (newClusterCount[nextOption] || 0) + 1;
     }
 
