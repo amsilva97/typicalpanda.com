@@ -6,9 +6,6 @@ interface GenerationStep {
   fullName: string;
   currentPattern: string;
   availableOptions: string[];
-  consecutiveSingleLetter: number;
-  nonConsecutiveSingleLetterLimit: number;
-  duplicateClusterLimit: { [key: string]: number; };
 }
 
 /**
@@ -18,7 +15,6 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
   const languageDefinitionPatterns = languageDefinition.patterns;
   const languageDefinitionOptions = languageDefinition.options;
   const startTime = Date.now();
-  const targetLength = Math.floor(Math.random() * (languageDefinitionOptions.maxLength - languageDefinitionOptions.minLength + 1)) + languageDefinitionOptions.minLength;
 
   // Initialize the stack with the starting state
   const stack: GenerationStep[] = [];
@@ -32,9 +28,6 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
     fullName: '',
     currentPattern: languageDefinitionOptions.startMarker,
     availableOptions: initialPatterns,
-    consecutiveSingleLetter: 0,
-    nonConsecutiveSingleLetterLimit: languageDefinitionOptions.nonConsecutiveSingleLetterLimit,
-    duplicateClusterLimit: {}
   });
 
   let maxIterations = 1000; // Total iterations allowed
@@ -48,16 +41,7 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
     // Get the current step and valid options
     const currentStep = stack[stack.length - 1];
     let availableOptions = currentStep.availableOptions;
-    let validOptions: string[] = [];
-
-    // Get valid options based on length constraints
-    if (currentStep.fullName.length < targetLength) {
-      // still need to add more pieces, don't allow end marker yet
-      validOptions = availableOptions.filter(option => option !== languageDefinitionOptions.endMarker);
-    } else {
-      // reached or exceeded target length, allow ending
-      validOptions = availableOptions.filter(option => option === languageDefinitionOptions.endMarker);
-    }
+    let validOptions: string[] = availableOptions.filter(option => true);
 
     // If there are no valid options, backtrack
     if (validOptions.length === 0) {
@@ -86,13 +70,6 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
       return currentStep.fullName;
     }
 
-    // Check if adding this option would make the name too long
-    const newFullName = currentStep.fullName + nextOption;
-    if (newFullName.length > languageDefinitionOptions.maxLength) {
-      // This option would make the name too long, skip it
-      continue;
-    }
-
     // Before pushing new step, check for dead ends
     const nextPatterns = languageDefinitionPatterns[nextOption] || [];
     if (nextPatterns.length === 0) {
@@ -101,13 +78,11 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
     }
 
     // Build the new full name
+    const newFullName = currentStep.fullName + nextOption;
     stack.push({
       fullName: newFullName,
       currentPattern: nextOption,
       availableOptions: [...nextPatterns],
-      consecutiveSingleLetter: 0,
-      nonConsecutiveSingleLetterLimit: 0,
-      duplicateClusterLimit: {}
     });
   }
 

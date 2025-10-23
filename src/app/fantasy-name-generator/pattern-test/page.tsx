@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { SupportedLanguage } from '../lib/markov-chain-language-models/core';
+import { SupportedLanguage, getLanguageDefinition } from '../lib/markov-chain-language-models/core';
+import { generateName } from '../lib/markov-chain-language-models/generations';
 import { testNameDiversity } from '../lib/markov-chain-language-models/tests';
 
 export default function PatternTest() {
@@ -112,8 +113,53 @@ export default function PatternTest() {
         </div>
 
         {testResults && (
+          <div className="panda-card p-6 mb-6">
+            <h2 className="text-xl font-semibold panda-text-primary mb-4">Sample Names Generated</h2>
+            <div className="grid grid-cols-5 gap-2 text-sm panda-text-secondary">
+              {(() => {
+                // Generate all 50 names first
+                const generatedNames: string[] = [];
+                const languageDefinition = getLanguageDefinition(selectedLanguage);
+                
+                for (let i = 0; i < 50; i++) {
+                  try {
+                    const sampleName = generateName(languageDefinition);
+                    generatedNames.push(sampleName);
+                  } catch {
+                    generatedNames.push('---');
+                  }
+                }
+                
+                // Count occurrences to identify duplicates
+                const nameCounts = generatedNames.reduce((counts, name) => {
+                  counts[name] = (counts[name] || 0) + 1;
+                  return counts;
+                }, {} as Record<string, number>);
+                
+                // Render with duplicate highlighting
+                return generatedNames.map((name, i) => {
+                  const isDuplicate = nameCounts[name] > 1;
+                  return (
+                    <div 
+                      key={i} 
+                      className={`p-2 rounded text-center truncate ${
+                        isDuplicate 
+                          ? 'bg-red-200 dark:bg-red-800 border-2 border-red-400 font-semibold' 
+                          : 'bg-gray-100 dark:bg-gray-700'
+                      }`}
+                    >
+                      {name}
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        )}
+
+        {testResults && (
           <div className="panda-card p-6">
-            <h2 className="text-xl font-semibold panda-text-primary mb-4">Test Results</h2>
+            <h2 className="text-xl font-semibold panda-text-primary mb-4">Uniqueness Test</h2>
             
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div className="text-center">

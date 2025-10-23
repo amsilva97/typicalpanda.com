@@ -16,17 +16,17 @@ export const oldEnglish: LanguageDefinition = {
       "ead", "ead", "ed", "ed",      // "blessed, wealth" - very common
       "god", "god", "god",           // "good, divine" - extremely common
       "wulf", "wulf",                // "wolf" - warrior names
-      
+
       // Tier 2: Common authentic starts (15% of names)
       "alf", "beorn", "cyne", "hild", "leod", "osw", "raed", "sig", "theod",
-      
+
       // Tier 3: Less common but authentic (5% of names)
       "ber", "cuth", "dun", "earl", "hun", "mil", "ord", "stan", "wil"
     ],
 
     // === MAJOR NAME ELEMENTS ===
     // These are the core building blocks of Old English names
-    
+
     // "Ael" family - "noble, elf"
     "ael": [
       "red",    // counsel -> "Aelred" (Elf-counsel)
@@ -55,7 +55,7 @@ export const oldEnglish: LanguageDefinition = {
       "wyn",    // -> "Eadwyn" (Blessed-friend)
       "$"
     ],
-    
+
     "ed": [
       "mund",   // -> "Edmund" (Blessed-protection)
       "ward",   // -> "Edward" (Blessed-guardian)
@@ -115,7 +115,7 @@ export const oldEnglish: LanguageDefinition = {
 
     // === ENDING PATTERNS ===
     // These are the classic Old English name endings that terminate names
-    
+
     // Primary endings (most common)
     "ric": ["$"],      // "ruler, king" - extremely common ending
     "mund": ["$"],     // "protection, guardian" - very common
@@ -156,12 +156,7 @@ export const oldEnglish: LanguageDefinition = {
 
   options: {
     name: "Old English",
-    minLength: 4,          // Allow shorter authentic names like "Beda"
-    maxLength: 10,         // Keep names manageable
     startMarker: "^",
     endMarker: "$",
-    consecutiveSingleLetterLimit: 1,  // Max 1 single letter in sequence
-    nonConsecutiveSingleLetterLimit: 2, // Max 2 single-letter patterns in name
-    duplicateClusterLimit: 1          // Each pattern used only once per name
   }
 };
