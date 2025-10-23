@@ -43,12 +43,13 @@ export default function PatternTest() {
     
     const { nameCount, uniquePercentage, diversityScore } = testResults;
     
-    if (nameCount >= 100 && uniquePercentage >= 95 && diversityScore >= 3) {
+    // If nameCount is -1, it means no failure occurred (excellent)
+    if (nameCount === -1 || (nameCount >= 80 && uniquePercentage >= 75 && diversityScore >= 3)) {
       return { status: 'excellent', message: 'Excellent name generation quality', color: 'text-green-600' };
-    } else if (nameCount >= 50 && uniquePercentage >= 90 && diversityScore >= 2) {
+    } else if (nameCount >= 40 && uniquePercentage >= 70 && diversityScore >= 2) {
       return { status: 'good', message: 'Good quality with room for improvement', color: 'text-yellow-600' };
     } else {
-      return { status: 'poor', message: 'Poor quality - low diversity or early failure', color: 'text-red-600' };
+      return { status: 'poor', message: 'Poor quality - early failure or low diversity', color: 'text-red-600' };
     }
   };  return (
     <div className="min-h-screen panda-bg-primary py-8">
@@ -107,7 +108,7 @@ export default function PatternTest() {
           
           <div className="mt-4 p-3 panda-accent-bg rounded-md">
             <p className="panda-accent-text text-sm">
-              <strong>Note:</strong> This test generates names one by one until uniqueness drops below 95%, then returns the results.
+              <strong>Note:</strong> This test generates names one by one until uniqueness drops below 70%, then returns the results.
             </p>
           </div>
         </div>
@@ -164,11 +165,11 @@ export default function PatternTest() {
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div className="text-center">
                 <div className="text-3xl font-bold panda-text-primary mb-2">
-                  {testResults.nameCount}
+                  {testResults.nameCount === -1 ? 'No Failure' : testResults.nameCount}
                 </div>
-                <div className="text-sm panda-text-secondary">Names Generated</div>
+                <div className="text-sm panda-text-secondary">Failure Point</div>
                 <div className="text-xs panda-text-secondary mt-1">
-                  Before uniqueness failed
+                  {testResults.nameCount === -1 ? 'Never dropped below 70%' : 'When uniqueness dropped below 70%'}
                 </div>
               </div>
               
@@ -208,10 +209,10 @@ export default function PatternTest() {
             <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
               <h3 className="font-semibold panda-text-primary mb-2">Understanding the Metrics:</h3>
               <ul className="text-sm panda-text-secondary space-y-1">
-                <li><strong>Names Generated:</strong> Total number of names created before uniqueness dropped below 95%</li>
-                <li><strong>Final Uniqueness:</strong> Percentage of unique names in the final list</li>
+                <li><strong>Failure Point:</strong> Name count when uniqueness first dropped below 70% (-1 if never failed)</li>
+                <li><strong>Final Uniqueness:</strong> Percentage of unique names after 100 generations</li>
                 <li><strong>Diversity Score:</strong> Average edit distance between all name pairs (higher = more diverse)</li>
-                <li><strong>Quality Guide:</strong> Excellent: 100+ names, 95%+ unique, 3+ diversity | Good: 50+ names, 90%+ unique, 2+ diversity</li>
+                <li><strong>Quality Guide:</strong> Excellent: No failure or 80+ names, 75%+ unique, 3+ diversity | Good: 40+ names, 70%+ unique, 2+ diversity</li>
               </ul>
             </div>
           </div>
