@@ -86,6 +86,14 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
 
     // Check for end marker
     if (nextOption === languageDefinitionOptions.endMarker) {
+
+      //lets print out each step as a list to console
+      const debug_segments: string[] = [];
+      for (const step of stack) {
+        debug_segments.push(step.currentPattern);
+      }
+      console.log(debug_segments);
+
       return currentStep.fullName;
     }
 
