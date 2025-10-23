@@ -39,28 +39,20 @@ function LevenshteinDistance(a: string, b: string): number {
 }
 
 /**
- * Calculate the percentage of unique names in a list
- */
-function getUniquePercentage(names: string[]): number {
-    const uniqueNames = new Set(names);
-    return (uniqueNames.size / names.length) * 100;
-}
-
-/**
  * Calculate diversity score using average Levenshtein distance
  */
 function getDiversityScore(names: string[]): number {
     if (names.length < 2) return 0;
-    
+
     const distances: number[] = [];
-    
+
     for (let i = 0; i < names.length; i++) {
         for (let j = i + 1; j < names.length; j++) {
             const distance = LevenshteinDistance(names[i], names[j]);
             distances.push(distance);
         }
     }
-    
+
     return distances.reduce((sum, dist) => sum + dist, 0) / distances.length;
 }
 
@@ -70,30 +62,28 @@ function getDiversityScore(names: string[]): number {
  */
 export function testNameDiversity(supportedLanguage: SupportedLanguage): [number, number, number] {
     const languageDefinition = getLanguageDefinition(supportedLanguage);
-    const names: string[] = [];
-    const uniquenessThreshold = 95; // Must have 95% or more unique names
-    
-    while (true) {
-        // Generate a new name
+    const generatedNames: Set<string> = new Set();
+    let totalGeneratedNames = 0;
+    let totalDuplicatesGenerated = 0;
+    let uniquePercentage: number;
+
+    for (let i = 0; i < 1000; i++) {
         const name = generateName(languageDefinition);
-        names.push(name);
-        
-        // Check if we have enough names to test (minimum 10)
-        if (names.length >= 10) {
-            const uniquePercentage = getUniquePercentage(names);
-            
-            // If uniqueness drops below threshold, we failed the test
-            if (uniquePercentage < uniquenessThreshold) {
-                const diversityScore = getDiversityScore(names);
-                return [names.length, uniquePercentage, diversityScore];
-            }
+        totalGeneratedNames++;
+        if (generatedNames.has(name)) {
+            totalDuplicatesGenerated++;
+        } else {
+            generatedNames.add(name);
         }
-        
-        // Safety limit to prevent infinite loops
-        if (names.length >= 1000) {
-            const uniquePercentage = getUniquePercentage(names);
-            const diversityScore = getDiversityScore(names);
-            return [names.length, uniquePercentage, diversityScore];
+        uniquePercentage = ((totalGeneratedNames - totalDuplicatesGenerated) / totalGeneratedNames) * 100;
+        if (uniquePercentage < 95) {
+            break;
         }
     }
+
+    const finalNameCount = totalGeneratedNames;
+    const finalUniquePercentage = ((totalGeneratedNames - totalDuplicatesGenerated) / totalGeneratedNames) * 100;
+    const finalDiversityScore = getDiversityScore(Array.from(generatedNames));
+
+    return [finalNameCount, finalUniquePercentage, finalDiversityScore];
 }
