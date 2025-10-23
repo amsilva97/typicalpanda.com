@@ -1,13 +1,18 @@
+'use client';
+
+import { useState } from 'react';
 import { generateNamesForLanguage } from '../lib/markov-chain-language-models/generations';
 import { SupportedLanguage, getLanguageDefinition } from '../lib/markov-chain-language-models/core';
 
 export default function PatternTest() {
+  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>(SupportedLanguage.OLD_ENGLISH);
+  const [isRunning, setIsRunning] = useState(false);
   
   const runPatternStructureTest = () => {
     console.log('🔍 === Pattern Structure Test ===');
     
     try {
-      const languageDefinition = getLanguageDefinition(SupportedLanguage.OLD_ENGLISH);
+      const languageDefinition = getLanguageDefinition(selectedLanguage);
       const patterns = languageDefinition.patterns;
       
       console.log('📊 Pattern Statistics:');
@@ -83,7 +88,7 @@ export default function PatternTest() {
     console.log('🌊 === Pattern Flow Test ===');
     
     try {
-      const languageDefinition = getLanguageDefinition(SupportedLanguage.OLD_ENGLISH);
+      const languageDefinition = getLanguageDefinition(selectedLanguage);
       const patterns = languageDefinition.patterns;
       
       // Test specific flows manually
@@ -131,7 +136,7 @@ export default function PatternTest() {
     
     try {
       // Generate names with debug info
-      const names = generateNamesForLanguage(SupportedLanguage.OLD_ENGLISH, 5);
+      const names = generateNamesForLanguage(selectedLanguage, 5);
       
       console.log('Generated names with analysis:');
       names.forEach((name: string, index: number) => {
@@ -152,7 +157,7 @@ export default function PatternTest() {
     console.log('⭐ === Pattern Quality Test ===');
     
     try {
-      const names = generateNamesForLanguage(SupportedLanguage.OLD_ENGLISH, 20);
+      const names = generateNamesForLanguage(selectedLanguage, 20);
       
       // Test for authentic Old English characteristics
       const authenticityTests = {
@@ -257,32 +262,85 @@ export default function PatternTest() {
     }
   }
 
-  const runAllPatternTests = () => {
-    console.log('🧪 === Running All Pattern Tests ===\n');
+  const runAllPatternTests = async () => {
+    setIsRunning(true);
+    console.log(`🧪 === Running All Pattern Tests for ${selectedLanguage} ===\n`);
     
-    runPatternStructureTest();
-    runPatternFlowTest();
-    runGenerationPathTest();
-    runPatternQualityTest();
-    
-    console.log('✅ All Pattern Tests Complete!');
+    try {
+      runPatternStructureTest();
+      runPatternFlowTest();
+      runGenerationPathTest();
+      runPatternQualityTest();
+      
+      console.log('✅ All Pattern Tests Complete!');
+    } catch (error) {
+      console.error('❌ Pattern tests failed:', error);
+    } finally {
+      setIsRunning(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen panda-bg-primary py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-6">
           <a 
             href="/fantasy-name-generator" 
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            className="panda-link text-sm font-medium"
           >
             ← Back to Fantasy Name Generator
           </a>
         </div>
         
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Pattern Test Suite
+        <h1 className="text-3xl font-bold panda-text-primary mb-8">
+          <span className="panda-text-gradient-gold">
+            Pattern Test Suite
+          </span>
         </h1>
+        
+        <div className="panda-card p-6 mb-6">
+          <h2 className="text-xl font-semibold panda-text-primary mb-4">Test Configuration</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="language-select" className="block text-sm font-medium panda-text-primary mb-2">
+                Select Language:
+              </label>
+              <select
+                id="language-select"
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value as SupportedLanguage)}
+                className="w-full px-3 py-2 border panda-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent panda-bg-primary panda-text-primary"
+              >
+                {Object.values(SupportedLanguage).map((language) => (
+                  <option key={language} value={language}>
+                    {language.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="pt-4">
+              <button
+                onClick={runAllPatternTests}
+                disabled={isRunning}
+                className={`w-full py-3 px-6 rounded-md font-medium transition-colors ${
+                  isRunning
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'panda-button-primary hover:scale-105 transition-transform'
+                }`}
+              >
+                {isRunning ? 'Running Tests...' : '🧪 Run Pattern Tests'}
+              </button>
+            </div>
+          </div>
+          
+          <div className="mt-4 p-3 panda-accent-bg rounded-md">
+            <p className="panda-accent-text text-sm">
+              💡 <strong>Tip:</strong> Open the browser console (F12 → Console) to see detailed test results and analysis.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
