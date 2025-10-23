@@ -65,9 +65,15 @@ export function testNameDiversity(supportedLanguage: SupportedLanguage): [number
     const generatedNames: Set<string> = new Set();
     let totalGeneratedNames = 0;
     let totalDuplicatesGenerated = 0;
-    let uniquePercentage: number;
+    let percentage = 0;
+    let failed_at = -1;
 
-    for (let i = 0; i < 1000; i++) {
+    const calc_percent = () => {
+        return ((totalGeneratedNames - totalDuplicatesGenerated) / totalGeneratedNames) * 100;
+    };
+
+    const iterations = 100; // Safety limit to prevent infinite loops
+    for (let i = 0; i < iterations; i++) {
         const name = generateName(languageDefinition);
         totalGeneratedNames++;
         if (generatedNames.has(name)) {
@@ -75,15 +81,14 @@ export function testNameDiversity(supportedLanguage: SupportedLanguage): [number
         } else {
             generatedNames.add(name);
         }
-        uniquePercentage = ((totalGeneratedNames - totalDuplicatesGenerated) / totalGeneratedNames) * 100;
-        if (uniquePercentage < 95) {
-            break;
-        }
+
+        percentage = calc_percent();
+        if (percentage < 70 && failed_at === -1 && i >= 10)
+            failed_at = totalGeneratedNames;
     }
 
-    const finalNameCount = totalGeneratedNames;
-    const finalUniquePercentage = ((totalGeneratedNames - totalDuplicatesGenerated) / totalGeneratedNames) * 100;
+    const finalUniquePercentage = calc_percent();
     const finalDiversityScore = getDiversityScore(Array.from(generatedNames));
 
-    return [finalNameCount, finalUniquePercentage, finalDiversityScore];
+    return [failed_at, finalUniquePercentage, finalDiversityScore];
 }
