@@ -8,9 +8,9 @@ export default function PatternTest() {
   const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>(SupportedLanguage.OLD_ENGLISH);
   const [isRunning, setIsRunning] = useState(false);
   const [testResults, setTestResults] = useState<{
+    nameCount: number;
     uniquePercentage: number;
     diversityScore: number;
-    sampleSize: number;
   } | null>(null);
 
   const runDiversityTest = async () => {
@@ -18,18 +18,20 @@ export default function PatternTest() {
     setTestResults(null);
     
     try {
-      const sampleSize = 50;
+      console.log(`Running simple diversity test for ${selectedLanguage}...`);
       
-      const [uniquePercentage, diversityScore] = testNameDiversity(selectedLanguage, sampleSize);
+      const [nameCount, uniquePercentage, diversityScore] = testNameDiversity(selectedLanguage);
       
       setTestResults({
+        nameCount,
         uniquePercentage,
-        diversityScore,
-        sampleSize
+        diversityScore
       });
       
+      console.log(`Test complete! Generated ${nameCount} names, ${uniquePercentage.toFixed(1)}% unique, diversity score: ${diversityScore.toFixed(2)}`);
+      
     } catch (error) {
-        //TODO: handle error appropriately, show it in the UI perhaps
+      console.error('Test failed:', error);
     } finally {
       setIsRunning(false);
     }
@@ -38,14 +40,14 @@ export default function PatternTest() {
   const getQualityAssessment = () => {
     if (!testResults) return null;
     
-    const { uniquePercentage, diversityScore } = testResults;
+    const { nameCount, uniquePercentage, diversityScore } = testResults;
     
-    if (uniquePercentage >= 95 && diversityScore >= 3) {
+    if (nameCount >= 100 && uniquePercentage >= 95 && diversityScore >= 3) {
       return { status: 'excellent', message: 'Excellent name generation quality', color: 'text-green-600' };
-    } else if (uniquePercentage >= 85 && diversityScore >= 2) {
+    } else if (nameCount >= 50 && uniquePercentage >= 90 && diversityScore >= 2) {
       return { status: 'good', message: 'Good quality with room for improvement', color: 'text-yellow-600' };
     } else {
-      return { status: 'poor', message: 'Poor quality - names too similar or duplicated', color: 'text-red-600' };
+      return { status: 'poor', message: 'Poor quality - low diversity or early failure', color: 'text-red-600' };
     }
   };  return (
     <div className="min-h-screen panda-bg-primary py-8">
@@ -97,14 +99,14 @@ export default function PatternTest() {
                     : 'panda-button-primary hover:scale-105 transition-transform'
                 }`}
               >
-                {isRunning ? 'Running Test...' : '🧪 Run Diversity Test (50 names)'}
+                {isRunning ? 'Running Test...' : 'Run Simple Diversity Test'}
               </button>
             </div>
           </div>
           
           <div className="mt-4 p-3 panda-accent-bg rounded-md">
             <p className="panda-accent-text text-sm">
-              💡 <strong>Tip:</strong> This test generates 50 names and analyzes their uniqueness and diversity using Levenshtein distance.
+              <strong>Note:</strong> This test generates names one by one until uniqueness drops below 95%, then returns the results.
             </p>
           </div>
         </div>
@@ -113,14 +115,24 @@ export default function PatternTest() {
           <div className="panda-card p-6">
             <h2 className="text-xl font-semibold panda-text-primary mb-4">Test Results</h2>
             
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <div className="grid md:grid-cols-3 gap-6 mb-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold panda-text-primary mb-2">
+                  {testResults.nameCount}
+                </div>
+                <div className="text-sm panda-text-secondary">Names Generated</div>
+                <div className="text-xs panda-text-secondary mt-1">
+                  Before uniqueness failed
+                </div>
+              </div>
+              
               <div className="text-center">
                 <div className="text-3xl font-bold panda-text-primary mb-2">
                   {testResults.uniquePercentage.toFixed(1)}%
                 </div>
-                <div className="text-sm panda-text-secondary">Uniqueness</div>
+                <div className="text-sm panda-text-secondary">Final Uniqueness</div>
                 <div className="text-xs panda-text-secondary mt-1">
-                  ({Math.round(testResults.uniquePercentage * testResults.sampleSize / 100)} unique out of {testResults.sampleSize})
+                  Percentage of unique names
                 </div>
               </div>
               
@@ -142,8 +154,7 @@ export default function PatternTest() {
                 'border-red-200 bg-red-50'
               }`}>
                 <div className={`font-semibold ${getQualityAssessment()?.color}`}>
-                  {getQualityAssessment()?.status === 'excellent' ? '✅' :
-                   getQualityAssessment()?.status === 'good' ? '⚠️' : '❌'} {getQualityAssessment()?.message}
+                  {getQualityAssessment()?.message}
                 </div>
               </div>
             )}
@@ -151,9 +162,10 @@ export default function PatternTest() {
             <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
               <h3 className="font-semibold panda-text-primary mb-2">Understanding the Metrics:</h3>
               <ul className="text-sm panda-text-secondary space-y-1">
-                <li><strong>Uniqueness:</strong> Percentage of generated names that are completely unique (100% = no duplicates)</li>
+                <li><strong>Names Generated:</strong> Total number of names created before uniqueness dropped below 95%</li>
+                <li><strong>Final Uniqueness:</strong> Percentage of unique names in the final list</li>
                 <li><strong>Diversity Score:</strong> Average edit distance between all name pairs (higher = more diverse)</li>
-                <li><strong>Quality Guide:</strong> Excellent: 95%+ unique, 3+ diversity | Good: 85%+ unique, 2+ diversity</li>
+                <li><strong>Quality Guide:</strong> Excellent: 100+ names, 95%+ unique, 3+ diversity | Good: 50+ names, 90%+ unique, 2+ diversity</li>
               </ul>
             </div>
           </div>

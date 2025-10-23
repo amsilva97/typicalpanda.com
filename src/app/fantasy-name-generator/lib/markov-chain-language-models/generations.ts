@@ -13,7 +13,7 @@ interface GenerationStep {
 /**
  * Generate a single name using a language definition with backtracking
  */
-function generateName(languageDefinition: LanguageDefinition, timeoutMs: number = 5000): string {
+export function generateName(languageDefinition: LanguageDefinition, timeoutMs: number = 5000): string {
   const languageDefinitionPatterns = languageDefinition.patterns;
   const languageDefinitionOptions = languageDefinition.options;
   const startTime = Date.now();
@@ -140,7 +140,7 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
 /**
  * Generate multiple names using a language definition
  */
-function generateNames(languageDefinition: LanguageDefinition, count: number = 10, timeoutMs: number = 5000): string[] {
+export function generateNames(languageDefinition: LanguageDefinition, count: number = 10, timeoutMs: number = 5000): string[] {
   const names: string[] = [];
   for (let i = 0; i < count; i++) {
     names.push(generateName(languageDefinition, timeoutMs));
