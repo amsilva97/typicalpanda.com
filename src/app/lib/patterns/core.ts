@@ -4,7 +4,6 @@
  */
 export interface LanguageDefinition {
     patterns: { [key: string]: string[]; };
-    meanings: { [key: string]: string; };
     options: {
         /* Name of the language */
         name: string;
