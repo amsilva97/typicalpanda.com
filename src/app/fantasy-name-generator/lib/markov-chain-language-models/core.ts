@@ -5,31 +5,13 @@
 export interface LanguageDefinition {
     patterns: { [key: string]: string[]; };
     options: {
-        /* Name of the language */
-        name: string;
-
-        /* Minimum length of generated names */
-        minLength: number;
-
-        /* Maximum length of generated names */
-        maxLength: number;
-
-        /* Start marker for generation */
-        startMarker: string;
-
-        /* End marker for generation */
-        endMarker: string;
-
-        /**
-         * Limit on consecutive single-letter patterns (-1 = disabled)
-         * e.g., if set to 2, "a-b-c" would be disallowed, but "a-bc-d" would be allowed
-         */
+        name: string; // Human-readable name of the language
+        minLength: number; // Minimum length of generated names
+        maxLength: number; // Maximum length of generated names
+        startMarker: string; // Pattern to start name generation from
+        endMarker: string; // Pattern to end name generation
         consecutiveSingleLetterLimit: number; // -1 = disabled, 0+ = max consecutive single letters allowed
-
-        /**
-         * Limit on duplicate multi-letter clusters (-1 = disabled)
-         * e.g., if set to 1, "abc" could appear only once in a name
-         */
+        nonConsecutiveSingleLetterLimit: number; // -1 = disabled, 0+ = max single letters allowed in name
         duplicateClusterLimit: number; // -1 = disabled, 0+ = max times same cluster (3+ letters) can be used
     };
 }

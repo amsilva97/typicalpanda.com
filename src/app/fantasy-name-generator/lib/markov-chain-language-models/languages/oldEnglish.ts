@@ -161,6 +161,7 @@ export const oldEnglish: LanguageDefinition = {
     startMarker: "^",
     endMarker: "$",
     consecutiveSingleLetterLimit: 1,  // Max 1 single letter in sequence
+    nonConsecutiveSingleLetterLimit: 2, // Max 2 single-letter patterns in name
     duplicateClusterLimit: 1          // Each pattern used only once per name
   }
 };
