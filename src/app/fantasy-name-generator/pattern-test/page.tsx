@@ -43,9 +43,21 @@ export default function PatternTest() {
     
     const { nameCount, uniquePercentage, diversityScore } = testResults;
     
+    // Array of excellent quality messages for variety
+    const excellentMessages = [
+      'Outstanding pattern diversity and uniqueness!',
+      'Exceptional name generation quality achieved!',
+      'Superb linguistic pattern performance!',
+      'Remarkable name diversity and authenticity!',
+      'Excellent name generation quality',
+      'Top-tier pattern generation results!',
+      'Outstanding linguistic diversity metrics!'
+    ];
+    
     // If nameCount is -1, it means no failure occurred (excellent)
     if (nameCount === -1 || (nameCount >= 80 && uniquePercentage >= 75 && diversityScore >= 3)) {
-      return { status: 'excellent', message: 'Excellent name generation quality', color: 'text-green-600' };
+      const randomMessage = excellentMessages[Math.floor(Math.random() * excellentMessages.length)];
+      return { status: 'excellent', message: randomMessage, color: 'text-green-600' };
     } else if (nameCount >= 40 && uniquePercentage >= 70 && diversityScore >= 2) {
       return { status: 'good', message: 'Good quality with room for improvement', color: 'text-yellow-600' };
     } else {
@@ -207,13 +219,33 @@ export default function PatternTest() {
             )}
 
             <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
-              <h3 className="font-semibold panda-text-primary mb-2">Understanding the Metrics:</h3>
-              <ul className="text-sm panda-text-secondary space-y-1">
-                <li><strong>Failure Point:</strong> Name count when uniqueness first dropped below 70% (-1 if never failed)</li>
-                <li><strong>Final Uniqueness:</strong> Percentage of unique names after 100 generations</li>
-                <li><strong>Diversity Score:</strong> Average edit distance between all name pairs (higher = more diverse)</li>
-                <li><strong>Quality Guide:</strong> Excellent: No failure or 80+ names, 75%+ unique, 3+ diversity | Good: 40+ names, 70%+ unique, 2+ diversity</li>
-              </ul>
+              <h3 className="font-semibold panda-text-primary mb-3">Understanding the Metrics:</h3>
+              
+              <div className="grid md:grid-cols-2 gap-4 text-sm panda-text-secondary">
+                <div className="space-y-2">
+                  <h4 className="font-medium panda-text-primary">Core Measurements:</h4>
+                  <ul className="space-y-1 ml-2">
+                    <li><strong>Failure Point:</strong> The exact generation count when uniqueness first drops below the 70% threshold. A value of -1 indicates the pattern never failed during the full test cycle.</li>
+                    <li><strong>Final Uniqueness:</strong> The percentage of completely unique names out of 100 total generations. Higher percentages indicate better pattern diversity.</li>
+                    <li><strong>Diversity Score:</strong> Average Levenshtein edit distance between all name pairs. Higher scores (3.0+) indicate greater linguistic variation between generated names.</li>
+                  </ul>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-medium panda-text-primary">Quality Classifications:</h4>
+                  <ul className="space-y-1 ml-2">
+                    <li><strong className="text-green-600">Excellent:</strong> No failure point OR 80+ names before failure, 75%+ uniqueness, 3.0+ diversity score</li>
+                    <li><strong className="text-yellow-600">Good:</strong> 40+ names before failure, 70%+ uniqueness, 2.0+ diversity score</li>
+                    <li><strong className="text-red-600">Poor:</strong> Early failure (&lt;40 names) or low diversity/uniqueness metrics</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-600">
+                <p className="text-xs panda-text-secondary italic">
+                  These metrics help evaluate how well the linguistic patterns generate diverse, authentic names while avoiding repetition and maintaining historical accuracy.
+                </p>
+              </div>
             </div>
           </div>
         )}

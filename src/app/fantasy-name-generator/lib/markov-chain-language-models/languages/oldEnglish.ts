@@ -236,7 +236,7 @@ export const oldEnglish: LanguageDefinition = {
     minNodes: 4,
     maxNodes: -1,
     consecutiveSingleLetterLimit: 2,
-    nonConsecutiveSingleLetterLimit: -1,
-    duplicateClusterLimit: -1
+    nonConsecutiveSingleLetterLimit: 3,
+    duplicateClusterLimit: 1
   }
 };
