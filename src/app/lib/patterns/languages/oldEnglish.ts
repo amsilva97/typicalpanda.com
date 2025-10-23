@@ -10,75 +10,16 @@ export const oldEnglish: LanguageDefinition = {
   patterns: {
     // Common Old English starting patterns
     "^": [
-      // Classic Old English name elements
+      // Authentic Old English name elements (favor these heavily)
       "ael", "aed", "alf", "aethel", "beorn", "cyne", "ead", "ed", "god",
       "hild", "leod", "ost", "raed", "sig", "theod", "wulf", "wyn",
-
-      // Common starting consonant clusters
-      "br", "dr", "fr", "gr", "bl", "cl", "fl", "gl", "pr", "tr", "th", "sc", "sw",
-
-      // Simple consonant starts
-      "b", "c", "d", "f", "g", "h", "k", "l", "m", "n", "p", "r", "s", "t", "w"
+      
+      // Simple but authentic starts (use sparingly)
+      "a", "e", "i", "o"
     ],
 
-    // Vowel continuations - heavily favor consonants, avoid vowel chains
-    "a": [
-      "r", "l", "n", "d", "s", "t", "m", "th", "nd", "st", "ld", "rd",
-      "dh", "gn", "mb", "wyn", "ric", "wald", "mund", "helm", "bert", "$"
-    ],
-    "e": [
-      "l", "r", "n", "d", "s", "t", "th", "nd", "st", "ld", "rd", "mb",
-      "dh", "wyn", "ric", "wald", "mund", "helm", "bert", "fred", "eth", "$"
-    ],
-    "i": [
-      "n", "r", "l", "s", "t", "d", "th", "nd", "st", "ld", "rd", "gn",
-      "mb", "wyn", "ric", "mund", "helm", "grim", "$"
-    ],
-    "o": [
-      "r", "n", "l", "s", "t", "d", "th", "nd", "st", "ld", "rd", "mb",
-      "dh", "wyn", "ric", "wald", "mund", "helm", "$"
-    ],
-    "u": [
-      "l", "r", "n", "s", "t", "d", "th", "nd", "st", "ld", "rd", "gn",
-      "mb", "$"
-    ],
-    "y": [
-      "r", "n", "l", "s", "t", "d", "th", "nd", "st", "ld", "rd", "$"
-    ],
-
-    // Consonant clusters - lead to vowels or endings
-    "th": ["a", "e", "i", "o", "u", "an", "or", "$"],
-    "nd": ["a", "e", "i", "o", "u", "or", "$"],
-    "st": ["a", "e", "i", "o", "u", "or", "$"],
-    "ld": ["a", "e", "i", "o", "u", "or", "$"],
-    "rd": ["a", "e", "i", "o", "u", "or", "$"],
-    "mb": ["a", "e", "i", "o", "u", "or", "$"],
-    "gn": ["a", "e", "i", "o", "u", "or", "$"],
-    "dh": ["a", "e", "i", "o", "u", "or", "$"],
-
-    // Single consonants - can continue or end
-    "r": ["a", "e", "i", "o", "u", "an", "or", "wyn", "ic", "ed", "$"],
-    "l": ["a", "e", "i", "o", "u", "an", "or", "wyn", "m", "d", "f", "$"],
-    "n": ["a", "e", "i", "o", "u", "wyn", "$"],
-    "d": ["a", "e", "i", "o", "u", "wyn", "$"],
-    "s": ["a", "e", "i", "o", "u", "tan", "$"],
-    "t": ["a", "e", "i", "o", "u", "an", "$"],
-    "m": ["a", "e", "i", "o", "u", "und", "$"],
-    "g": ["a", "e", "i", "o", "u", "rim", "$"],
-    "k": ["a", "e", "i", "o", "u", "$"],
-    "p": ["a", "e", "i", "o", "u", "$"],
-    "f": ["a", "e", "i", "o", "u", "red", "$"],
-    "h": ["a", "e", "i", "o", "u", "elm", "$"],
-    "v": ["a", "e", "i", "o", "u", "$"],
-    "w": ["a", "e", "i", "o", "u", "ulf", "in", "ald", "$"],
-    "c": ["a", "e", "i", "o", "u", "$"],
-
-    // Common endings
-    "an": ["a", "d", "s", "t", "$"],
-    "or": ["a", "d", "s", "t", "n", "$"],
-
-    // Classic Old English name elements - can continue or end
-    "ael": ["d", "f", "r", "red", "ric", "wyn", "$"],
+    // Major Old English name elements - lead to meaningful endings
+    "ael": ["red", "ric", "wyn", "ward", "mund", "$"],
     "aed": ["ward", "mund", "ric", "wyn", "$"],
     "alf": ["red", "ric", "wald", "$"],
     "aethel": ["red", "ric", "wald", "stan", "wyn", "$"],
@@ -86,7 +27,7 @@ export const oldEnglish: LanguageDefinition = {
     "cyne": ["ric", "wald", "mund", "$"],
     "ead": ["mund", "ric", "ward", "wyn", "$"],
     "ed": ["mund", "ric", "ward", "wyn", "$"],
-    "god": ["ric", "mund", "wyn", "$"],
+    "god": ["ric", "mund", "wyn", "win", "$"],
     "hild": ["a", "e", "red", "ric", "helm", "$"],
     "leod": ["ric", "mund", "gar", "$"],
     "ost": ["ric", "mund", "gar", "$"],
@@ -96,65 +37,35 @@ export const oldEnglish: LanguageDefinition = {
     "wulf": ["ric", "red", "stan", "$"],
     "wyn": ["a", "d", "red", "ric", "$"],
 
-    // Consonant cluster starters
-    "br": ["a", "e", "i", "o", "u", "$"],
-    "dr": ["a", "e", "i", "o", "u", "$"],
-    "fr": ["a", "e", "i", "o", "u", "$"],
-    "gr": ["a", "e", "i", "o", "u", "$"],
-    "bl": ["a", "e", "i", "o", "u", "$"],
-    "cl": ["a", "e", "i", "o", "u", "$"],
-    "fl": ["a", "e", "i", "o", "u", "$"],
-    "gl": ["a", "e", "i", "o", "u", "$"],
-    "pr": ["a", "e", "i", "o", "u", "$"],
-    "tr": ["a", "e", "i", "o", "u", "$"],
+    // Vowel continuations - lead to authentic consonants or endings
+    "a": ["l", "n", "d", "ld", "nd", "red", "ric", "$"],
+    "e": ["l", "r", "n", "d", "ld", "nd", "ric", "fred", "$"],
+    "i": ["n", "r", "l", "s", "ld", "ric", "mund", "$"],
+    "o": ["r", "n", "l", "s", "ld", "ric", "wald", "$"],
 
-    // Classic Old English ending clusters
-    "ric": ["$"],        // -ric (ruler, king)
-    "wald": ["$"],       // -wald (rule, power) 
-    "mund": ["$"],       // -mund (protection)
-    "helm": ["$"],       // -helm (helmet, protection)
-    "bert": ["$"],       // -bert (bright)
-    "fred": ["$"],       // -fred (peace)
-    "win": ["$"],        // -win (friend)
-    "red": ["$"],        // -red (counsel)
-    "grim": ["$"],       // -grim (mask, fierce)
-    "bald": ["$"],       // -bald (bold)
-    "stan": ["$"],       // -stan (stone)
+    // Consonant endings - mostly terminate
+    "l": ["a", "e", "d", "f", "$"],
+    "n": ["a", "e", "d", "$"],
+    "d": ["a", "e", "$"],
+    "r": ["a", "e", "ed", "$"],
+    "s": ["a", "e", "$"],
+    "t": ["a", "e", "$"],
 
-    // Additional authentic Old English endings
-    "weard": ["$"],      // -weard (guard, protector)
-    "wine": ["$"],       // -wine (friend, lord)
-    "thane": ["$"],      // -thane (servant, warrior)
-    "here": ["$"],       // -here (army)
-    "flee": ["$"],       // -flee (refuge)
-    "geat": ["$"],       // -geat (gate, way)
-    "mon": ["$"],        // -mon (man)
-    "noth": ["$"],       // -noth (boldness)
-    "hard": ["$"],       // -hard (hardy)
-    "fast": ["$"],       // -fast (firm)
-    "leof": ["$"],       // -leof (dear, beloved)
-    "maer": ["$"],       // -maer (famous)
-    "mod": ["$"],        // -mod (courage)
-    "wig": ["$"],        // -wig (war)
-    "hun": ["$"],        // -hun (bear cub, young warrior)
-    "ulf": ["$"],        // -ulf (wolf)
-    "ing": ["$"],        // -ing (meadow, descendant)
-    "ton": ["$"],        // -ton (enclosure, town)
-    "ham": ["$"],        // -ham (home, village)
-    "ley": ["$"],        // -ley (meadow, clearing)
-    "ford": ["$"],       // -ford (ford, crossing)
-    "burg": ["$"],       // -burg (fortress, town)
-    "wick": ["$"],       // -wick (village, dwelling)
+    // Compound endings - mostly terminate
+    "ld": ["a", "e", "$"],
+    "nd": ["a", "e", "$"],
 
-    // Common simple endings
-    "eth": ["$"],        // -eth
-    "en": ["$"],         // -en
-    "ar": ["$"],         // -ar
-    "er": ["$"],         // -er
-    "el": ["$"],         // -el
-    "id": ["$"],         // -id
-    "od": ["$"],         // -od
-    "ad": ["$"]          // -ad
+    // Classic Old English endings - always terminate
+    "ric": ["$"],        // ruler, king
+    "wald": ["$"],       // rule, power
+    "mund": ["$"],       // protection
+    "helm": ["$"],       // helmet, protection
+    "red": ["$"],        // counsel
+    "win": ["$"],        // friend
+    "ward": ["$"],       // guard, protector
+    "stan": ["$"],       // stone
+    "fred": ["$"],       // peace
+    "gar": ["$"]         // spear
   },
 
   meanings: {
@@ -232,8 +143,8 @@ export const oldEnglish: LanguageDefinition = {
     maxLength: 12,
     startMarker: "^",
     endMarker: "$",
-    consecutiveSingleLetterLimit: 2,
-    duplicateClusterLimit: 2
+    consecutiveSingleLetterLimit: 1, // Stricter: max 1 consecutive single letter
+    duplicateClusterLimit: 1        // Stricter: each pattern can only be used once
   }
 };
 
