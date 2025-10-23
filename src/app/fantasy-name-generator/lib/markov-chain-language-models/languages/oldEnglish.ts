@@ -235,7 +235,7 @@ export const oldEnglish: LanguageDefinition = {
     endMarker: "$",
     minNodes: 4,
     maxNodes: -1,
-    consecutiveSingleLetterLimit: -1,
+    consecutiveSingleLetterLimit: 1,
     nonConsecutiveSingleLetterLimit: -1,
     duplicateClusterLimit: -1
   }

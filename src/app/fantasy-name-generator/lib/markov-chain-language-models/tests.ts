@@ -60,13 +60,13 @@ function getDiversityScore(names: string[]): number {
  * Simple diversity test that generates names one by one until it fails
  * Returns [finalNameCount, finalUniquePercentage, finalDiversityScore]
  */
-export function testNameDiversity(supportedLanguage: SupportedLanguage): [number, number, number] {
+function _testNameDiversity(supportedLanguage: SupportedLanguage): [number, number, number] {
     const languageDefinition = getLanguageDefinition(supportedLanguage);
     const generatedNames: Set<string> = new Set();
     let totalGeneratedNames = 0;
     let totalDuplicatesGenerated = 0;
     let percentage = 0;
-    let failed_at = -1;
+    let failedAt = -1;
 
     const calc_percent = () => {
         return ((totalGeneratedNames - totalDuplicatesGenerated) / totalGeneratedNames) * 100;
@@ -83,12 +83,30 @@ export function testNameDiversity(supportedLanguage: SupportedLanguage): [number
         }
 
         percentage = calc_percent();
-        if (percentage < 70 && failed_at === -1 && i >= 10)
-            failed_at = totalGeneratedNames;
+        if (percentage < 70 && failedAt === -1 && i >= 10)
+            failedAt = totalGeneratedNames;
     }
 
     const finalUniquePercentage = calc_percent();
     const finalDiversityScore = getDiversityScore(Array.from(generatedNames));
 
-    return [failed_at, finalUniquePercentage, finalDiversityScore];
+    return [failedAt, finalUniquePercentage, finalDiversityScore];
+}
+
+export function testNameDiversity(supportedLanguage: SupportedLanguage): [number, number, number] {
+    let failedAts = [];
+    let finalUniquePercentages = [];
+    let finalDiversityScores = [];
+    for (let i = 0; i < 100; i++) {
+        const [failedAt, uniquePercentage, diversityScore] = _testNameDiversity(supportedLanguage);
+        failedAts.push(failedAt);
+        finalUniquePercentages.push(uniquePercentage);
+        finalDiversityScores.push(diversityScore);
+    }
+    
+    const avgFailedAt = failedAts.reduce((sum, val) => sum + (val === -1 ? 0 : val), 0) / failedAts.filter(val => val !== -1).length || -1;
+    const avgUniquePercentage = finalUniquePercentages.reduce((sum, val) => sum + val, 0) / finalUniquePercentages.length;
+    const avgDiversityScore = finalDiversityScores.reduce((sum, val) => sum + val, 0) / finalDiversityScores.length;
+
+    return [avgFailedAt, avgUniquePercentage, avgDiversityScore];
 }
