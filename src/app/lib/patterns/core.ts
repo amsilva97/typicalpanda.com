@@ -11,8 +11,23 @@ export interface LanguageDefinition {
         maxLength: number;
         startMarker: string;
         endMarker: string;
+
+        // Limits how many consecutive single-letter patterns can appear
         consecutiveSingleLetterLimit: number; // -1 = disabled, 0+ = max consecutive single letters allowed
-        duplicateClusterLimit: number; // -1 = disabled, 0+ = max times same cluster (3+ letters) can be used
+
+        // Limits how many times the same multi-letter cluster can appear
+        duplicateClusterLimit: number; // -1 = disabled, 0+ = max times same cluster (2+ letters) can be used
+        maxVowelChain: number; // -1 = disabled, 0+ = max consecutive vowels allowed
+        maxConsonantChain: number; // -1 = disabled, 0+ = max consecutive consonants allowed
+        forbiddenPatterns: string[]; // Patterns that should never be used
+        requiredPatterns: string[]; // Patterns that must appear at least once (empty = no requirement)
+        minPatternLength: number; // -1 = disabled, 0+ = minimum length for non-single-letter patterns
+        maxPatternLength: number; // -1 = disabled, 0+ = maximum length for any pattern
+        vowelRatio: number; // -1 = disabled, 0.0-1.0 = target ratio of vowels to total letters
+        doubleLetterLimit: number; // -1 = disabled, 0+ = max consecutive identical letters (aa, bb, etc.)
+        endingPatternWeight: number; // 0.0-1.0 = probability bias toward ending patterns when near target length
+        preferredStartPatterns: string[]; // Patterns to favor at the beginning (empty = no preference)
+        preferredEndPatterns: string[]; // Patterns to favor at the end (empty = no preference)
     };
 }
 
