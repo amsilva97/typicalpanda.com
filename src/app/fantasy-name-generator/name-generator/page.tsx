@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { generateNamesForLanguage } from '../lib/patterns/generations';
-import { getLanguageDisplayName } from '../lib/patterns/core';
-import { getSupportedLanguages } from '../lib/patterns/core';
-import { SupportedLanguage } from '../lib/patterns/core';
+import { generateNamesForLanguage } from '../lib/markov-chain-language-models/generations';
+import { getLanguageDisplayName } from '../lib/markov-chain-language-models/core';
+import { getSupportedLanguages } from '../lib/markov-chain-language-models/core';
+import { SupportedLanguage } from '../lib/markov-chain-language-models/core';
 
 // Create dynamic language mapping from all supported languages
 const createLanguageMapping = () => {
