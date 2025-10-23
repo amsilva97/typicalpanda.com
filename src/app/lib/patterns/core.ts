@@ -6,28 +6,32 @@ export interface LanguageDefinition {
     patterns: { [key: string]: string[]; };
     meanings: { [key: string]: string; };
     options: {
+        /* Name of the language */
         name: string;
+
+        /* Minimum length of generated names */
         minLength: number;
+
+        /* Maximum length of generated names */
         maxLength: number;
+
+        /* Start marker for generation */
         startMarker: string;
+
+        /* End marker for generation */
         endMarker: string;
 
-        // Limits how many consecutive single-letter patterns can appear
+        /**
+         * Limit on consecutive single-letter patterns (-1 = disabled)
+         * e.g., if set to 2, "a-b-c" would be disallowed, but "a-bc-d" would be allowed
+         */
         consecutiveSingleLetterLimit: number; // -1 = disabled, 0+ = max consecutive single letters allowed
 
-        // Limits how many times the same multi-letter cluster can appear
-        duplicateClusterLimit: number; // -1 = disabled, 0+ = max times same cluster (2+ letters) can be used
-        maxVowelChain: number; // -1 = disabled, 0+ = max consecutive vowels allowed
-        maxConsonantChain: number; // -1 = disabled, 0+ = max consecutive consonants allowed
-        forbiddenPatterns: string[]; // Patterns that should never be used
-        requiredPatterns: string[]; // Patterns that must appear at least once (empty = no requirement)
-        minPatternLength: number; // -1 = disabled, 0+ = minimum length for non-single-letter patterns
-        maxPatternLength: number; // -1 = disabled, 0+ = maximum length for any pattern
-        vowelRatio: number; // -1 = disabled, 0.0-1.0 = target ratio of vowels to total letters
-        doubleLetterLimit: number; // -1 = disabled, 0+ = max consecutive identical letters (aa, bb, etc.)
-        endingPatternWeight: number; // 0.0-1.0 = probability bias toward ending patterns when near target length
-        preferredStartPatterns: string[]; // Patterns to favor at the beginning (empty = no preference)
-        preferredEndPatterns: string[]; // Patterns to favor at the end (empty = no preference)
+        /**
+         * Limit on duplicate multi-letter clusters (-1 = disabled)
+         * e.g., if set to 1, "abc" could appear only once in a name
+         */
+        duplicateClusterLimit: number; // -1 = disabled, 0+ = max times same cluster (3+ letters) can be used
     };
 }
 
