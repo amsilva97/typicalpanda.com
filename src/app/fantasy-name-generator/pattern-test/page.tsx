@@ -1,286 +1,53 @@
 'use client';
 
 import { useState } from 'react';
-import { generateNamesForLanguage } from '../lib/markov-chain-language-models/generations';
-import { SupportedLanguage, getLanguageDefinition } from '../lib/markov-chain-language-models/core';
+import { SupportedLanguage } from '../lib/markov-chain-language-models/core';
+import { testNameDiversity } from '../lib/markov-chain-language-models/tests';
 
 export default function PatternTest() {
   const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>(SupportedLanguage.OLD_ENGLISH);
   const [isRunning, setIsRunning] = useState(false);
-  
-  const runPatternStructureTest = () => {
-    console.log('🔍 === Pattern Structure Test ===');
-    
-    try {
-      const languageDefinition = getLanguageDefinition(selectedLanguage);
-      const patterns = languageDefinition.patterns;
-      
-      console.log('📊 Pattern Statistics:');
-      console.log(`Total patterns: ${Object.keys(patterns).length}`);
-      
-      // Analyze pattern types
-      const startPatterns = patterns['^'] || [];
-      const endingPatterns = Object.keys(patterns).filter(key => 
-        patterns[key].includes('$')
-      );
-      
-      console.log(`Start patterns: ${startPatterns.length}`);
-      console.log(`Patterns that can end: ${endingPatterns.length}`);
-      
-      // Check for orphaned patterns (patterns that are referenced but don't exist)
-      const allReferencedPatterns = new Set<string>();
-      Object.values(patterns).forEach((patternArray: string[]) => {
-        patternArray.forEach((pattern: string) => {
-          if (pattern !== '$') {
-            allReferencedPatterns.add(pattern);
-          }
-        });
-      });
-      
-      const orphanedPatterns = Array.from(allReferencedPatterns).filter(
-        pattern => !patterns[pattern]
-      );
-      
-      if (orphanedPatterns.length === 0) {
-        console.log('✅ No orphaned patterns found');
-      } else {
-        console.log('❌ Orphaned patterns found:', orphanedPatterns);
-      }
-      
-      // Check for dead-end patterns (patterns that exist but can't lead anywhere)
-      const deadEndPatterns = Object.keys(patterns).filter(key => {
-        const destinations = patterns[key];
-        return key !== '^' && destinations.length === 0;
-      });
-      
-      if (deadEndPatterns.length === 0) {
-        console.log('✅ No dead-end patterns found');
-      } else {
-        console.log('⚠️  Dead-end patterns found:', deadEndPatterns);
-      }
-      
-      // Show start patterns
-      console.log('\n🚀 Start Patterns:', startPatterns);
-      
-      // Show most connected patterns
-      const connectionCounts = new Map<string, number>();
-      Object.entries(patterns).forEach(([key, destinations]) => {
-        connectionCounts.set(key, (destinations as string[]).length);
-      });
-      
-      const topConnected = Array.from(connectionCounts.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-      
-      console.log('\n🔗 Most Connected Patterns:');
-      topConnected.forEach(([pattern, count]) => {
-        console.log(`  "${pattern}": ${count} connections -> [${patterns[pattern].slice(0, 3).join(', ')}${patterns[pattern].length > 3 ? '...' : ''}]`);
-      });
-      
-    } catch (error) {
-      console.error('❌ Pattern structure test failed:', error);
-    }
-    
-    console.log('');
-  };
+  const [testResults, setTestResults] = useState<{
+    uniquePercentage: number;
+    diversityScore: number;
+    sampleSize: number;
+  } | null>(null);
 
-  const runPatternFlowTest = () => {
-    console.log('🌊 === Pattern Flow Test ===');
-    
-    try {
-      const languageDefinition = getLanguageDefinition(selectedLanguage);
-      const patterns = languageDefinition.patterns;
-      
-      // Test specific flows manually
-      const testFlows = [
-        ['ael', 'red'],
-        ['god', 'ric'],
-        ['wulf', 'stan'],
-        ['aethel', 'wald'],
-        ['ed', 'mund']
-      ];
-      
-      console.log('Testing specific authentic flows:');
-      testFlows.forEach(([start, expectedEnd]) => {
-        const startDestinations = patterns[start] || [];
-        if (startDestinations.includes(expectedEnd)) {
-          console.log(`✅ ${start} -> ${expectedEnd} (creates "${start}${expectedEnd}")`);
-        } else {
-          console.log(`❌ ${start} -/-> ${expectedEnd} (missing connection)`);
-          console.log(`   Available: [${startDestinations.join(', ')}]`);
-        }
-      });
-      
-      // Test that major elements can reach endings
-      const majorElements = ['ael', 'god', 'wulf', 'aethel', 'ed', 'ead'];
-      console.log('\nTesting paths to endings:');
-      
-      majorElements.forEach(element => {
-        const canReachEnd = canReachEndingFrom(patterns, element, new Set());
-        if (canReachEnd) {
-          console.log(`✅ "${element}" can reach an ending`);
-        } else {
-          console.log(`❌ "${element}" cannot reach an ending`);
-        }
-      });
-      
-    } catch (error) {
-      console.error('❌ Pattern flow test failed:', error);
-    }
-    
-    console.log('');
-  };
-
-  const runGenerationPathTest = () => {
-    console.log('🛤️  === Generation Path Test ===');
-    
-    try {
-      // Generate names with debug info
-      const names = generateNamesForLanguage(selectedLanguage, 5);
-      
-      console.log('Generated names with analysis:');
-      names.forEach((name: string, index: number) => {
-        console.log(`${index + 1}. "${name}" (${name.length} chars)`);
-        
-        // Try to analyze the name structure
-        analyzeNameStructure(name);
-      });
-      
-    } catch (error) {
-      console.error('❌ Generation path test failed:', error);
-    }
-    
-    console.log('');
-  };
-
-  const runPatternQualityTest = () => {
-    console.log('⭐ === Pattern Quality Test ===');
-    
-    try {
-      const names = generateNamesForLanguage(selectedLanguage, 20);
-      
-      // Test for authentic Old English characteristics
-      const authenticityTests = {
-        'Contains authentic prefixes': (name: string) => 
-          ['ael', 'god', 'wulf', 'aethel', 'ed', 'ead'].some(prefix => name.startsWith(prefix)),
-        
-        'Contains authentic endings': (name: string) =>
-          ['ric', 'mund', 'ward', 'win', 'wyn', 'red', 'fred', 'gar', 'stan', 'wald'].some(ending => name.endsWith(ending)),
-        
-        'No awkward single letters': (name: string) =>
-          !/(^|[aeiou])[bcdfghjklmnpqrstvwxyz]([bcdfghjklmnpqrstvwxyz]|$)/i.test(name),
-        
-        'Pronounceable': (name: string) =>
-          !/[bcdfghjklmnpqrstvwxyz]{4,}/i.test(name) && !/[aeiou]{4,}/i.test(name),
-        
-        'Reasonable length': (name: string) =>
-          name.length >= 4 && name.length <= 10
-      };
-      
-      console.log('Quality test results:');
-      Object.entries(authenticityTests).forEach(([testName, testFunc]) => {
-        const passCount = names.filter(testFunc).length;
-        const percentage = ((passCount / names.length) * 100).toFixed(1);
-        
-        if (passCount === names.length) {
-          console.log(`✅ ${testName}: ${passCount}/${names.length} (${percentage}%)`);
-        } else if (passCount >= names.length * 0.8) {
-          console.log(`⚠️  ${testName}: ${passCount}/${names.length} (${percentage}%)`);
-        } else {
-          console.log(`❌ ${testName}: ${passCount}/${names.length} (${percentage}%)`);
-        }
-      });
-      
-      // Show some examples
-      console.log('\nGenerated names:', names);
-      
-      // Find best and worst examples
-      const scored = names.map((name: string) => ({
-        name,
-        score: Object.values(authenticityTests).filter(test => test(name)).length
-      }));
-      
-      scored.sort((a: any, b: any) => b.score - a.score);
-      
-      console.log(`\nBest examples: ${scored.slice(0, 3).map((s: any) => `"${s.name}" (${s.score}/5)`).join(', ')}`);
-      console.log(`Worst examples: ${scored.slice(-3).map((s: any) => `"${s.name}" (${s.score}/5)`).join(', ')}`);
-      
-    } catch (error) {
-      console.error('❌ Pattern quality test failed:', error);
-    }
-    
-    console.log('');
-  };
-
-  // Helper function to check if a pattern can reach an ending
-  function canReachEndingFrom(patterns: { [key: string]: string[] }, start: string, visited: Set<string>): boolean {
-    if (visited.has(start)) return false; // Avoid cycles
-    
-    const destinations = patterns[start] || [];
-    
-    if (destinations.includes('$')) return true;
-    
-    visited.add(start);
-    
-    for (const destination of destinations) {
-      if (destination !== '$' && canReachEndingFrom(patterns, destination, new Set(visited))) {
-        return true;
-      }
-    }
-    
-    return false;
-  }
-
-  // Helper function to analyze name structure
-  function analyzeNameStructure(name: string) {
-    const commonPrefixes = ['ael', 'god', 'wulf', 'aethel', 'ed', 'ead', 'alf', 'beorn', 'cyne'];
-    const commonSuffixes = ['ric', 'mund', 'ward', 'win', 'wyn', 'red', 'fred', 'gar', 'stan', 'wald'];
-    
-    const foundPrefix = commonPrefixes.find(prefix => name.startsWith(prefix));
-    const foundSuffix = commonSuffixes.find(suffix => name.endsWith(suffix));
-    
-    let analysis = '   ';
-    
-    if (foundPrefix) {
-      analysis += `Prefix: "${foundPrefix}" `;
-    }
-    
-    if (foundSuffix) {
-      analysis += `Suffix: "${foundSuffix}" `;
-    }
-    
-    if (foundPrefix && foundSuffix) {
-      const middle = name.slice(foundPrefix.length, -foundSuffix.length);
-      if (middle) {
-        analysis += `Middle: "${middle}" `;
-      }
-      analysis += `(Structure: ${foundPrefix}+${middle || '∅'}+${foundSuffix})`;
-    }
-    
-    if (analysis.trim()) {
-      console.log(analysis);
-    }
-  }
-
-  const runAllPatternTests = async () => {
+  const runDiversityTest = async () => {
     setIsRunning(true);
-    console.log(`🧪 === Running All Pattern Tests for ${selectedLanguage} ===\n`);
+    setTestResults(null);
     
     try {
-      runPatternStructureTest();
-      runPatternFlowTest();
-      runGenerationPathTest();
-      runPatternQualityTest();
+      const sampleSize = 50;
       
-      console.log('✅ All Pattern Tests Complete!');
+      const [uniquePercentage, diversityScore] = testNameDiversity(selectedLanguage, sampleSize);
+      
+      setTestResults({
+        uniquePercentage,
+        diversityScore,
+        sampleSize
+      });
+      
     } catch (error) {
-      console.error('❌ Pattern tests failed:', error);
+        //TODO: handle error appropriately, show it in the UI perhaps
     } finally {
       setIsRunning(false);
     }
   };
 
-  return (
+  const getQualityAssessment = () => {
+    if (!testResults) return null;
+    
+    const { uniquePercentage, diversityScore } = testResults;
+    
+    if (uniquePercentage >= 95 && diversityScore >= 3) {
+      return { status: 'excellent', message: 'Excellent name generation quality', color: 'text-green-600' };
+    } else if (uniquePercentage >= 85 && diversityScore >= 2) {
+      return { status: 'good', message: 'Good quality with room for improvement', color: 'text-yellow-600' };
+    } else {
+      return { status: 'poor', message: 'Poor quality - names too similar or duplicated', color: 'text-red-600' };
+    }
+  };  return (
     <div className="min-h-screen panda-bg-primary py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-6">
@@ -294,7 +61,7 @@ export default function PatternTest() {
         
         <h1 className="text-3xl font-bold panda-text-primary mb-8">
           <span className="panda-text-gradient-gold">
-            Pattern Test Suite
+            Name Diversity Test
           </span>
         </h1>
         
@@ -322,7 +89,7 @@ export default function PatternTest() {
             
             <div className="pt-4">
               <button
-                onClick={runAllPatternTests}
+                onClick={runDiversityTest}
                 disabled={isRunning}
                 className={`w-full py-3 px-6 rounded-md font-medium transition-colors ${
                   isRunning
@@ -330,17 +97,67 @@ export default function PatternTest() {
                     : 'panda-button-primary hover:scale-105 transition-transform'
                 }`}
               >
-                {isRunning ? 'Running Tests...' : '🧪 Run Pattern Tests'}
+                {isRunning ? 'Running Test...' : '🧪 Run Diversity Test (50 names)'}
               </button>
             </div>
           </div>
           
           <div className="mt-4 p-3 panda-accent-bg rounded-md">
             <p className="panda-accent-text text-sm">
-              💡 <strong>Tip:</strong> Open the browser console (F12 → Console) to see detailed test results and analysis.
+              💡 <strong>Tip:</strong> This test generates 50 names and analyzes their uniqueness and diversity using Levenshtein distance.
             </p>
           </div>
         </div>
+
+        {testResults && (
+          <div className="panda-card p-6">
+            <h2 className="text-xl font-semibold panda-text-primary mb-4">Test Results</h2>
+            
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold panda-text-primary mb-2">
+                  {testResults.uniquePercentage.toFixed(1)}%
+                </div>
+                <div className="text-sm panda-text-secondary">Uniqueness</div>
+                <div className="text-xs panda-text-secondary mt-1">
+                  ({Math.round(testResults.uniquePercentage * testResults.sampleSize / 100)} unique out of {testResults.sampleSize})
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <div className="text-3xl font-bold panda-text-primary mb-2">
+                  {testResults.diversityScore.toFixed(2)}
+                </div>
+                <div className="text-sm panda-text-secondary">Diversity Score</div>
+                <div className="text-xs panda-text-secondary mt-1">
+                  Average Levenshtein Distance
+                </div>
+              </div>
+            </div>
+
+            {getQualityAssessment() && (
+              <div className={`text-center p-4 rounded-md border-2 ${
+                getQualityAssessment()?.status === 'excellent' ? 'border-green-200 bg-green-50' :
+                getQualityAssessment()?.status === 'good' ? 'border-yellow-200 bg-yellow-50' :
+                'border-red-200 bg-red-50'
+              }`}>
+                <div className={`font-semibold ${getQualityAssessment()?.color}`}>
+                  {getQualityAssessment()?.status === 'excellent' ? '✅' :
+                   getQualityAssessment()?.status === 'good' ? '⚠️' : '❌'} {getQualityAssessment()?.message}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+              <h3 className="font-semibold panda-text-primary mb-2">Understanding the Metrics:</h3>
+              <ul className="text-sm panda-text-secondary space-y-1">
+                <li><strong>Uniqueness:</strong> Percentage of generated names that are completely unique (100% = no duplicates)</li>
+                <li><strong>Diversity Score:</strong> Average edit distance between all name pairs (higher = more diverse)</li>
+                <li><strong>Quality Guide:</strong> Excellent: 95%+ unique, 3+ diversity | Good: 85%+ unique, 2+ diversity</li>
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

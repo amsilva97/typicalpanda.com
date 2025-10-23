@@ -96,7 +96,6 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
       for (const step of stack) {
         debug_segments.push(step.currentPattern);
       }
-      console.log([currentStep.fullName, ...debug_segments]);
 
       return currentStep.fullName;
     }
