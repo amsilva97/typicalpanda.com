@@ -13,6 +13,7 @@ export interface LanguageDefinition {
         consecutiveSingleLetterLimit: number; // Max consecutive single-letter patterns (-1, disabled)
         nonConsecutiveSingleLetterLimit: number; // Max non-consecutive single-letter patterns (-1, disabled)
         duplicateClusterLimit: number; // Max duplicate clusters (+3-letter patterns) (-1, disabled)
+        totalClusterLimit: number; // Max total clusters (+3-letter patterns) (-1, disabled)
     };
 }
 

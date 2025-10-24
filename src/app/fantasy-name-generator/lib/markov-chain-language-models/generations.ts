@@ -10,6 +10,7 @@ interface GenerationStep {
   consecutiveSingleLetter: number;
   nonConsecutiveSingleLetter: number;
   duplicateCluster: { [key: string]: number; };
+  totalClusterLimit: number;
 }
 
 /**
@@ -35,7 +36,8 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
     nodeCount: 0,
     consecutiveSingleLetter: 0,
     nonConsecutiveSingleLetter: 0,
-    duplicateCluster: {}
+    duplicateCluster: {},
+    totalClusterLimit: 0
   });
 
   // Picks a int between 'LanguageDefinition.options.minNodes' and 'LanguageDefinition.options.maxNodes'
@@ -75,6 +77,20 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
     // Enforce non-consecutive single-letter limit
     if (languageDefinitionOptions.nonConsecutiveSingleLetterLimit !== -1 && currentStep.nonConsecutiveSingleLetter >= languageDefinitionOptions.nonConsecutiveSingleLetterLimit)
       validOptions = validOptions.filter(option => option.length !== 1);
+
+    // Enforce duplicate cluster limit
+    if (languageDefinitionOptions.duplicateClusterLimit !== -1) {
+      validOptions = validOptions.filter(option => {
+        const clusterCount = currentStep.duplicateCluster[option] || 0;
+        return clusterCount < languageDefinitionOptions.duplicateClusterLimit;
+      });
+    }
+
+    // Enforce total cluster limit
+    if (languageDefinitionOptions.totalClusterLimit !== -1 && currentStep.totalClusterLimit >= languageDefinitionOptions.totalClusterLimit) {
+      validOptions = validOptions.filter(option => option.length < 3);
+    }
+
 
     // If there are no valid options, backtrack
     if (validOptions.length === 0) {
@@ -121,8 +137,9 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
       availableOptions: [...nextPatterns],
       nodeCount: currentStep.nodeCount + 1,
       consecutiveSingleLetter: nextOption.length === 1 ? currentStep.consecutiveSingleLetter + 1 : 0,
-      nonConsecutiveSingleLetter: nextOption.length === 1 ? currentStep.nonConsecutiveSingleLetter + 1 : currentStep.nonConsecutiveSingleLetter,
-      duplicateCluster: newDuplicateCluster
+      nonConsecutiveSingleLetter: currentStep.nonConsecutiveSingleLetter + (nextOption.length === 1 ? 1 : 0),
+      duplicateCluster: newDuplicateCluster,
+      totalClusterLimit: currentStep.totalClusterLimit + (nextOption.length >= 3 ? 1 : 0)
     });
   }
 
