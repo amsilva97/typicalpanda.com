@@ -11,6 +11,40 @@ const consonantConnections = () => ["d", "g", "r", "l", "n", "t", "s"];
 const allVowels = () => ["a", "e", "i", "o"];
 const shortEndings = () => ["ric", "bert", "helm", "wick"];
 const mediumEndings = () => ["mund", "bert", "helm", "wick"];
+const simpleConsonants = () => ["b", "d", "f", "g", "h", "r", "w", "m"];
+const twoLetterStarts = () => ["fr", "th", "el", "er"];
+const commonPrefixes = () => ["red", "stan", "gar"];
+const rareEndings = () => ["ric", "mund", "bert", "helm", "wick"];
+const vowelEndings = () => ["a", "e"];
+const redPatterns = () => ["red", ...commonEndings()];
+const stanPatterns = () => ["stan", ...commonEndings()];
+const singleLetterFlow = () => ["d", "f", "fr", "r"];
+const commonStarts = () => ["Al", "Ael", "Aeth", "Ead", "Ed", "Eg"];
+const godlyStarts = () => ["Elf", "God", "Grim"];
+const heroicStarts = () => ["Har", "Hild", "Leo", "Os"];
+const warriorStarts = () => ["Ulf", "Wil", "Wulf"];
+const nobleStarts = () => ["Cuth", "Dun", "Eor", "Sig", "Thur"];
+const rareStarts = () => ["Wend", "Oth", "Bri", "Cen", "Ord"];
+const singleVowelFlow = () => ["n", "r", "s", "d", "l", "t"];
+const commonSyllables = () => ["ed", "ic", "ald"];
+const rareElements = () => ["ric", "wald", "bert", "helm", "wick"];
+const multiLetterEndings = () => ["ar", "er", "ir", "ulf", "wen", "ard"];
+const shortSyllables = () => ["d", "l", "r"];
+const complexEndings = () => ["ald", "ert", "orn", "erg", "urg", "rant"];
+const structuralElements = () => ["ard", "ild", "ulf", "elm", "ert"];
+const flowElements = () => ["ald", "ard", "ulf", "ine", "old", "in"];
+const buildingBlocks = () => ["er", "und", "ild", "ond", "ael"];
+const frPatterns = () => ["ed", "ic", "ith", "ied", "ank"];
+const thPatterns = () => ["red", "ulf", "ild", "ane"];
+const elPatterns = () => ["d", "f", "m", "mer"];
+const basicConsonantFlow = () => ["g", "m", "w", "r"];
+const simpleLetterGroups = () => ["f", "fr", "g", "r", "d", "m"];
+const specialElements = () => ["heim", "kell"];
+const rareSpecialElements = () => ["fwin", "pold"];
+const battleElements = () => ["geat", "laf"];
+const mysticalElements = () => ["here", "noth"];
+const structureElements = () => ["burg", "gard", "run"];
+const arPattern = () => ["d", "ic", "ald", "ell", "ny"];
 const terminators = () => ["$"];
 const finalize = (n: string[]) => Array.from(new Set(n));
 
@@ -22,46 +56,46 @@ const finalize = (n: string[]) => Array.from(new Set(n));
 export const oldEnglish: LanguageDefinition = {
   patterns: {
     // Start marker - expanded Old English name beginnings
-    "^": ["Al", "Ael", "Aeth", "Ead", "Ed", "Eg", "Elf", "God", "Grim", "Har", "Hild", "Leo", "Os", "Ulf", "Wil", "Wulf", "Cuth", "Dun", "Eor", "Sig", "Thur", "Wend", "Oth", "Bri", "Cen", "Ord"],
+    "^": finalize([...commonStarts(), ...godlyStarts(), ...heroicStarts(), ...warriorStarts(), ...nobleStarts(), ...rareStarts()]),
 
     // Expanded starting patterns - now connected to major clusters
-    "Al": finalize(["b", "d", "fr", "g", "r", "f", "m", "w", ...commonEndings()]),
-    "Ael": finalize(["f", "fr", "g", "r", "d", "m", "red", "stan", ...commonEndings()]),
-    "Aeth": finalize(["el", "er", "red", "stan", ...commonEndings()]),
-    "Ead": finalize(["g", "m", "w", "r", "b", ...commonEndings()]),
-    "Ed": finalize(["g", "m", "w", "r", "gar", ...commonEndings()]),
+    "Al": finalize([...simpleConsonants(), ...commonEndings()]),
+    "Ael": finalize([...simpleLetterGroups(), ...commonPrefixes(), ...commonEndings()]),
+    "Aeth": finalize([...twoLetterStarts(), ...commonPrefixes(), ...commonEndings()]),
+    "Ead": finalize([...basicConsonantFlow(), "b", ...commonEndings()]),
+    "Ed": finalize([...basicConsonantFlow(), "gar", ...commonEndings()]),
     "Eg": finalize(["b", "g", ...commonEndings()]),
-    "Elf": finalize(["r", "w", "red", "gar", "stan", ...commonEndings()]),
+    "Elf": finalize(["r", "w", ...commonPrefixes(), ...commonEndings()]),
     "God": finalize(["fr", "w", "r", ...commonEndings()]),
     "Grim": finalize(["b", "h", "ald", "bald", ...commonEndings()]),
     "Har": finalize(["d", "old", "ald", "ry", "mond", ...commonEndings()]),
-    "Hild": finalize(["a", "e", "red", "burg", "gard", "run", ...commonEndings()]),
-    "Leo": finalize(["f", "fr", "fwin", "pold", ...commonEndings()]),
-    "Os": finalize(["b", "g", "r", "w", "geat", "laf", ...commonEndings()]),
-    "Ulf": finalize(["r", "w", "gar", "red", "stan", "heim", "kell", ...commonEndings()]),
+    "Hild": finalize([...vowelEndings(), "red", ...structureElements(), ...commonEndings()]),
+    "Leo": finalize(["f", "fr", ...rareSpecialElements(), ...commonEndings()]),
+    "Os": finalize(["b", "g", "r", "w", ...battleElements(), ...commonEndings()]),
+    "Ulf": finalize(["r", "w", ...commonPrefixes(), ...specialElements(), ...commonEndings()]),
     "Wil": finalize(["f", "fr", "h", "grim", "laf", ...commonEndings()]),
-    "Wulf": finalize(["r", "st", "gar", "red", "here", "noth", ...commonEndings()]),
-    "Cuth": finalize(["red", ...commonEndings()]),
-    "Dun": finalize(["stan", ...commonEndings()]),
+    "Wulf": finalize(["r", "st", "gar", "red", ...mysticalElements(), ...commonEndings()]),
+    "Cuth": finalize(redPatterns()),
+    "Dun": finalize(stanPatterns()),
     "Eor": finalize(["l", "men", ...commonEndings()]),
-    "Sig": finalize(["red", ...commonEndings()]),
-    "Thur": finalize(["stan", ...commonEndings()]),
+    "Sig": finalize(redPatterns()),
+    "Thur": finalize(stanPatterns()),
     "Wend": finalize(["el", "il", ...shortEndings()]),
-    "Oth": finalize(["red", ...commonEndings()]),
+    "Oth": finalize(redPatterns()),
     "Bri": finalize(["ht", "c", "ard", ...shortEndings()]),
-    "Cen": finalize(["red", ...commonEndings()]),
+    "Cen": finalize(redPatterns()),
     "Ord": finalize(["gar", "wine", ...commonEndings()]),
 
     // Expanded single letter continuations
     "d": finalize(["r", "w", "g", "gar", "wine", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "g": finalize(["ar", "er", "ir", "ulf", "wen", "ard", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "l": finalize(["d", "f", "fr", "r", ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "g": finalize([...multiLetterEndings(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "l": finalize([...singleLetterFlow(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
     "f": finalize(["r", "red", "stan", "rid", "ard", ...basicEndings(), ...allVowels(), ...terminators()]),
-    "r": finalize(["ed", "ic", "ulf", "wen", "ald", "gar", ...basicEndings(), "i", ...vowelConnections(), ...terminators()]),
-    "b": finalize(["ald", "ert", "orn", "erg", "urg", "rant", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "h": finalize(["ard", "ild", "ulf", "elm", "ert", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "w": finalize(["ald", "ard", "ulf", "ine", "old", "in", ...basicEndings(), ...allVowels(), ...terminators()]),
-    "m": finalize(["er", "und", "ild", "ond", "ael", ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "r": finalize([...commonSyllables(), "ulf", "wen", "gar", ...basicEndings(), "i", ...vowelConnections(), ...terminators()]),
+    "b": finalize([...complexEndings(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "h": finalize([...structuralElements(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "w": finalize([...flowElements(), ...basicEndings(), ...allVowels(), ...terminators()]),
+    "m": finalize([...buildingBlocks(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
     "c": finalize(["red", ...basicEndings(), ...vowelConnections(), ...terminators()]),
     "y": finalize([...terminators()]),
     "t": finalize(["red", "h", ...basicEndings(), ...vowelConnections(), ...terminators()]),
@@ -70,7 +104,7 @@ export const oldEnglish: LanguageDefinition = {
     "a": finalize([...consonantConnections(), ...terminators()]),
     "e": finalize([...consonantConnections(), ...terminators()]),
     "i": finalize(["c", ...consonantConnections(), ...terminators()]),
-    "o": finalize(["n", "r", "s", "d", "l", "t", ...terminators()]),
+    "o": finalize([...singleVowelFlow(), ...terminators()]),
     "u": finalize([...consonantConnections(), ...terminators()]),
 
     // Additional single consonants
@@ -80,12 +114,12 @@ export const oldEnglish: LanguageDefinition = {
     "p": finalize([...vowelConnections(), ...terminators()]),
 
     // Expanded two-letter patterns
-    "fr": finalize(["ed", "ic", "ith", "ied", "ank", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "th": finalize(["red", "ulf", "ild", "ane", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "el": finalize(["d", "f", "m", "mer", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "er": finalize(["ic", "ed", "ald", "gar", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "ar": finalize(["d", "ic", "ald", "ell", "ny", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "ir": finalize(["ed", "ic", "ald", ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "fr": finalize([...frPatterns(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "th": finalize([...thPatterns(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "el": finalize([...elPatterns(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "er": finalize([...commonSyllables(), "gar", ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "ar": finalize([...arPattern(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    "ir": finalize([...commonSyllables(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
     "ht": finalize(["red", ...basicEndings(), ...terminators()]),
     "ry": finalize([...terminators()]),
     "ny": finalize([...terminators()]),
@@ -107,7 +141,7 @@ export const oldEnglish: LanguageDefinition = {
     "ant": finalize([...terminators()]),
 
     // Additional vowel combinations for flow
-    "ea": finalize(["d", "l", "r", ...terminators()]),
+    "ea": finalize([...shortSyllables(), ...terminators()]),
     "ie": finalize(["d", "l", ...terminators()]),
     "ou": finalize(["r", "s", ...terminators()]),
     "ai": finalize(["n", ...terminators()]),
@@ -119,10 +153,10 @@ export const oldEnglish: LanguageDefinition = {
     "ert": finalize([...majorClusters(), ...terminators()]),
     "orn": finalize([...mediumEndings(), ...terminators()]),
     "ard": finalize([...commonEndings(), ...terminators()]),
-    "ild": finalize(["a", "e", ...mediumEndings(), ...terminators()]),
+    "ild": finalize([...vowelEndings(), ...mediumEndings(), ...terminators()]),
     "ulf": finalize([...majorClusters(), ...terminators()]),
     "ine": finalize([...mediumEndings(), ...terminators()]),
-    "und": finalize(["ric", "wald", "bert", "helm", "fred", "wick", ...terminators()]),
+    "und": finalize([...rareElements(), "fred", ...terminators()]),
     "wen": finalize([...mediumEndings(), ...terminators()]),
     "gar": finalize([...commonEndings(), ...terminators()]),
     "ith": finalize([...mediumEndings(), ...terminators()]),
@@ -132,12 +166,12 @@ export const oldEnglish: LanguageDefinition = {
     "wald": finalize([...majorClusters(), ...terminators()]),
     "fred": finalize([...majorClusters(), ...terminators()]),
     "helm": finalize([...majorClusters(), ...terminators()]),
-    "burg": finalize(["ric", "mund", "bert", "helm", "wick", "$"]),
+    "burg": finalize([...rareEndings(), ...terminators()]),
     "bald": finalize([...majorClusters(), ...terminators()]),
     "win": finalize([...majorClusters(), ...terminators()]),
-    "wine": finalize(["ric", "mund", "bert", "helm", "wick", "$"]),
-    "gard": finalize(["ric", "mund", "bert", "helm", "wick", "$"]),
-    "run": finalize(["ric", "mund", "bert", "helm", "wick", "$"]),
+    "wine": finalize([...rareEndings(), ...terminators()]),
+    "gard": finalize([...rareEndings(), ...terminators()]),
+    "run": finalize([...rareEndings(), ...terminators()]),
     "rant": finalize([...mediumEndings(), ...terminators()]),
     "fwin": finalize([...mediumEndings(), ...terminators()]),
     "pold": finalize([...mediumEndings(), ...terminators()]),
@@ -148,7 +182,7 @@ export const oldEnglish: LanguageDefinition = {
     "grim": finalize([...commonEndings(), ...terminators()]),
     "here": finalize([...mediumEndings(), ...terminators()]),
     "noth": finalize([...mediumEndings(), ...terminators()]),
-    "mond": finalize(["ric", "wald", "bert", "helm", "wick", ...terminators()]),
+    "mond": finalize([...rareElements(), ...terminators()]),
     "wick": finalize([...majorClusters(), ...terminators()])
   },
 
