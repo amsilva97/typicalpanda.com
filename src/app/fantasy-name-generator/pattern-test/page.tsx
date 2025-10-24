@@ -222,18 +222,18 @@ export default function PatternTest() {
                                 <div className="space-y-2">
                                     <h4 className="font-medium panda-text-primary">Core Measurements:</h4>
                                     <ul className="space-y-1 ml-2">
-                                        <li><strong>Failure Point:</strong> The exact generation count when uniqueness first drops below the 70% threshold. A value of -1 indicates the pattern never failed during the full test cycle.</li>
+                                        <li><strong>Failure Point:</strong> The exact generation count when uniqueness first drops below 70%.</li>
                                         <li><strong>Final Uniqueness:</strong> The percentage of completely unique names out of 100 total generations. Higher percentages indicate better pattern diversity.</li>
-                                        <li><strong>Diversity Score:</strong> Average Levenshtein edit distance between all name pairs. Higher scores (3.0+) indicate greater linguistic variation between generated names.</li>
+                                        <li><strong>Diversity Score:</strong> Average Levenshtein edit distance between all name pairs. Higher scores indicate greater linguistic variation between generated names.</li>
                                     </ul>
                                 </div>
 
                                 <div className="space-y-2">
                                     <h4 className="font-medium panda-text-primary">Quality Classifications:</h4>
                                     <ul className="space-y-1 ml-2">
-                                        <li><strong className="text-green-600">Excellent:</strong> No failure point OR 80+ names before failure, 75%+ uniqueness, 3.0+ diversity score</li>
-                                        <li><strong className="text-yellow-600">Good:</strong> 40+ names before failure, 70%+ uniqueness, 2.0+ diversity score</li>
-                                        <li><strong className="text-red-600">Poor:</strong> Early failure (&lt;40 names) or low diversity/uniqueness metrics</li>
+                                        <li><strong className="text-green-600">Excellent:</strong> No failure point OR 100+ names before failure, 90%+ uniqueness, 6.0+ diversity score</li>
+                                        <li><strong className="text-yellow-600">Good:</strong> 50+ names before failure, 80%+ uniqueness, 4.0+ diversity score</li>
+                                        <li><strong className="text-red-600">Poor:</strong> Early failure (&lt;50 names) or low diversity/uniqueness metrics</li>
                                     </ul>
                                 </div>
                             </div>
