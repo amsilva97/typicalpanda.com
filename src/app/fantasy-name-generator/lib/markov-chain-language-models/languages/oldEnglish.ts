@@ -147,6 +147,6 @@ export const oldEnglish: LanguageDefinition = {
     consecutiveSingleLetterLimit: 1,
     nonConsecutiveSingleLetterLimit: 2,
     duplicateClusterLimit: 1,
-    totalClusterLimit: 3
+    totalClusterLimit: 2
   }
 };
