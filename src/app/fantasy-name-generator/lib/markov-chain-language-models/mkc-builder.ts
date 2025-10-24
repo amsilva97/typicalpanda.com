@@ -141,10 +141,11 @@ function removeInvalidPatterns(nameSegments: string[][], languageDefinition: Lan
         })
     }
 
-    // Remove any that have a node with 5 or more characters
-    nameSegments = nameSegments.filter(segments => {
-        return !segments.some(s => s.length >= DEFAULT_MAX_NODE_LENGTH);
-    });
+    /* Temporarily remove this as the outlier should be able to this ones job */
+    // // Remove any that have a node with 5 or more characters
+    // nameSegments = nameSegments.filter(segments => {
+    //     return !segments.some(s => s.length >= DEFAULT_MAX_NODE_LENGTH);
+    // });
 
     // Remove any that have a node with the same letter twice in a row
     nameSegments = nameSegments.filter(segments => {
