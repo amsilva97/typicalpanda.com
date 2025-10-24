@@ -16,7 +16,7 @@ interface GenerationStep {
 /**
  * Generate a single name using a language definition with backtracking
  */
-export function generateName(languageDefinition: LanguageDefinition, timeoutMs: number = 5000): string {
+function generateName(languageDefinition: LanguageDefinition, timeoutMs: number = 5000): string {
   const languageDefinitionPatterns = languageDefinition.patterns;
   const languageDefinitionOptions = languageDefinition.options;
   const startTime = Date.now();
@@ -150,7 +150,7 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
 /**
  * Generate multiple names using a language definition
  */
-export function generateNames(languageDefinition: LanguageDefinition, count: number = 10, timeoutMs: number = 5000): string[] {
+function generateNames(languageDefinition: LanguageDefinition, count: number = 10, timeoutMs: number = 5000): string[] {
   const names: Set<string> = new Set();
   let failedAttempts = 0;
   const maxFailedAttempts = count * 5; // Arbitrary limit to prevent infinite loops

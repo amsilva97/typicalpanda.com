@@ -1,4 +1,4 @@
-import { generateName } from '../markov-chain-language-models/generations';
+import { generateNamesForLanguage } from '../markov-chain-language-models/generations';
 import { SupportedLanguage, getLanguageDefinition } from '../markov-chain-language-models/core';
 
 /**
@@ -61,7 +61,6 @@ function getDiversityScore(names: string[]): number {
  * Returns [finalNameCount, finalUniquePercentage, finalDiversityScore]
  */
 function _testNameDiversity(supportedLanguage: SupportedLanguage): [number, number, number] {
-    const languageDefinition = getLanguageDefinition(supportedLanguage);
     const generatedNames: Set<string> = new Set();
     let totalGeneratedNames = 0;
     let totalDuplicatesGenerated = 0;
@@ -74,7 +73,7 @@ function _testNameDiversity(supportedLanguage: SupportedLanguage): [number, numb
 
     const iterations = 100; // Safety limit to prevent infinite loops
     for (let i = 0; i < iterations; i++) {
-        const name = generateName(languageDefinition);
+        const name = generateNamesForLanguage(supportedLanguage, 1)[0];
         totalGeneratedNames++;
         if (generatedNames.has(name)) {
             totalDuplicatesGenerated++;
