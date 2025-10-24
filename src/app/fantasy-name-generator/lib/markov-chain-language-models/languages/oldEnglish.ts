@@ -233,10 +233,10 @@ export const oldEnglish: LanguageDefinition = {
     name: "Old English",
     startMarker: "^",
     endMarker: "$",
-    minNodes: 4,
-    maxNodes: -1,
-    consecutiveSingleLetterLimit: 2,
-    nonConsecutiveSingleLetterLimit: 3,
-    duplicateClusterLimit: 1
+    minNodes: 2,              // Historical names like "Ed", "Ulf" were common (2 nodes: start + end)
+    maxNodes: 6,              // Most names were 2-4 nodes; very few exceeded this (e.g. "Aethel-stan")
+    consecutiveSingleLetterLimit: 1,     // Rarely had consecutive single letters in authentic names
+    nonConsecutiveSingleLetterLimit: 2,  // Limited single letters to maintain syllable integrity
+    duplicateClusterLimit: 1             // Old English avoided repetitive patterns within names
   }
 };
