@@ -53,39 +53,39 @@ export const oldEnglish: LanguageDefinition = {
     // Start marker - all possible name beginnings
     "^": allStarts(),
 
-    // Common starting patterns - high connectivity
-    "Al": combine(singleLetterFlow(), majorClusters()),
-    "Ael": combine(singleLetterFlow(), majorClusters()),
+    // Common starting patterns - improved flow
+    "Al": combine(vowelFlow(), ["b", "d", "f", "g", "r"], majorClusters()),
+    "Ael": combine(vowelFlow(), ["f", "d", "g", "r"], majorClusters()),
     "Aeth": combine(["el", "er"], majorClusters()),
-    "Ead": combine(consonantFlow(), majorClusters()),
-    "Ed": combine(consonantFlow(), majorClusters()),
-    "Eg": combine(["b", "g"], majorClusters()),
-    "Os": combine(consonantFlow(), majorClusters()),
+    "Ead": combine(vowelFlow(), ["g", "m", "w", "r"], majorClusters()),
+    "Ed": combine(vowelFlow(), ["g", "m", "w", "r"], majorClusters()),
+    "Eg": combine(vowelFlow(), ["b", "g"], majorClusters()),
+    "Os": combine(vowelFlow(), ["b", "g", "w"], majorClusters()),
 
     // Noble starting patterns
     "Cuth": combine(majorClusters(), ["red", "win"]),
     "Sig": combine(majorClusters(), ["red", "wald"]),
 
-    // Warrior starting patterns  
-    "Elf": combine(consonantFlow(), majorClusters()),
-    "God": combine(["fr", "w", "r"], majorClusters()),
-    "Grim": combine(["b", "h"], majorClusters()),
-    "Har": combine(["d", "old"], majorClusters()),
-    "Ulf": combine(consonantFlow(), majorClusters()),
-    "Wil": combine(["f", "fr", "h"], majorClusters()),
-    "Wulf": combine(["r", "st"], majorClusters()),
+    // Warrior starting patterns - smoother combinations
+    "Elf": combine(vowelFlow(), ["r", "w"], ["red", "ric", "win"], majorClusters()),
+    "God": combine(vowelFlow(), ["fr", "w", "r"], majorClusters()),
+    "Grim": combine(vowelFlow(), ["b", "h"], majorClusters()),
+    "Har": combine(vowelFlow(), ["d"], ["old", "ald"], majorClusters()),
+    "Ulf": combine(vowelFlow(), ["r", "w"], ["ric", "red"], majorClusters()),
+    "Wil": combine(vowelFlow(), ["f", "h"], ["fred", "helm"], majorClusters()),
+    "Wulf": combine(vowelFlow(), ["r"], ["ric", "red"], majorClusters()),
 
-    // Rare starting patterns
-    "Hild": combine(vowelFlow(), ["red", "burg", "gard"]),
-    "Leo": combine(["f", "fr"], majorClusters()),
-    "Dun": combine(["stan"], majorClusters()),
-    "Eor": combine(["l", "men"], majorClusters()),
-    "Thur": combine(["stan"], majorClusters()),
-    "Wend": combine(["el", "il"], majorClusters()),
-    "Oth": combine(["helm"], majorClusters()),
-    "Bri": combine(["ht", "c"], majorClusters()),
-    "Cen": combine(["red"], majorClusters()),
-    "Ord": combine(["gar"], majorClusters()),
+    // Rare starting patterns - better flow
+    "Hild": combine(vowelFlow(), ["red", "burg", "gard"], majorClusters()),
+    "Leo": combine(vowelFlow(), ["f"], ["fred", "ric"], majorClusters()),
+    "Dun": combine(vowelFlow(), ["stan"], majorClusters()),
+    "Eor": combine(vowelFlow(), ["l", "men"], majorClusters()),
+    "Thur": combine(vowelFlow(), ["stan"], majorClusters()),
+    "Wend": combine(vowelFlow(), ["el", "il"], majorClusters()),
+    "Oth": combine(vowelFlow(), ["helm"], majorClusters()),
+    "Bri": combine(vowelFlow(), ["c"], ["cht"], majorClusters()),
+    "Cen": combine(vowelFlow(), ["red"], majorClusters()),
+    "Ord": combine(vowelFlow(), ["gar"], majorClusters()),
 
     // Single letter vowel patterns
     "a": createVowelPattern(),
@@ -93,19 +93,19 @@ export const oldEnglish: LanguageDefinition = {
     "i": createVowelPattern(),
     "o": createVowelPattern(),
 
-    // Single letter consonant patterns
-    "b": createConsonantPattern(),
-    "c": createConsonantPattern(),
-    "d": createConsonantPattern(),
-    "f": createConsonantPattern(),
-    "g": createConsonantPattern(),
-    "h": createConsonantPattern(),
-    "l": createConsonantPattern(),
-    "m": createConsonantPattern(),
-    "n": createConsonantPattern(),
-    "r": createConsonantPattern(),
-    "t": createConsonantPattern(),
-    "w": createConsonantPattern(),
+    // Single letter consonant patterns - improved flow
+    "b": combine(vowelFlow(), ["ald", "ert", "urg"], ["$"]),
+    "c": combine(vowelFlow(), ["red", "ric"], ["$"]),
+    "d": combine(vowelFlow(), ["gar", "mund", "wald"], ["$"]),
+    "f": combine(vowelFlow(), ["red", "ric", "rid"], ["$"]),
+    "g": combine(vowelFlow(), ["ar", "er", "ulf", "ard"], ["$"]),
+    "h": combine(vowelFlow(), ["ard", "ild", "elm"], ["$"]),
+    "l": combine(vowelFlow(), ["d", "f", "bert", "mund"], ["$"]),
+    "m": combine(vowelFlow(), ["er", "und", "ild"], ["$"]),
+    "n": combine(vowelFlow(), ["d", "g"], ["$"]),
+    "r": combine(vowelFlow(), ["ed", "ic", "ald", "bert"], ["$"]),
+    "t": combine(vowelFlow(), ["ric", "red"], ["$"]),
+    "w": combine(vowelFlow(), ["ald", "ard", "ine", "in"], ["$"]),
 
     // Two-letter patterns
     "fr": createTwoLetterPattern(["ed", "ic", "ith"]),
@@ -152,7 +152,12 @@ export const oldEnglish: LanguageDefinition = {
     "ny": TERMINATOR,
     "gard": TERMINATOR,
     "men": TERMINATOR,
-    "il": TERMINATOR
+    "il": TERMINATOR,
+    "cht": TERMINATOR,
+    "rid": TERMINATOR,
+    "elm": TERMINATOR,
+    "urg": TERMINATOR,
+    "in": TERMINATOR
   },
 
   options: {
