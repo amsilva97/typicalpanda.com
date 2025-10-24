@@ -202,6 +202,87 @@ function removeOutliers(nameGroupingList: string[][][]): string[][][] {
 }
 
 /**
+ * Analyzes groupings to identify nodes that are likely artificial splits
+ * of natural linguistic clusters. Uses lookback analysis to detect when
+ * a node is frequently preceded by specific characters, suggesting they
+ * should be merged into a single cluster.
+ * 
+ * @param nameGroupingList - Array of all name groupings to analyze
+ * @returns Filtered array with artificial splits removed
+ */
+function removeLookbackArtifacts(nameGroupingList: string[][][]): string[][][] {
+    const LOOKBACK_THRESHOLD = 0.7; // If 70% of occurrences have the same predecessor, consider it an artifact
+    const MIN_OCCURRENCES = 3; // Need at least 3 occurrences to be statistically meaningful
+    
+    // Track predecessors for each node across all groupings
+    const nodePredecessors: { [node: string]: { [predecessor: string]: number } } = {};
+    const nodeTotalOccurrences: { [node: string]: number } = {};
+    
+    // Analyze all groupings to build predecessor statistics
+    nameGroupingList.forEach(groupings => {
+        groupings.forEach(grouping => {
+            for (let i = 1; i < grouping.length; i++) {
+                const node = grouping[i];
+                const predecessor = grouping[i - 1];
+                
+                if (!nodePredecessors[node]) {
+                    nodePredecessors[node] = {};
+                    nodeTotalOccurrences[node] = 0;
+                }
+                
+                nodePredecessors[node][predecessor] = (nodePredecessors[node][predecessor] || 0) + 1;
+                nodeTotalOccurrences[node]++;
+            }
+        });
+    });
+    
+    // Identify nodes that are likely artificial splits
+    const artificialNodes = new Set<string>();
+    
+    Object.entries(nodePredecessors).forEach(([node, predecessors]) => {
+        const totalOccurrences = nodeTotalOccurrences[node];
+        
+        // Skip if not enough occurrences for meaningful analysis
+        if (totalOccurrences < MIN_OCCURRENCES) return;
+        
+        // Find the most common predecessor
+        let maxCount = 0;
+        let dominantPredecessor = '';
+        
+        Object.entries(predecessors).forEach(([predecessor, count]) => {
+            if (count > maxCount) {
+                maxCount = count;
+                dominantPredecessor = predecessor;
+            }
+        });
+        
+        // If one predecessor dominates, this node is likely an artificial split
+        const dominanceRatio = maxCount / totalOccurrences;
+        if (dominanceRatio >= LOOKBACK_THRESHOLD) {
+            // Additional check: the combined cluster should be reasonable length
+            const combinedLength = dominantPredecessor.length + node.length;
+            if (combinedLength <= 4) { // Don't create overly long clusters
+                artificialNodes.add(node);
+                console.log(`Identified artificial split: '${node}' (${dominanceRatio.toFixed(2)} ratio with predecessor '${dominantPredecessor}')`);
+            }
+        }
+    });
+    
+    // Filter out groupings that contain artificial splits
+    return nameGroupingList.map(groupings => {
+        return groupings.filter(grouping => {
+            // Remove groupings where any node (except the first) is identified as artificial
+            for (let i = 1; i < grouping.length; i++) {
+                if (artificialNodes.has(grouping[i])) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    });
+}
+
+/**
  * Build a Markov chain from a list of names by analyzing all possible
  * segmentations of each name and creating transition patterns between segments.
  * 
@@ -246,6 +327,7 @@ export function buildChain(names: string[], languageDefinition: LanguageDefiniti
     });
 
     nameGroupingList = removeOutliers(nameGroupingList);
+    nameGroupingList = removeLookbackArtifacts(nameGroupingList);
 
     // Build patterns from names
     nameGroupingList.forEach(groupings => {
