@@ -97,7 +97,7 @@ export function testNameDiversity(supportedLanguage: SupportedLanguage): [number
     let failedAts = [];
     let finalUniquePercentages = [];
     let finalDiversityScores = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1000; i++) {
         const [failedAt, uniquePercentage, diversityScore] = _testNameDiversity(supportedLanguage);
         failedAts.push(failedAt);
         finalUniquePercentages.push(uniquePercentage);
