@@ -32,8 +32,6 @@ export function buildChain(names: string[]): LanguageDefinition {
         patterns: {},
         options: {
             name: 'Custom Markov Chain',
-            startMarker: '^',
-            endMarker: '$',
             minNodes: 2,
             maxNodes: 6,
             consecutiveSingleLetterLimit: 2,

@@ -140,8 +140,6 @@ export const oldEnglish: LanguageDefinition = {
 
   options: {
     name: "Old English",
-    startMarker: "^",
-    endMarker: "$",
     minNodes: 2,
     maxNodes: 5,
     consecutiveSingleLetterLimit: 1,

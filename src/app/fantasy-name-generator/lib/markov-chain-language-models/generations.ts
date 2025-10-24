@@ -1,4 +1,7 @@
-import { getLanguageDefinition, LanguageDefinition, SupportedLanguage } from './core';
+import {
+  getLanguageDefinition, LanguageDefinition, SupportedLanguage,
+  startMarker, endMarker
+} from './core';
 
 class NameGenerationError extends Error { }
 
@@ -23,15 +26,15 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
 
   // Initialize the stack with the starting state
   const stack: GenerationStep[] = [];
-  const initialPatterns = [...(languageDefinitionPatterns[languageDefinitionOptions.startMarker] || [])];
+  const initialPatterns = [...(languageDefinitionPatterns[startMarker] || [])];
 
   if (initialPatterns.length === 0) {
-    throw new NameGenerationError(`No patterns found for start marker: '${languageDefinitionOptions.startMarker}'`);
+    throw new NameGenerationError(`No patterns found for start marker: '${startMarker}'`);
   }
 
   stack.push({
     fullName: '',
-    currentPattern: languageDefinitionOptions.startMarker,
+    currentPattern: startMarker,
     availableOptions: initialPatterns,
     nodeCount: 0,
     consecutiveSingleLetter: 0,
@@ -41,8 +44,11 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
   });
 
   // Picks a int between 'LanguageDefinition.options.minNodes' and 'LanguageDefinition.options.maxNodes'
-  const forcedClusterIndex: number = Math.floor(Math.random()
-    * (languageDefinitionOptions.maxNodes - languageDefinitionOptions.minNodes + 1)) + languageDefinitionOptions.minNodes;
+  let forcedClusterIndex: number | null = null;
+  if (languageDefinitionOptions.minNodes !== undefined && languageDefinitionOptions.maxNodes !== undefined) {
+    forcedClusterIndex = Math.floor(Math.random()
+      * (languageDefinitionOptions.maxNodes - languageDefinitionOptions.minNodes + 1)) + languageDefinitionOptions.minNodes;
+  }
 
   let maxIterations = 1000; // Total iterations allowed
   while (stack.length > 0 && maxIterations > 0) {
@@ -58,36 +64,37 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
     let validOptions: string[] = availableOptions;
 
     // Enforce forced cluster index
-    if (languageDefinitionOptions.maxNodes !== -1 && currentStep.nodeCount === forcedClusterIndex - 1) {
+    if (languageDefinitionOptions.maxNodes !== undefined && forcedClusterIndex !== null && currentStep.nodeCount === forcedClusterIndex - 1) {
       validOptions = availableOptions.filter(option => option.length >= 3);
     }
 
     // Enforce minimum nodes constraint
-    if (languageDefinitionOptions.minNodes !== -1 && currentStep.nodeCount < languageDefinitionOptions.minNodes)
-      validOptions = availableOptions.filter(option => option !== languageDefinitionOptions.endMarker);
+    if (languageDefinitionOptions.minNodes !== undefined && currentStep.nodeCount < languageDefinitionOptions.minNodes)
+      validOptions = availableOptions.filter(option => option !== endMarker);
 
     // Enforce maximum nodes constraint
-    if (languageDefinitionOptions.maxNodes !== -1 && currentStep.nodeCount >= languageDefinitionOptions.maxNodes)
-      validOptions = availableOptions.filter(option => option === languageDefinitionOptions.endMarker);
+    if (languageDefinitionOptions.maxNodes !== undefined && currentStep.nodeCount >= languageDefinitionOptions.maxNodes)
+      validOptions = availableOptions.filter(option => option === endMarker);
 
     // Enforce consecutive single-letter limit
-    if (languageDefinitionOptions.consecutiveSingleLetterLimit !== -1 && currentStep.consecutiveSingleLetter >= languageDefinitionOptions.consecutiveSingleLetterLimit)
+    if (languageDefinitionOptions.consecutiveSingleLetterLimit !== undefined && currentStep.consecutiveSingleLetter >= languageDefinitionOptions.consecutiveSingleLetterLimit)
       validOptions = validOptions.filter(option => option.length !== 1);
 
     // Enforce non-consecutive single-letter limit
-    if (languageDefinitionOptions.nonConsecutiveSingleLetterLimit !== -1 && currentStep.nonConsecutiveSingleLetter >= languageDefinitionOptions.nonConsecutiveSingleLetterLimit)
+    if (languageDefinitionOptions.nonConsecutiveSingleLetterLimit !== undefined && currentStep.nonConsecutiveSingleLetter >= languageDefinitionOptions.nonConsecutiveSingleLetterLimit)
       validOptions = validOptions.filter(option => option.length !== 1);
 
     // Enforce duplicate cluster limit
-    if (languageDefinitionOptions.duplicateClusterLimit !== -1) {
+    if (languageDefinitionOptions.duplicateClusterLimit !== undefined) {
       validOptions = validOptions.filter(option => {
         const clusterCount = currentStep.duplicateCluster[option] || 0;
-        return clusterCount < languageDefinitionOptions.duplicateClusterLimit;
+        if (languageDefinitionOptions.duplicateClusterLimit !== undefined)
+          return clusterCount < languageDefinitionOptions.duplicateClusterLimit;
       });
     }
 
     // Enforce total cluster limit
-    if (languageDefinitionOptions.totalClusterLimit !== -1 && currentStep.totalClusterLimit >= languageDefinitionOptions.totalClusterLimit) {
+    if (languageDefinitionOptions.totalClusterLimit !== undefined && currentStep.totalClusterLimit >= languageDefinitionOptions.totalClusterLimit) {
       validOptions = validOptions.filter(option => option.length < 3);
     }
 
@@ -108,7 +115,7 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
     currentStep.availableOptions.splice(originalIndex, 1);
 
     // Check for end marker
-    if (nextOption === languageDefinitionOptions.endMarker) {
+    if (nextOption === endMarker) {
 
       //lets print out each step as a list to console
       const debug_segments: string[] = [];
