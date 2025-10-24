@@ -142,10 +142,10 @@ export const oldEnglish: LanguageDefinition = {
     name: "Old English",
     startMarker: "^",
     endMarker: "$",
-    minNodes: -1,
-    maxNodes: -1,
-    consecutiveSingleLetterLimit: -1,
-    nonConsecutiveSingleLetterLimit: -1,
-    duplicateClusterLimit: -1
+    minNodes: 2,
+    maxNodes: 5,
+    consecutiveSingleLetterLimit: 1,
+    nonConsecutiveSingleLetterLimit: 2,
+    duplicateClusterLimit: 1
   }
 };
