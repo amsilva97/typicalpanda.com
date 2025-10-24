@@ -1,52 +1,47 @@
 import { LanguageDefinition } from '../core';
 
 /**
- * Helper functions for common Old English name patterns
+ * Helper functions for Old English name pattern construction
+ * Organized by semantic meaning and usage patterns
  */
-const commonEndings = () => ["ric", "mund", "wald", "bert", "helm", "fred", "win", "wick"];
-const majorClusters = () => ["bert", "mund", "wald", "helm", "fred", "bald", "win", "wick"];
-const basicEndings = () => ["ric", "mund", "wald", "bert", "helm"];
-const vowelConnections = () => ["a", "e", "i"];
-const consonantConnections = () => ["d", "g", "r", "l", "n", "t", "s"];
-const allVowels = () => ["a", "e", "i", "o"];
-const shortEndings = () => ["ric", "bert", "helm", "wick"];
-const mediumEndings = () => ["mund", "bert", "helm", "wick"];
-const simpleConsonants = () => ["b", "d", "f", "g", "h", "r", "w", "m"];
-const twoLetterStarts = () => ["fr", "th", "el", "er"];
-const commonPrefixes = () => ["red", "stan", "gar"];
-const rareEndings = () => ["ric", "mund", "bert", "helm", "wick"];
-const vowelEndings = () => ["a", "e"];
-const redPatterns = () => ["red", ...commonEndings()];
-const stanPatterns = () => ["stan", ...commonEndings()];
-const singleLetterFlow = () => ["d", "f", "fr", "r"];
-const commonStarts = () => ["Al", "Ael", "Aeth", "Ead", "Ed", "Eg"];
-const godlyStarts = () => ["Elf", "God", "Grim"];
-const heroicStarts = () => ["Har", "Hild", "Leo", "Os"];
-const warriorStarts = () => ["Ulf", "Wil", "Wulf"];
-const nobleStarts = () => ["Cuth", "Dun", "Eor", "Sig", "Thur"];
-const rareStarts = () => ["Wend", "Oth", "Bri", "Cen", "Ord"];
-const singleVowelFlow = () => ["n", "r", "s", "d", "l", "t"];
-const commonSyllables = () => ["ed", "ic", "ald"];
-const rareElements = () => ["ric", "wald", "bert", "helm", "wick"];
-const multiLetterEndings = () => ["ar", "er", "ir", "ulf", "wen", "ard"];
-const shortSyllables = () => ["d", "l", "r"];
-const complexEndings = () => ["ald", "ert", "orn", "erg", "urg", "rant"];
-const structuralElements = () => ["ard", "ild", "ulf", "elm", "ert"];
-const flowElements = () => ["ald", "ard", "ulf", "ine", "old", "in"];
-const buildingBlocks = () => ["er", "und", "ild", "ond", "ael"];
-const frPatterns = () => ["ed", "ic", "ith", "ied", "ank"];
-const thPatterns = () => ["red", "ulf", "ild", "ane"];
-const elPatterns = () => ["d", "f", "m", "mer"];
-const basicConsonantFlow = () => ["g", "m", "w", "r"];
-const simpleLetterGroups = () => ["f", "fr", "g", "r", "d", "m"];
-const specialElements = () => ["heim", "kell"];
-const rareSpecialElements = () => ["fwin", "pold"];
-const battleElements = () => ["geat", "laf"];
-const mysticalElements = () => ["here", "noth"];
-const structureElements = () => ["burg", "gard", "run"];
-const arPattern = () => ["d", "ic", "ald", "ell", "ny"];
-const terminators = () => ["$"];
-const finalize = (n: string[]) => Array.from(new Set(n));
+
+// Core building blocks
+const VOWELS = ["a", "e", "i", "o", "u"];
+const CONSONANTS = ["b", "c", "d", "f", "g", "h", "k", "l", "m", "n", "p", "r", "s", "t", "w"];
+const TERMINATOR = ["$"];
+
+// Semantic name elements (meanings)
+const POWER_ELEMENTS = ["ric", "wald", "mund"];        // ruler, ruler, protection
+const NOBLE_ELEMENTS = ["bert", "helm", "fred"];        // bright, helmet, peace
+const BATTLE_ELEMENTS = ["gar", "here", "geat"];        // spear, army, Geat
+const MYSTICAL_ELEMENTS = ["elf", "god", "wulf"];       // elf, god, wolf
+const PLACE_ELEMENTS = ["burg", "wick", "stan"];        // fortress, settlement, stone
+
+// Starting patterns by category
+const COMMON_STARTS = ["Al", "Ed", "Eg", "Os"];
+const NOBLE_STARTS = ["Ael", "Aeth", "Ead", "Cuth", "Sig"];
+const WARRIOR_STARTS = ["Elf", "God", "Grim", "Har", "Ulf", "Wil", "Wulf"];
+const RARE_STARTS = ["Hild", "Leo", "Dun", "Eor", "Thur", "Wend", "Oth", "Bri", "Cen", "Ord"];
+
+// Pattern construction helpers
+const majorClusters = () => combine(POWER_ELEMENTS, NOBLE_ELEMENTS, BATTLE_ELEMENTS, PLACE_ELEMENTS);
+const allStarts = () => combine(COMMON_STARTS, NOBLE_STARTS, WARRIOR_STARTS, RARE_STARTS);
+const vowelFlow = () => VOWELS.filter(v => v !== "u"); // Exclude 'u' for more natural flow
+const consonantFlow = () => ["d", "g", "l", "m", "n", "r", "t", "w"];
+const singleLetterFlow = () => combine(consonantFlow(), vowelFlow());
+
+// Two-letter pattern builders
+const createTwoLetterPattern = (endings: string[]) => combine(endings, majorClusters(), vowelFlow(), ["$"]);
+const createVowelPattern = () => combine(consonantFlow(), ["$"]);
+const createConsonantPattern = () => combine(majorClusters(), vowelFlow(), ["$"]);
+
+// Ending constructors
+const clusterEndings = () => combine(POWER_ELEMENTS, NOBLE_ELEMENTS, ["$"]);
+
+// Utility functions
+const unique = <T>(arr: T[]): T[] => Array.from(new Set(arr));
+const combine = (...arrays: string[][]) => unique(arrays.flat());
+const withTerminator = (patterns: string[]) => combine(patterns, ["$"]);
 
 /**
  * Old English language definition
@@ -55,135 +50,109 @@ const finalize = (n: string[]) => Array.from(new Set(n));
  */
 export const oldEnglish: LanguageDefinition = {
   patterns: {
-    // Start marker - expanded Old English name beginnings
-    "^": finalize([...commonStarts(), ...godlyStarts(), ...heroicStarts(), ...warriorStarts(), ...nobleStarts(), ...rareStarts()]),
+    // Start marker - all possible name beginnings
+    "^": allStarts(),
 
-    // Expanded starting patterns - now connected to major clusters
-    "Al": finalize([...simpleConsonants(), ...commonEndings()]),
-    "Ael": finalize([...simpleLetterGroups(), ...commonPrefixes(), ...commonEndings()]),
-    "Aeth": finalize([...twoLetterStarts(), ...commonPrefixes(), ...commonEndings()]),
-    "Ead": finalize([...basicConsonantFlow(), "b", ...commonEndings()]),
-    "Ed": finalize([...basicConsonantFlow(), "gar", ...commonEndings()]),
-    "Eg": finalize(["b", "g", ...commonEndings()]),
-    "Elf": finalize(["r", "w", ...commonPrefixes(), ...commonEndings()]),
-    "God": finalize(["fr", "w", "r", ...commonEndings()]),
-    "Grim": finalize(["b", "h", "ald", "bald", ...commonEndings()]),
-    "Har": finalize(["d", "old", "ald", "ry", "mond", ...commonEndings()]),
-    "Hild": finalize([...vowelEndings(), "red", ...structureElements(), ...commonEndings()]),
-    "Leo": finalize(["f", "fr", ...rareSpecialElements(), ...commonEndings()]),
-    "Os": finalize(["b", "g", "r", "w", ...battleElements(), ...commonEndings()]),
-    "Ulf": finalize(["r", "w", ...commonPrefixes(), ...specialElements(), ...commonEndings()]),
-    "Wil": finalize(["f", "fr", "h", "grim", "laf", ...commonEndings()]),
-    "Wulf": finalize(["r", "st", "gar", "red", ...mysticalElements(), ...commonEndings()]),
-    "Cuth": finalize(redPatterns()),
-    "Dun": finalize(stanPatterns()),
-    "Eor": finalize(["l", "men", ...commonEndings()]),
-    "Sig": finalize(redPatterns()),
-    "Thur": finalize(stanPatterns()),
-    "Wend": finalize(["el", "il", ...shortEndings()]),
-    "Oth": finalize(redPatterns()),
-    "Bri": finalize(["ht", "c", "ard", ...shortEndings()]),
-    "Cen": finalize(redPatterns()),
-    "Ord": finalize(["gar", "wine", ...commonEndings()]),
+    // Common starting patterns - high connectivity
+    "Al": combine(singleLetterFlow(), majorClusters()),
+    "Ael": combine(singleLetterFlow(), majorClusters()),
+    "Aeth": combine(["el", "er"], majorClusters()),
+    "Ead": combine(consonantFlow(), majorClusters()),
+    "Ed": combine(consonantFlow(), majorClusters()),
+    "Eg": combine(["b", "g"], majorClusters()),
+    "Os": combine(consonantFlow(), majorClusters()),
 
-    // Expanded single letter continuations
-    "d": finalize(["r", "w", "g", "gar", "wine", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "g": finalize([...multiLetterEndings(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "l": finalize([...singleLetterFlow(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "f": finalize(["r", "red", "stan", "rid", "ard", ...basicEndings(), ...allVowels(), ...terminators()]),
-    "r": finalize([...commonSyllables(), "ulf", "wen", "gar", ...basicEndings(), "i", ...vowelConnections(), ...terminators()]),
-    "b": finalize([...complexEndings(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "h": finalize([...structuralElements(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "w": finalize([...flowElements(), ...basicEndings(), ...allVowels(), ...terminators()]),
-    "m": finalize([...buildingBlocks(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "c": finalize(["red", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "y": finalize([...terminators()]),
-    "t": finalize(["red", "h", ...basicEndings(), ...vowelConnections(), ...terminators()]),
+    // Noble starting patterns
+    "Cuth": combine(majorClusters(), ["red", "win"]),
+    "Sig": combine(majorClusters(), ["red", "wald"]),
 
-    // Single letter vowels - improved connections
-    "a": finalize([...consonantConnections(), ...terminators()]),
-    "e": finalize([...consonantConnections(), ...terminators()]),
-    "i": finalize(["c", ...consonantConnections(), ...terminators()]),
-    "o": finalize([...singleVowelFlow(), ...terminators()]),
-    "u": finalize([...consonantConnections(), ...terminators()]),
+    // Warrior starting patterns  
+    "Elf": combine(consonantFlow(), majorClusters()),
+    "God": combine(["fr", "w", "r"], majorClusters()),
+    "Grim": combine(["b", "h"], majorClusters()),
+    "Har": combine(["d", "old"], majorClusters()),
+    "Ulf": combine(consonantFlow(), majorClusters()),
+    "Wil": combine(["f", "fr", "h"], majorClusters()),
+    "Wulf": combine(["r", "st"], majorClusters()),
 
-    // Additional single consonants
-    "n": finalize(["d", "r", "g", ...vowelConnections(), ...terminators()]),
-    "s": finalize(["t", "w", ...vowelConnections(), ...terminators()]),
-    "k": finalize([...vowelConnections(), ...terminators()]),
-    "p": finalize([...vowelConnections(), ...terminators()]),
+    // Rare starting patterns
+    "Hild": combine(vowelFlow(), ["red", "burg", "gard"]),
+    "Leo": combine(["f", "fr"], majorClusters()),
+    "Dun": combine(["stan"], majorClusters()),
+    "Eor": combine(["l", "men"], majorClusters()),
+    "Thur": combine(["stan"], majorClusters()),
+    "Wend": combine(["el", "il"], majorClusters()),
+    "Oth": combine(["helm"], majorClusters()),
+    "Bri": combine(["ht", "c"], majorClusters()),
+    "Cen": combine(["red"], majorClusters()),
+    "Ord": combine(["gar"], majorClusters()),
 
-    // Expanded two-letter patterns
-    "fr": finalize([...frPatterns(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "th": finalize([...thPatterns(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "el": finalize([...elPatterns(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "er": finalize([...commonSyllables(), "gar", ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "ar": finalize([...arPattern(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "ir": finalize([...commonSyllables(), ...basicEndings(), ...vowelConnections(), ...terminators()]),
-    "ht": finalize(["red", ...basicEndings(), ...terminators()]),
-    "ry": finalize([...terminators()]),
-    "ny": finalize([...terminators()]),
-    "old": finalize([...terminators()]),
-    "ond": finalize([...terminators()]),
-    "ell": finalize([...terminators()]),
-    "ied": finalize([...terminators()]),
-    "men": finalize([...terminators()]),
-    "rid": finalize([...terminators()]),
-    "erg": finalize([...terminators()]),
-    "elm": finalize([...terminators()]),
-    "in": finalize([...terminators()]),
-    "il": finalize([...terminators()]),
-    "ank": finalize([...terminators()]),
-    "ane": finalize([...terminators()]),
-    "mer": finalize([...terminators()]),
-    "ael": finalize([...terminators()]),
-    "urg": finalize([...terminators()]),
-    "ant": finalize([...terminators()]),
+    // Single letter vowel patterns
+    "a": createVowelPattern(),
+    "e": createVowelPattern(), 
+    "i": createVowelPattern(),
+    "o": createVowelPattern(),
 
-    // Additional vowel combinations for flow
-    "ea": finalize([...shortSyllables(), ...terminators()]),
-    "ie": finalize(["d", "l", ...terminators()]),
-    "ou": finalize(["r", "s", ...terminators()]),
-    "ai": finalize(["n", ...terminators()]),
-    "ei": finalize(["n", ...terminators()]),
+    // Single letter consonant patterns
+    "b": createConsonantPattern(),
+    "c": createConsonantPattern(),
+    "d": createConsonantPattern(),
+    "f": createConsonantPattern(),
+    "g": createConsonantPattern(),
+    "h": createConsonantPattern(),
+    "l": createConsonantPattern(),
+    "m": createConsonantPattern(),
+    "n": createConsonantPattern(),
+    "r": createConsonantPattern(),
+    "t": createConsonantPattern(),
+    "w": createConsonantPattern(),
 
-    // Extended three-letter patterns - all major clusters interconnected
-    "ald": finalize(["r", "w", ...majorClusters(), ...terminators()]),
-    "red": finalize([...majorClusters(), ...terminators()]),
-    "ert": finalize([...majorClusters(), ...terminators()]),
-    "orn": finalize([...mediumEndings(), ...terminators()]),
-    "ard": finalize([...commonEndings(), ...terminators()]),
-    "ild": finalize([...vowelEndings(), ...mediumEndings(), ...terminators()]),
-    "ulf": finalize([...majorClusters(), ...terminators()]),
-    "ine": finalize([...mediumEndings(), ...terminators()]),
-    "und": finalize([...rareElements(), "fred", ...terminators()]),
-    "wen": finalize([...mediumEndings(), ...terminators()]),
-    "gar": finalize([...commonEndings(), ...terminators()]),
-    "ith": finalize([...mediumEndings(), ...terminators()]),
-    "stan": finalize([...commonEndings(), ...terminators()]),
-    "bert": finalize([...majorClusters(), ...terminators()]),
-    "mund": finalize([...majorClusters(), ...terminators()]),
-    "wald": finalize([...majorClusters(), ...terminators()]),
-    "fred": finalize([...majorClusters(), ...terminators()]),
-    "helm": finalize([...majorClusters(), ...terminators()]),
-    "burg": finalize([...rareEndings(), ...terminators()]),
-    "bald": finalize([...majorClusters(), ...terminators()]),
-    "win": finalize([...majorClusters(), ...terminators()]),
-    "wine": finalize([...rareEndings(), ...terminators()]),
-    "gard": finalize([...rareEndings(), ...terminators()]),
-    "run": finalize([...rareEndings(), ...terminators()]),
-    "rant": finalize([...mediumEndings(), ...terminators()]),
-    "fwin": finalize([...mediumEndings(), ...terminators()]),
-    "pold": finalize([...mediumEndings(), ...terminators()]),
-    "geat": finalize([...mediumEndings(), ...terminators()]),
-    "laf": finalize([...mediumEndings(), ...terminators()]),
-    "heim": finalize([...commonEndings(), ...terminators()]),
-    "kell": finalize([...mediumEndings(), ...terminators()]),
-    "grim": finalize([...commonEndings(), ...terminators()]),
-    "here": finalize([...mediumEndings(), ...terminators()]),
-    "noth": finalize([...mediumEndings(), ...terminators()]),
-    "mond": finalize([...rareElements(), ...terminators()]),
-    "wick": finalize([...majorClusters(), ...terminators()])
+    // Two-letter patterns
+    "fr": createTwoLetterPattern(["ed", "ic", "ith"]),
+    "th": createTwoLetterPattern(["red", "ane"]),
+    "el": createTwoLetterPattern(["d", "f", "m"]),
+    "er": createTwoLetterPattern(["ic", "ed"]),
+    "ar": createTwoLetterPattern(["d", "ic", "ny"]),
+    "ir": createTwoLetterPattern(["ed", "ic"]),
+    "st": createTwoLetterPattern(["an"]),
+
+    // Major clusters - fully interconnected
+    "ric": clusterEndings(),
+    "mund": clusterEndings(),
+    "wald": clusterEndings(),
+    "bert": clusterEndings(),
+    "helm": clusterEndings(),
+    "fred": clusterEndings(),
+    "gar": clusterEndings(),
+    "here": clusterEndings(),
+    "geat": clusterEndings(),
+    "burg": clusterEndings(),
+    "wick": clusterEndings(),
+    "stan": clusterEndings(),
+
+    // Supporting patterns
+    "red": withTerminator(POWER_ELEMENTS),
+    "win": withTerminator(POWER_ELEMENTS),
+    "old": TERMINATOR,
+    "ald": combine(["r", "w"], POWER_ELEMENTS, ["$"]),
+    "ert": withTerminator(POWER_ELEMENTS),
+    "orn": withTerminator(POWER_ELEMENTS),
+    "ard": withTerminator(POWER_ELEMENTS),
+    "ild": combine(vowelFlow(), POWER_ELEMENTS, ["$"]),
+    "ulf": withTerminator(POWER_ELEMENTS),
+    "ine": withTerminator(POWER_ELEMENTS),
+    "und": withTerminator(POWER_ELEMENTS),
+    "wen": withTerminator(POWER_ELEMENTS),
+    "ith": withTerminator(POWER_ELEMENTS),
+
+    // Terminal patterns
+    "an": TERMINATOR,
+    "ic": TERMINATOR,
+    "ed": TERMINATOR,
+    "ny": TERMINATOR,
+    "gard": TERMINATOR,
+    "men": TERMINATOR,
+    "il": TERMINATOR
   },
 
   options: {
