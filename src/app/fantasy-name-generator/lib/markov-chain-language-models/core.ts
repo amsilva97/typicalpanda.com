@@ -4,6 +4,7 @@
  */
 export interface LanguageDefinition {
     patterns: { [key: string]: string[]; };
+    reversePatterns: { [key: string]: string[]; };
     options: {
         name: string; // Human-readable name of the language
         startMarker: string; // Pattern to start name generation from
@@ -30,18 +31,36 @@ export const getSupportedLanguages = (): SupportedLanguage[] => {
     return Object.values(SupportedLanguage);
 };
 
+function generateReversePatterns(patterns: { [key: string]: string[]; }): { [key: string]: string[]; } {
+    const reversePatterns: { [key: string]: string[]; } = {};
+    for (const [key, values] of Object.entries(patterns)) {
+        values.forEach(value => {
+            if (!reversePatterns[value]) {
+                reversePatterns[value] = [];
+            }
+            reversePatterns[value].push(key);
+        });
+    }
+    return reversePatterns;
+}
+
 /**
  * Get the language definition for a supported language
  */
 export function getLanguageDefinition(language: SupportedLanguage): LanguageDefinition {
+    let languageDefinition: LanguageDefinition;
     switch (language) {
         case SupportedLanguage.OLD_ENGLISH:
             // Lazy load to avoid circular dependencies
             const { oldEnglish } = require('./languages/oldEnglish');
-            return oldEnglish;
-        default:
-            throw new Error(`Unsupported language: ${language}`);
+            languageDefinition = oldEnglish;
+            break;
     }
+    if (!languageDefinition) {
+        throw new Error(`Language definition not found for language: ${language}`);
+    }
+    languageDefinition.reversePatterns = generateReversePatterns(languageDefinition.patterns);
+    return languageDefinition;
 }
 
 /**
