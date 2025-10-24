@@ -150,7 +150,7 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
 /**
  * Generate multiple names using a language definition
  */
-function generateNames(languageDefinition: LanguageDefinition, count: number = 10, timeoutMs: number = 5000): string[] {
+export function generateNames(languageDefinition: LanguageDefinition, count: number = 10, timeoutMs: number = 5000): string[] {
   const names: Set<string> = new Set();
   let failedAttempts = 0;
   const maxFailedAttempts = count * 5; // Arbitrary limit to prevent infinite loops

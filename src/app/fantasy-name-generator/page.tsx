@@ -13,6 +13,12 @@ export default function FantasyNameGeneratorHome() {
       description: 'Analyze and validate the Old English pattern structure',
       href: '/fantasy-name-generator/pattern-test',
       status: 'Live' as const
+    },
+    {
+      title: 'MKC Builder',
+      description: 'Build custom Markov chains from your own name lists',
+      href: '/fantasy-name-generator/mkc-builder',
+      status: 'Live' as const
     }
   ];
 
