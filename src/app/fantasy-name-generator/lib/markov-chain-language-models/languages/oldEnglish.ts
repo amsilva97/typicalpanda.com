@@ -52,6 +52,19 @@ export const oldEnglish: LanguageDefinition = {
     "y": ["$"],
     "t": ["ric", "red", "$"],
     
+    // Single letter vowels - missing patterns
+    "a": ["l", "r", "n", "d", "$"],
+    "e": ["l", "r", "n", "d", "g", "$"],
+    "i": ["c", "l", "n", "r", "$"],
+    "o": ["n", "r", "s", "$"],
+    "u": ["l", "r", "n", "s", "$"],
+    
+    // Additional single consonants
+    "n": ["d", "r", "g", "$"],
+    "s": ["t", "w", "$"],
+    "k": ["$"],
+    "p": ["$"],
+    
     // Expanded two-letter patterns
     "fr": ["ed", "ic", "ith", "ied", "ank", "$"],
     "th": ["red", "ulf", "ild", "ane", "$"],
@@ -104,11 +117,7 @@ export const oldEnglish: LanguageDefinition = {
     "wine": ["$"],
     "gard": ["$"],
     "run": ["$"],
-    "rant": ["$"],
-    
-    // Vowel endings
-    "a": ["$"],
-    "e": ["$"]
+    "rant": ["$"]
   },
 
   options: {
