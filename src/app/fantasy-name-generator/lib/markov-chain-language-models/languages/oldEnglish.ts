@@ -41,29 +41,29 @@ export const oldEnglish: LanguageDefinition = {
     // Expanded single letter continuations
     "d": ["r", "w", "g", "gar", "mund", "ric", "wald", "wine", "$"],
     "g": ["ar", "er", "ir", "ulf", "wen", "bert", "mund", "wald", "ard", "$"],
-    "l": ["d", "f", "fr", "r", "bert", "mund", "ric", "wald", "$"],
-    "f": ["r", "red", "ric", "stan", "rid", "ard", "$"],
-    "r": ["ed", "ic", "ulf", "wen", "ald", "bert", "mund", "gar", "$"],
-    "b": ["ald", "ert", "orn", "erg", "urg", "rant", "$"],
-    "h": ["ard", "ild", "ulf", "elm", "ert", "ard", "$"],
-    "w": ["ald", "ard", "ulf", "ine", "old", "in", "ine", "ulf", "$"],
-    "m": ["er", "und", "ild", "ond", "ael", "$"],
-    "c": ["red", "ric", "$"],
+    "l": ["d", "f", "fr", "r", "bert", "mund", "ric", "wald", "a", "e", "$"],
+    "f": ["r", "red", "ric", "stan", "rid", "ard", "a", "e", "$"],
+    "r": ["ed", "ic", "ulf", "wen", "ald", "bert", "mund", "gar", "i", "a", "$"],
+    "b": ["ald", "ert", "orn", "erg", "urg", "rant", "a", "e", "$"],
+    "h": ["ard", "ild", "ulf", "elm", "ert", "a", "e", "$"],
+    "w": ["ald", "ard", "ulf", "ine", "old", "in", "a", "e", "i", "$"],
+    "m": ["er", "und", "ild", "ond", "ael", "a", "e", "$"],
+    "c": ["red", "ric", "a", "e", "$"],
     "y": ["$"],
-    "t": ["ric", "red", "$"],
+    "t": ["ric", "red", "a", "e", "$"],
     
-    // Single letter vowels - missing patterns
-    "a": ["l", "r", "n", "d", "$"],
-    "e": ["l", "r", "n", "d", "g", "$"],
-    "i": ["c", "l", "n", "r", "$"],
-    "o": ["n", "r", "s", "$"],
-    "u": ["l", "r", "n", "s", "$"],
+    // Single letter vowels - improved connections
+    "a": ["l", "r", "n", "d", "g", "b", "$"],
+    "e": ["l", "r", "n", "d", "g", "b", "t", "$"],
+    "i": ["c", "l", "n", "r", "d", "g", "$"],
+    "o": ["n", "r", "s", "d", "$"],
+    "u": ["l", "r", "n", "s", "d", "g", "$"],
     
     // Additional single consonants
-    "n": ["d", "r", "g", "$"],
-    "s": ["t", "w", "$"],
-    "k": ["$"],
-    "p": ["$"],
+    "n": ["d", "r", "g", "a", "e", "$"],
+    "s": ["t", "w", "a", "e", "$"],
+    "k": ["a", "e", "$"],
+    "p": ["a", "e", "$"],
     
     // Expanded two-letter patterns
     "fr": ["ed", "ic", "ith", "ied", "ank", "$"],
@@ -91,6 +91,13 @@ export const oldEnglish: LanguageDefinition = {
     "ael": ["$"],
     "urg": ["$"],
     "ant": ["$"],
+    
+    // Additional vowel combinations for flow
+    "ea": ["d", "l", "r", "$"],
+    "ie": ["d", "l", "$"],
+    "ou": ["r", "s", "$"],
+    "ai": ["n", "$"],
+    "ei": ["n", "$"],
     
     // Extended three-letter patterns
     "ald": ["r", "w", "ric", "$"],
