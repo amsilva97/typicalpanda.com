@@ -257,8 +257,6 @@ export const oldEnglish: LanguageDefinition = {
     "burg": ["$"]      // "fortress, town"
   },
 
-  reversePatterns: {}, //Automatically generated
-
   options: {
     name: "Old English",
     startMarker: "^",

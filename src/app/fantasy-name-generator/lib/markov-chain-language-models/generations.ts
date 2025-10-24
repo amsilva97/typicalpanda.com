@@ -38,6 +38,10 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
     duplicateCluster: {}
   });
 
+  // Picks a int between 'LanguageDefinition.options.minNodes' and 'LanguageDefinition.options.maxNodes'
+  const forcedClusterIndex: number = Math.floor(Math.random()
+    * (languageDefinitionOptions.maxNodes - languageDefinitionOptions.minNodes + 1)) + languageDefinitionOptions.minNodes;
+
   let maxIterations = 1000; // Total iterations allowed
   while (stack.length > 0 && maxIterations > 0) {
     // Check for timeout
@@ -50,6 +54,11 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
     const currentStep = stack[stack.length - 1];
     let availableOptions = currentStep.availableOptions;
     let validOptions: string[] = availableOptions;
+
+    // Enforce forced cluster index
+    if (languageDefinitionOptions.maxNodes !== -1 && currentStep.nodeCount === forcedClusterIndex - 1) {
+      validOptions = availableOptions.filter(option => option.length >= 3);
+    }
 
     // Enforce minimum nodes constraint
     if (languageDefinitionOptions.minNodes !== -1 && currentStep.nodeCount < languageDefinitionOptions.minNodes)
