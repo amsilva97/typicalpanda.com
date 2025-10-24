@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { SupportedLanguage, getLanguageDefinition } from '../lib/markov-chain-language-models/core';
-import { generateName } from '../lib/markov-chain-language-models/generations';
+import { SupportedLanguage } from '../lib/markov-chain-language-models/core';
+import { generateNamesForLanguage } from '../lib/markov-chain-language-models/generations';
 import { testNameDiversity } from '../lib/markov-chain-language-models/tests';
 
 export default function PatternTest() {
@@ -137,18 +137,16 @@ export default function PatternTest() {
                         <h2 className="text-xl font-semibold panda-text-primary mb-4">Sample Names Generated</h2>
                         <div className="grid grid-cols-5 gap-2 text-sm panda-text-secondary">
                             {(() => {
-                                // Generate sample names for display
-                                const generatedNames: string[] = [];
-                                const languageDefinition = getLanguageDefinition(selectedLanguage);
+                                // Generate sample names for display using generateNamesForLanguage
+                                let generatedNames: string[] = [];
 
                                 try {
-                                    for (let i = 0; i < 50; i++) {
-                                        try {
-                                            const sampleName = generateName(languageDefinition);
-                                            generatedNames.push(sampleName);
-                                        } catch {
-                                            generatedNames.push('---');
-                                        }
+                                    // Generate 50 names at once using the proper API
+                                    generatedNames = generateNamesForLanguage(selectedLanguage, 50);
+                                    
+                                    // Fill remaining slots with '---' if we didn't get 50 names
+                                    while (generatedNames.length < 50) {
+                                        generatedNames.push('---');
                                     }
                                 } catch (error) {
                                     console.error('Error generating sample names:', error);
