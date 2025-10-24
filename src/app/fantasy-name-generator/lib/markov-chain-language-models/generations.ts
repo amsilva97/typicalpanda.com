@@ -1,6 +1,6 @@
 import { getLanguageDefinition, LanguageDefinition, SupportedLanguage } from './core';
 
-class PatternError extends Error { }
+class NameGenerationError extends Error { }
 
 interface GenerationStep {
   fullName: string;
@@ -26,7 +26,7 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
   const initialPatterns = [...(languageDefinitionPatterns[languageDefinitionOptions.startMarker] || [])];
 
   if (initialPatterns.length === 0) {
-    throw new PatternError(`No patterns found for start marker: '${languageDefinitionOptions.startMarker}'`);
+    throw new NameGenerationError(`No patterns found for start marker: '${languageDefinitionOptions.startMarker}'`);
   }
 
   stack.push({
@@ -48,7 +48,7 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
   while (stack.length > 0 && maxIterations > 0) {
     // Check for timeout
     if (Date.now() - startTime > timeoutMs) {
-      throw new PatternError(`Generation timed out after ${timeoutMs}ms`);
+      throw new NameGenerationError(`Generation timed out after ${timeoutMs}ms`);
     }
     maxIterations--;
 
@@ -144,7 +144,7 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
   }
 
   // If we get here, we've exhausted all possibilities
-  throw new PatternError(`Failed to generate a valid name within timeout (${timeoutMs}ms) - all possibilities exhausted`);
+  throw new NameGenerationError(`Failed to generate a valid name within timeout (${timeoutMs}ms) - all possibilities exhausted`);
 }
 
 /**
@@ -156,10 +156,15 @@ export function generateNames(languageDefinition: LanguageDefinition, count: num
   const maxFailedAttempts = count * 5; // Arbitrary limit to prevent infinite loops
 
   while (names.size < count && failedAttempts < maxFailedAttempts) {
-    const name = generateName(languageDefinition);
-    if (!names.has(name)) {
-      names.add(name);
-    } else {
+    try {
+      const name = generateName(languageDefinition);
+      if (!names.has(name)) {
+        names.add(name);
+      } else {
+        failedAttempts++;
+      }
+    }
+    catch (error) {
       failedAttempts++;
     }
   }

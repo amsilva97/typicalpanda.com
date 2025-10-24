@@ -4,10 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { buildChain } from '../lib/markov-chain-language-models/mkc-builder';
 import { LanguageDefinition } from '../lib/markov-chain-language-models/core';
+import { generateNames } from '../lib/markov-chain-language-models/generations';
 
 export default function MkcBuilder() {
   const [namesInput, setNamesInput] = useState<string>('');
   const [markovChainResult, setMarkovChainResult] = useState<LanguageDefinition | null>(null);
+  const [generatedNames, setGeneratedNames] = useState<string[]>([]);
   const [isBuilding, setIsBuilding] = useState(false);
 
   const handleBuildChain = () => {
@@ -27,12 +29,23 @@ export default function MkcBuilder() {
     setTimeout(() => {
       const result = buildChain(names);
       setMarkovChainResult(result);
+      
+      // Generate 50 names using the built Markov chain
+      try {
+        const generated = generateNames(result, 50);
+        setGeneratedNames(generated);
+      } catch (error) {
+        console.error('Error generating names:', error);
+        setGeneratedNames([]);
+      }
+      
       setIsBuilding(false);
     }, 500);
   };
 
   const clearResults = () => {
     setMarkovChainResult(null);
+    setGeneratedNames([]);
     setNamesInput('');
   };
 
@@ -114,6 +127,33 @@ export default function MkcBuilder() {
             </div>
           </div>
 
+          {/* Generated Names Section */}
+          {generatedNames.length > 0 && (
+            <div className="panda-card p-6 mb-6">
+              <h2 className="text-xl font-semibold panda-text-primary mb-4">
+                Generated Names ({generatedNames.length})
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
+                {generatedNames.map((name, index) => (
+                  <div
+                    key={index}
+                    onClick={() => navigator.clipboard.writeText(name)}
+                    className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 
+                             px-3 py-2 rounded-lg text-center cursor-pointer transition-colors duration-200
+                             text-gray-700 dark:text-gray-300 text-sm font-medium border 
+                             border-gray-200 dark:border-gray-600"
+                    title="Click to copy"
+                  >
+                    {name}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs panda-text-secondary text-center">
+                Click any name to copy it to clipboard
+              </p>
+            </div>
+          )}
+
           {/* Results Section */}
           {markovChainResult && (
             <div className="panda-card p-6">
@@ -130,7 +170,7 @@ export default function MkcBuilder() {
                   <strong>Status:</strong> Chain built successfully from {namesInput.split(',').filter(n => n.trim()).length} names
                 </p>
                 <p className="mt-1">
-                  <strong>Note:</strong> This is currently displaying test data. The actual Markov chain implementation will be added in future updates.
+                  <strong>Generated:</strong> {generatedNames.length} unique names using the custom Markov chain
                 </p>
               </div>
             </div>
