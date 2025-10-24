@@ -21,7 +21,16 @@ export default function PatternTest() {
         try {
             console.log(`Running simple diversity test for ${selectedLanguage}...`);
 
-            const [nameCount, uniquePercentage, diversityScore] = testNameDiversity(selectedLanguage);
+            // Use setTimeout to let the UI update before starting the heavy computation
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            const [nameCount, uniquePercentage, diversityScore] = await new Promise<[number, number, number]>((resolve) => {
+                // Run the test in the next tick to allow UI to update
+                setTimeout(() => {
+                    const result = testNameDiversity(selectedLanguage);
+                    resolve(result);
+                }, 10);
+            });
 
             setTestResults({
                 nameCount,
@@ -87,7 +96,15 @@ export default function PatternTest() {
                                         : 'panda-button-primary hover:scale-105 transition-transform'
                                     }`}
                             >
-                                {isRunning ? 'Running Test...' : 'Run Simple Diversity Test'}
+                                {isRunning ? (
+                                    <div className="flex items-center justify-center">
+                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Running Test...
+                                    </div>
+                                ) : 'Run Simple Diversity Test'}
                             </button>
                         </div>
                     </div>
@@ -99,22 +116,43 @@ export default function PatternTest() {
                     </div>
                 </div>
 
+                {isRunning && (
+                    <div className="panda-card p-6 mb-6">
+                        <div className="flex flex-col items-center justify-center py-12">
+                            <svg className="animate-spin h-12 w-12 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <h3 className="text-lg font-semibold panda-text-primary mb-2">Running Diversity Test</h3>
+                            <p className="panda-text-secondary text-center">
+                                Generating names and analyzing patterns...<br />
+                                This may take a few moments.
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {testResults && (
                     <div className="panda-card p-6 mb-6">
                         <h2 className="text-xl font-semibold panda-text-primary mb-4">Sample Names Generated</h2>
                         <div className="grid grid-cols-5 gap-2 text-sm panda-text-secondary">
                             {(() => {
-                                // Generate all 50 names first
+                                // Generate sample names for display
                                 const generatedNames: string[] = [];
                                 const languageDefinition = getLanguageDefinition(selectedLanguage);
 
-                                for (let i = 0; i < 50; i++) {
-                                    try {
-                                        const sampleName = generateName(languageDefinition);
-                                        generatedNames.push(sampleName);
-                                    } catch {
-                                        generatedNames.push('---');
+                                try {
+                                    for (let i = 0; i < 50; i++) {
+                                        try {
+                                            const sampleName = generateName(languageDefinition);
+                                            generatedNames.push(sampleName);
+                                        } catch {
+                                            generatedNames.push('---');
+                                        }
                                     }
+                                } catch (error) {
+                                    console.error('Error generating sample names:', error);
+                                    return <div className="col-span-5 text-center py-4 text-red-500">Error generating sample names</div>;
                                 }
 
                                 // Count occurrences to identify duplicates
