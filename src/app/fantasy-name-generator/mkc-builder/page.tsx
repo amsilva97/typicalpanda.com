@@ -11,6 +11,7 @@ export default function MkcBuilder() {
   const [markovChainResult, setMarkovChainResult] = useState<LanguageDefinition | null>(null);
   const [generatedNames, setGeneratedNames] = useState<string[]>([]);
   const [isBuilding, setIsBuilding] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleBuildChain = () => {
     if (!namesInput.trim()) {
@@ -25,18 +26,34 @@ export default function MkcBuilder() {
       .map(name => name.trim())
       .filter(name => name.length > 0);
     
+    // Clear previous errors
+    setError(null);
+    
     // Simulate processing time for better UX
     setTimeout(() => {
-      const result = buildChain(names);
-      setMarkovChainResult(result);
-      
-      // Generate 50 names using the built Markov chain
       try {
+        const result = buildChain(names);
+        setMarkovChainResult(result);
+        
+        console.log('Built chain result:', result);
+        console.log('Chain patterns:', Object.keys(result.patterns));
+        
+        // Generate 50 names using the built Markov chain
         const generated = generateNames(result, 50);
+        console.log('Generated names:', generated);
+        
+        if (generated.length === 0) {
+          setError('No names could be generated from the provided input. Try providing more diverse names or check that your input contains valid names.');
+        } else {
+          setError(null);
+        }
+        
         setGeneratedNames(generated);
       } catch (error) {
-        console.error('Error generating names:', error);
+        console.error('Error during chain building or name generation:', error);
+        setError(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
         setGeneratedNames([]);
+        setMarkovChainResult(null);
       }
       
       setIsBuilding(false);
@@ -47,6 +64,7 @@ export default function MkcBuilder() {
     setMarkovChainResult(null);
     setGeneratedNames([]);
     setNamesInput('');
+    setError(null);
   };
 
   return (
@@ -114,7 +132,7 @@ export default function MkcBuilder() {
                 )}
               </button>
               
-              {markovChainResult && (
+              {(markovChainResult || error) && (
                 <button
                   onClick={clearResults}
                   className="px-4 py-2 border border-gray-300 dark:border-gray-600 
@@ -127,30 +145,64 @@ export default function MkcBuilder() {
             </div>
           </div>
 
+          {/* Error Section */}
+          {error && (
+            <div className="panda-card p-4 mb-6 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+              <div className="flex items-start">
+                <svg className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <div>
+                  <h3 className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">
+                    Generation Failed
+                  </h3>
+                  <p className="text-sm text-red-700 dark:text-red-300">
+                    {error}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Generated Names Section */}
-          {generatedNames.length > 0 && (
+          {markovChainResult && !error && (
             <div className="panda-card p-6 mb-6">
               <h2 className="text-xl font-semibold panda-text-primary mb-4">
                 Generated Names ({generatedNames.length})
               </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
-                {generatedNames.map((name, index) => (
-                  <div
-                    key={index}
-                    onClick={() => navigator.clipboard.writeText(name)}
-                    className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 
-                             px-3 py-2 rounded-lg text-center cursor-pointer transition-colors duration-200
-                             text-gray-700 dark:text-gray-300 text-sm font-medium border 
-                             border-gray-200 dark:border-gray-600"
-                    title="Click to copy"
-                  >
-                    {name}
+              {generatedNames.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
+                    {generatedNames.map((name, index) => (
+                      <div
+                        key={index}
+                        onClick={() => navigator.clipboard.writeText(name)}
+                        className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 
+                                 px-3 py-2 rounded-lg text-center cursor-pointer transition-colors duration-200
+                                 text-gray-700 dark:text-gray-300 text-sm font-medium border 
+                                 border-gray-200 dark:border-gray-600"
+                        title="Click to copy"
+                      >
+                        {name}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <p className="text-xs panda-text-secondary text-center">
-                Click any name to copy it to clipboard
-              </p>
+                  <p className="text-xs panda-text-secondary text-center">
+                    Click any name to copy it to clipboard
+                  </p>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-400 dark:text-gray-500 mb-2">
+                    <svg className="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    No names were generated. The Markov chain may need more diverse input data.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

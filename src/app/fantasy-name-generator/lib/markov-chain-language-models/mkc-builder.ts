@@ -34,24 +34,35 @@ export function buildChain(names: string[]): LanguageDefinition {
             name: 'Custom Markov Chain',
             startMarker: '^',
             endMarker: '$',
-            minNodes: -1,
-            maxNodes: -1,
-            consecutiveSingleLetterLimit: -1,
-            nonConsecutiveSingleLetterLimit: -1,
-            duplicateClusterLimit: -1,
-            totalClusterLimit: -1
+            minNodes: 2,
+            maxNodes: 6,
+            consecutiveSingleLetterLimit: 2,
+            nonConsecutiveSingleLetterLimit: 3,
+            duplicateClusterLimit: 2,
+            totalClusterLimit: 3
         }
     };
 
     // Build patterns from names
     names.forEach(name => {
-        const upperName = name.toLowerCase();
-        const groupings = allGroupings(upperName);
-        languageDefinition.patterns['^'] = languageDefinition.patterns['^'] || [];
-        languageDefinition.patterns['$'] = languageDefinition.patterns['$'] || [];
-        languageDefinition.patterns['^'].push(groupings[0][0]);
-        languageDefinition.patterns['$'].push(groupings[0][groupings[0].length - 1]);
+        const cleanName = name.toLowerCase().trim();
+        if (cleanName.length === 0) return;
+        
+        const groupings = allGroupings(cleanName);
+        
+        // Initialize pattern arrays if they don't exist
+        if (!languageDefinition.patterns['^']) {
+            languageDefinition.patterns['^'] = [];
+        }
+        
+        // Process each possible grouping of the name
         groupings.forEach(grouping => {
+            if (grouping.length === 0) return;
+            
+            // Add start pattern
+            languageDefinition.patterns['^'].push(grouping[0]);
+            
+            // Add transitions between segments
             for (let i = 0; i < grouping.length - 1; i++) {
                 const key = grouping[i];
                 const next = grouping[i + 1];
@@ -60,6 +71,13 @@ export function buildChain(names: string[]): LanguageDefinition {
                 }
                 languageDefinition.patterns[key].push(next);
             }
+            
+            // Add end pattern
+            const lastSegment = grouping[grouping.length - 1];
+            if (!languageDefinition.patterns[lastSegment]) {
+                languageDefinition.patterns[lastSegment] = [];
+            }
+            languageDefinition.patterns[lastSegment].push('$');
         });
     });
 
