@@ -2,16 +2,31 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { buildChain } from '../lib/markov-chain-language-models/mkc-builder';
+import { buildChain, createEmptyLanguageDefinition } from '../lib/markov-chain-language-models/mkc-builder';
 import { LanguageDefinition } from '../lib/markov-chain-language-models/core';
 import { generateNames } from '../lib/markov-chain-language-models/generations';
 
 export default function MkcBuilder() {
+  // Create persistent language definition
+  const [languageDefinition, setLanguageDefinition] = useState<LanguageDefinition>(() => createEmptyLanguageDefinition());
   const [namesInput, setNamesInput] = useState<string>('');
   const [markovChainResult, setMarkovChainResult] = useState<LanguageDefinition | null>(null);
   const [generatedNames, setGeneratedNames] = useState<string[]>([]);
   const [isBuilding, setIsBuilding] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showOptions, setShowOptions] = useState(false);
+  
+  // Helper functions to update options in the language definition
+  const updateOption = <K extends keyof LanguageDefinition['options']>(key: K, value: LanguageDefinition['options'][K]) => {
+    setLanguageDefinition(prev => ({
+      ...prev,
+      options: {
+        ...prev.options,
+        [key]: value
+      }
+    }));
+  };
 
   const handleBuildChain = () => {
     if (!namesInput.trim()) {
@@ -32,15 +47,13 @@ export default function MkcBuilder() {
     // Simulate processing time for better UX
     setTimeout(() => {
       try {
-        const result = buildChain(names);
-        setMarkovChainResult(result);
+        // Build the chain using the persistent language definition
+        const result = buildChain(names, languageDefinition);
         
-        console.log('Built chain result:', result);
-        console.log('Chain patterns:', Object.keys(result.patterns));
+        setMarkovChainResult(result);
         
         // Generate 50 names using the built Markov chain
         const generated = generateNames(result, 50);
-        console.log('Generated names:', generated);
         
         if (generated.length === 0) {
           setError('No names could be generated from the provided input. Try providing more diverse names or check that your input contains valid names.');
@@ -60,11 +73,42 @@ export default function MkcBuilder() {
     }, 500);
   };
 
+  const handleRegenerateNames = () => {
+    if (!markovChainResult) return;
+    
+    setIsRegenerating(true);
+    setError(null);
+    
+    setTimeout(() => {
+      try {
+        // Use the current language definition (already updated with latest options)
+        const generated = generateNames(languageDefinition, 50);
+        
+        if (generated.length === 0) {
+          setError('No names could be generated with current options. Try adjusting the settings.');
+        } else {
+          setError(null);
+        }
+        
+        setGeneratedNames(generated);
+      } catch (error) {
+        console.error('Error regenerating names:', error);
+        setError(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+        setGeneratedNames([]);
+      }
+      
+      setIsRegenerating(false);
+    }, 300);
+  };
+
   const clearResults = () => {
     setMarkovChainResult(null);
     setGeneratedNames([]);
     setNamesInput('');
     setError(null);
+    setShowOptions(false);
+    // Reset the language definition to empty state
+    setLanguageDefinition(createEmptyLanguageDefinition());
   };
 
   return (
@@ -144,6 +188,268 @@ export default function MkcBuilder() {
               )}
             </div>
           </div>
+
+          {/* Options and Regenerate Section */}
+          {markovChainResult && (
+            <div className="panda-card p-6 mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold panda-text-primary">
+                  Generation Controls
+                </h2>
+                <button
+                  onClick={() => setShowOptions(!showOptions)}
+                  className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 
+                           text-gray-700 dark:text-gray-300 rounded-lg font-medium 
+                           hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                >
+                  {showOptions ? 'Hide Options' : 'Show Options'}
+                </button>
+              </div>
+              
+              <div className="flex gap-3 mb-4">
+                <button
+                  onClick={handleRegenerateNames}
+                  disabled={isRegenerating}
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 
+                           disabled:cursor-not-allowed text-white rounded-lg font-medium 
+                           transition-colors duration-200"
+                >
+                  {isRegenerating ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Regenerating...
+                    </span>
+                  ) : (
+                    '🔄 Generate New Names'
+                  )}
+                </button>
+              </div>
+
+              {/* Options Panel */}
+              {showOptions && (
+                <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+                  <h3 className="text-md font-medium panda-text-primary mb-3">
+                    Generation Options
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium panda-text-primary">
+                          Min Nodes
+                        </label>
+                        <label className="flex items-center text-xs">
+                          <input
+                            type="checkbox"
+                            checked={languageDefinition.options.minNodes !== undefined}
+                            onChange={(e) => updateOption('minNodes', e.target.checked ? 2 : undefined)}
+                            className="mr-1"
+                          />
+                          Enable
+                        </label>
+                      </div>
+                      {languageDefinition.options.minNodes !== undefined ? (
+                        <>
+                          <div className="text-xs panda-text-secondary mb-1">
+                            Value: {languageDefinition.options.minNodes}
+                          </div>
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            value={languageDefinition.options.minNodes}
+                            onChange={(e) => updateOption('minNodes', parseInt(e.target.value))}
+                            className="w-full"
+                          />
+                        </>
+                      ) : (
+                        <div className="text-xs text-gray-400 italic">Disabled (unlimited)</div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium panda-text-primary">
+                          Max Nodes
+                        </label>
+                        <label className="flex items-center text-xs">
+                          <input
+                            type="checkbox"
+                            checked={languageDefinition.options.maxNodes !== undefined}
+                            onChange={(e) => updateOption('maxNodes', e.target.checked ? 6 : undefined)}
+                            className="mr-1"
+                          />
+                          Enable
+                        </label>
+                      </div>
+                      {languageDefinition.options.maxNodes !== undefined ? (
+                        <>
+                          <div className="text-xs panda-text-secondary mb-1">
+                            Value: {languageDefinition.options.maxNodes}
+                          </div>
+                          <input
+                            type="range"
+                            min="2"
+                            max="15"
+                            value={languageDefinition.options.maxNodes}
+                            onChange={(e) => updateOption('maxNodes', parseInt(e.target.value))}
+                            className="w-full"
+                          />
+                        </>
+                      ) : (
+                        <div className="text-xs text-gray-400 italic">Disabled (unlimited)</div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium panda-text-primary">
+                          Consecutive Single Letter Limit
+                        </label>
+                        <label className="flex items-center text-xs">
+                          <input
+                            type="checkbox"
+                            checked={languageDefinition.options.consecutiveSingleLetterLimit !== undefined}
+                            onChange={(e) => updateOption('consecutiveSingleLetterLimit', e.target.checked ? 2 : undefined)}
+                            className="mr-1"
+                          />
+                          Enable
+                        </label>
+                      </div>
+                      {languageDefinition.options.consecutiveSingleLetterLimit !== undefined ? (
+                        <>
+                          <div className="text-xs panda-text-secondary mb-1">
+                            Value: {languageDefinition.options.consecutiveSingleLetterLimit}
+                          </div>
+                          <input
+                            type="range"
+                            min="0"
+                            max="5"
+                            value={languageDefinition.options.consecutiveSingleLetterLimit}
+                            onChange={(e) => updateOption('consecutiveSingleLetterLimit', parseInt(e.target.value))}
+                            className="w-full"
+                          />
+                        </>
+                      ) : (
+                        <div className="text-xs text-gray-400 italic">Disabled (unlimited)</div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium panda-text-primary">
+                          Non-Consecutive Single Letter Limit
+                        </label>
+                        <label className="flex items-center text-xs">
+                          <input
+                            type="checkbox"
+                            checked={languageDefinition.options.nonConsecutiveSingleLetterLimit !== undefined}
+                            onChange={(e) => updateOption('nonConsecutiveSingleLetterLimit', e.target.checked ? 3 : undefined)}
+                            className="mr-1"
+                          />
+                          Enable
+                        </label>
+                      </div>
+                      {languageDefinition.options.nonConsecutiveSingleLetterLimit !== undefined ? (
+                        <>
+                          <div className="text-xs panda-text-secondary mb-1">
+                            Value: {languageDefinition.options.nonConsecutiveSingleLetterLimit}
+                          </div>
+                          <input
+                            type="range"
+                            min="0"
+                            max="10"
+                            value={languageDefinition.options.nonConsecutiveSingleLetterLimit}
+                            onChange={(e) => updateOption('nonConsecutiveSingleLetterLimit', parseInt(e.target.value))}
+                            className="w-full"
+                          />
+                        </>
+                      ) : (
+                        <div className="text-xs text-gray-400 italic">Disabled (unlimited)</div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium panda-text-primary">
+                          Duplicate Cluster Limit
+                        </label>
+                        <label className="flex items-center text-xs">
+                          <input
+                            type="checkbox"
+                            checked={languageDefinition.options.duplicateClusterLimit !== undefined}
+                            onChange={(e) => updateOption('duplicateClusterLimit', e.target.checked ? 2 : undefined)}
+                            className="mr-1"
+                          />
+                          Enable
+                        </label>
+                      </div>
+                      {languageDefinition.options.duplicateClusterLimit !== undefined ? (
+                        <>
+                          <div className="text-xs panda-text-secondary mb-1">
+                            Value: {languageDefinition.options.duplicateClusterLimit}
+                          </div>
+                          <input
+                            type="range"
+                            min="0"
+                            max="5"
+                            value={languageDefinition.options.duplicateClusterLimit}
+                            onChange={(e) => updateOption('duplicateClusterLimit', parseInt(e.target.value))}
+                            className="w-full"
+                          />
+                        </>
+                      ) : (
+                        <div className="text-xs text-gray-400 italic">Disabled (unlimited)</div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium panda-text-primary">
+                          Total Cluster Limit
+                        </label>
+                        <label className="flex items-center text-xs">
+                          <input
+                            type="checkbox"
+                            checked={languageDefinition.options.totalClusterLimit !== undefined}
+                            onChange={(e) => updateOption('totalClusterLimit', e.target.checked ? 3 : undefined)}
+                            className="mr-1"
+                          />
+                          Enable
+                        </label>
+                      </div>
+                      {languageDefinition.options.totalClusterLimit !== undefined ? (
+                        <>
+                          <div className="text-xs panda-text-secondary mb-1">
+                            Value: {languageDefinition.options.totalClusterLimit}
+                          </div>
+                          <input
+                            type="range"
+                            min="0"
+                            max="10"
+                            value={languageDefinition.options.totalClusterLimit}
+                            onChange={(e) => updateOption('totalClusterLimit', parseInt(e.target.value))}
+                            className="w-full"
+                          />
+                        </>
+                      ) : (
+                        <div className="text-xs text-gray-400 italic">Disabled (unlimited)</div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      <strong>Tip:</strong> Adjust these values to control name generation. Lower values = shorter names, higher values = longer names. 
+                      Use limits to prevent repetitive patterns.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Error Section */}
           {error && (

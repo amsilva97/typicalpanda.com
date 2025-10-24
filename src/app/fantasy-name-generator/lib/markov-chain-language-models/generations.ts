@@ -88,8 +88,7 @@ function generateName(languageDefinition: LanguageDefinition, timeoutMs: number 
     if (languageDefinitionOptions.duplicateClusterLimit !== undefined) {
       validOptions = validOptions.filter(option => {
         const clusterCount = currentStep.duplicateCluster[option] || 0;
-        if (languageDefinitionOptions.duplicateClusterLimit !== undefined)
-          return clusterCount < languageDefinitionOptions.duplicateClusterLimit;
+        return clusterCount < languageDefinitionOptions.duplicateClusterLimit!;
       });
     }
 
