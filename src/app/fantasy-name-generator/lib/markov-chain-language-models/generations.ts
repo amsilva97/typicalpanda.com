@@ -151,11 +151,24 @@ export function generateName(languageDefinition: LanguageDefinition, timeoutMs: 
  * Generate multiple names using a language definition
  */
 export function generateNames(languageDefinition: LanguageDefinition, count: number = 10, timeoutMs: number = 5000): string[] {
-  const names: string[] = [];
-  for (let i = 0; i < count; i++) {
-    names.push(generateName(languageDefinition, timeoutMs));
+  const names: Set<string> = new Set();
+  let failedAttempts = 0;
+  const maxFailedAttempts = count * 5; // Arbitrary limit to prevent infinite loops
+
+  while (names.size < count && failedAttempts < maxFailedAttempts) {
+    const name = generateName(languageDefinition);
+    if (!names.has(name)) {
+      names.add(name);
+    } else {
+      failedAttempts++;
+    }
   }
-  return names;
+
+  if (names.size < count) {
+    console.warn(`Only generated '${names.size}' unique names out of requested '${count}' after '${failedAttempts}' failed attempts.`);
+  }
+
+  return Array.from(names);
 }
 
 /**
