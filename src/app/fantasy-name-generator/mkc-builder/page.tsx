@@ -512,6 +512,89 @@ export default function MkcBuilder() {
             </div>
           )}
 
+          {/* AI Analysis Data Collection Section */}
+          {markovChainResult && (
+            <div className="panda-card p-6 mb-6">
+              <h2 className="text-xl font-semibold panda-text-primary mb-4">
+                🤖 AI Agent Data Collection
+              </h2>
+              <p className="text-sm panda-text-secondary mb-4">
+                Copy this comprehensive data section to get AI assistance with improving your Markov chain system:
+              </p>
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 overflow-auto border border-gray-200 dark:border-gray-600">
+                <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+{`=== MARKOV CHAIN ANALYSIS REQUEST ===
+
+## CURRENT SYSTEM PERFORMANCE
+- Input Names Count: ${namesInput.split(',').filter(n => n.trim()).length}
+- Generated Names Count: ${generatedNames.length}
+- Total Pattern Keys: ${Object.keys(markovChainResult.patterns).length}
+- Start Patterns: ${markovChainResult.patterns['^']?.length || 0}
+
+## ACTIVE GENERATION OPTIONS
+- Min Nodes: ${languageDefinition.options.minNodes ?? 'Disabled'}
+- Max Nodes: ${languageDefinition.options.maxNodes ?? 'Disabled'}  
+- Consecutive Single Letter Limit: ${languageDefinition.options.consecutiveSingleLetterLimit ?? 'Disabled'}
+- Non-Consecutive Single Letter Limit: ${languageDefinition.options.nonConsecutiveSingleLetterLimit ?? 'Disabled'}
+- Duplicate Cluster Limit: ${languageDefinition.options.duplicateClusterLimit ?? 'Disabled'}
+- Total Cluster Limit: ${languageDefinition.options.totalClusterLimit ?? 'Disabled'}
+
+## INPUT DATASET
+Names: ${namesInput}
+
+## GENERATED OUTPUT SAMPLE (First 20)
+${generatedNames.slice(0, 20).map((name, i) => `${i+1}. ${name}`).join('\n')}
+${generatedNames.length > 20 ? `\n... and ${generatedNames.length - 20} more names` : ''}
+
+## PATTERN ANALYSIS NEEDED
+Please analyze:
+1. **Quality Issues**: Are there repetitive patterns, unnatural combinations, or linguistic inconsistencies?
+2. **Diversity Problems**: Too many similar names or lack of variation?
+3. **Lookback Improvements**: Should we adjust the lookback artifact removal (currently 70% threshold, min 3 occurrences)?
+4. **Filter Optimization**: Are the current filters (consonant clusters, repeated letters) working effectively?
+5. **Option Tuning**: What settings would improve authenticity for this specific dataset?
+6. **Pattern Distribution**: Are certain patterns dominating inappropriately?
+
+## TECHNICAL CONTEXT  
+- Using lookback artifact removal (70% dominance threshold)
+- Outlier filtering (1% threshold) 
+- Hard-coded filters: repeated letters, consonant clusters
+- Max node length check temporarily disabled
+- Bit manipulation for all possible word segmentations
+
+## SPECIFIC IMPROVEMENTS REQUESTED
+- Suggest optimal parameter values for this dataset
+- Identify problematic generated names and root causes  
+- Recommend additional filtering or preprocessing steps
+- Propose linguistic rule enhancements
+- Advise on dataset-specific optimizations
+
+## PATTERN SAMPLE (Top 10 Start Patterns)
+${markovChainResult.patterns['^']?.slice(0, 10).map((pattern, i) => `${i+1}. "${pattern}"`).join('\n') || 'No start patterns'}
+
+## ERROR LOG
+${error || 'No errors reported'}
+
+Please provide detailed analysis and actionable recommendations for improving name generation quality.`}
+                </pre>
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <button
+                  onClick={() => {
+                    const dataText = document.querySelector('.bg-gray-50.dark\\:bg-gray-800 pre')?.textContent || '';
+                    navigator.clipboard.writeText(dataText);
+                  }}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  📋 Copy Analysis Data
+                </button>
+                <span className="text-xs panda-text-secondary">
+                  All system state, parameters, and output data for AI analysis
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Results Section */}
           {markovChainResult && (
             <div className="panda-card p-6">

@@ -7,6 +7,13 @@ const CONSONANTS_PATTERN = /[bcdfghjklmnpqrstvwxz]{2,}/i;
 const REPEATED_LETTER_PATTERN = /(.)\1/;
 const CLUSTER_MIN_LENGTH = 3;
 
+// Language-agnostic quality constants
+const MIN_NAME_LENGTH = 4; // Increased to prevent short fragments like "eri", "rin"
+const MAX_PHONEME_REPETITION = 3; // Limit repeated sounds like "mereradoc"
+const IMPROVED_LOOKBACK_THRESHOLD = 0.8; // Stricter than 70%
+const VOWEL_PATTERN = /[aeiouAEIOU]/;
+const MAX_ENDING_DOMINANCE = 0.2; // Reduce ending pattern dominance to 20%
+
 /**
  * Create an empty language definition with undefined options (all disabled by default)
  */
@@ -60,6 +67,156 @@ function allGroupings(word: string): string[][] {
     }
 
     return results;
+}
+
+/**
+ * Language-agnostic quality validation for name segments.
+ * Applies universal linguistic principles to filter out low-quality patterns.
+ * 
+ * @param segments - Array of name segments to validate
+ * @returns True if segments meet quality standards
+ */
+function isHighQualityPattern(segments: string[]): boolean {
+    const fullName = segments.join('');
+    
+    // Minimum name length check (prevents fragments like "dog")
+    if (fullName.length < MIN_NAME_LENGTH) {
+        return false;
+    }
+    
+    // Check for excessive phoneme repetition (prevents "mereradoc" type issues)
+    if (hasExcessivePhonemeRepetition(fullName)) {
+        return false;
+    }
+    
+    // Check for unnatural consonant clusters at word start
+    if (hasUnaturalStartCluster(fullName)) {
+        return false;
+    }
+    
+    // Ensure reasonable vowel distribution
+    if (!hasReasonableVowelDistribution(segments)) {
+        return false;
+    }
+    
+    // Final check for very short segments that might slip through
+    if (segments.length === 1 && segments[0].length < MIN_NAME_LENGTH) {
+        return false;
+    }
+    
+    return true;
+}
+
+/**
+ * Detects excessive repetition of similar phonemes that create unnatural sounds.
+ */
+function hasExcessivePhonemeRepetition(name: string): boolean {
+    const lower = name.toLowerCase();
+    
+    // Check for repeated syllable-like patterns (er-er-er, wa-wa, etc.)
+    if (hasRepeatedSyllablePatterns(lower)) {
+        return true;
+    }
+    
+    // Check for excessive single consonant repetition
+    const consonantGroups = lower.match(/[bcdfghjklmnpqrstvwxz]+/g) || [];
+    
+    for (const group of consonantGroups) {
+        // Check for excessive repetition of same consonant type
+        const rCount = (group.match(/r/g) || []).length;
+        const lCount = (group.match(/l/g) || []).length;
+        const nCount = (group.match(/n/g) || []).length;
+        const wCount = (group.match(/w/g) || []).length;
+        
+        if (rCount > 2 || lCount > 2 || nCount > 2 || wCount > 2) {
+            return true;
+        }
+    }
+    
+    // Check for alternating vowel-consonant repetition patterns
+    if (hasAlternatingRepetition(lower)) {
+        return true;
+    }
+    
+    return false;
+}
+
+/**
+ * Detects repeated syllable-like patterns that create stuttering effects.
+ */
+function hasRepeatedSyllablePatterns(name: string): boolean {
+    // Check for 2-3 character patterns that repeat (like "er", "wa", "an")
+    for (let patternLength = 2; patternLength <= 3; patternLength++) {
+        for (let i = 0; i <= name.length - patternLength * 2; i++) {
+            const pattern = name.substr(i, patternLength);
+            const nextPattern = name.substr(i + patternLength, patternLength);
+            
+            if (pattern === nextPattern) {
+                // Found immediate repetition, check if it continues
+                let repetitions = 2;
+                let nextIndex = i + patternLength * 2;
+                
+                while (nextIndex + patternLength <= name.length && 
+                       name.substr(nextIndex, patternLength) === pattern) {
+                    repetitions++;
+                    nextIndex += patternLength;
+                }
+                
+                // Flag if pattern repeats 3+ times or 2+ times for longer patterns
+                if (repetitions >= 3 || (patternLength >= 3 && repetitions >= 2)) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Detects alternating repetition patterns like "abab" or "cdcd".
+ */
+function hasAlternatingRepetition(name: string): boolean {
+    // Check for alternating 2-character patterns
+    for (let i = 0; i <= name.length - 4; i++) {
+        const pattern1 = name.substr(i, 2);
+        const pattern2 = name.substr(i + 2, 2);
+        
+        if (pattern1 === pattern2) {
+            return true; // Found "abab" pattern
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Detects unnatural consonant clusters at the beginning of names.
+ */
+function hasUnaturalStartCluster(name: string): boolean {
+    // Check for difficult-to-pronounce consonant starts
+    const unnaturalStarts = /^[bcdfghjklmnpqrstvwxz]{3,}/i;
+    return unnaturalStarts.test(name);
+}
+
+/**
+ * Ensures segments have reasonable vowel distribution for pronounceability.
+ */
+function hasReasonableVowelDistribution(segments: string[]): boolean {
+    let totalSegments = segments.length;
+    let segmentsWithVowels = 0;
+    
+    for (const segment of segments) {
+        if (segment.length > 2 && VOWEL_PATTERN.test(segment)) {
+            segmentsWithVowels++;
+        } else if (segment.length <= 2) {
+            // Short segments are usually okay
+            segmentsWithVowels++;
+        }
+    }
+    
+    // At least 50% of multi-character segments should contain vowels
+    return (segmentsWithVowels / totalSegments) >= 0.5;
 }
 
 /**
@@ -157,6 +314,9 @@ function removeInvalidPatterns(nameSegments: string[][], languageDefinition: Lan
         return !segments.some(s => CONSONANTS_PATTERN.test(s));
     });
 
+    // Apply language-agnostic quality validation
+    nameSegments = nameSegments.filter(segments => isHighQualityPattern(segments));
+
     return nameSegments
 }
 
@@ -211,8 +371,8 @@ function removeOutliers(nameGroupingList: string[][][]): string[][][] {
  * @returns Filtered array with artificial splits removed
  */
 function removeLookbackArtifacts(nameGroupingList: string[][][]): string[][][] {
-    const LOOKBACK_THRESHOLD = 0.7; // If 70% of occurrences have the same predecessor, consider it an artifact
-    const MIN_OCCURRENCES = 3; // Need at least 3 occurrences to be statistically meaningful
+    const LOOKBACK_THRESHOLD = IMPROVED_LOOKBACK_THRESHOLD; // Stricter 80% threshold
+    const MIN_OCCURRENCES = 4; // Higher minimum for better statistical reliability
     
     // Track predecessors for each node across all groupings
     const nodePredecessors: { [node: string]: { [predecessor: string]: number } } = {};
@@ -280,6 +440,104 @@ function removeLookbackArtifacts(nameGroupingList: string[][][]): string[][][] {
             return true;
         });
     });
+}
+
+/**
+ * Balances specific overused patterns to prevent dominance of particular suffixes.
+ * 
+ * @param patterns - Current patterns array
+ * @param key - Pattern key being processed
+ * @param languageDefinition - Language definition to modify
+ */
+function balanceSpecificPatterns(patterns: string[], key: string, languageDefinition: LanguageDefinition): void {
+    const MAX_PATTERN_INSTANCES = 3; // Limit any single pattern to 3 instances
+    
+    // Count occurrences of each pattern
+    const patternCounts: { [pattern: string]: number } = {};
+    patterns.forEach(pattern => {
+        patternCounts[pattern] = (patternCounts[pattern] || 0) + 1;
+    });
+    
+    // Find overused patterns
+    const overusedPatterns = Object.entries(patternCounts)
+        .filter(([pattern, count]) => count > MAX_PATTERN_INSTANCES)
+        .map(([pattern, count]) => pattern);
+    
+    if (overusedPatterns.length > 0) {
+        // Rebuild patterns array with limited instances
+        const balancedPatterns: string[] = [];
+        
+        for (const [pattern, count] of Object.entries(patternCounts)) {
+            const allowedCount = Math.min(count, MAX_PATTERN_INSTANCES);
+            for (let i = 0; i < allowedCount; i++) {
+                balancedPatterns.push(pattern);
+            }
+        }
+        
+        languageDefinition.patterns[key] = balancedPatterns;
+        
+        // Log significant reductions
+        overusedPatterns.forEach(pattern => {
+            console.log(`Balanced overused pattern '${pattern}' in key '${key}' (was ${patternCounts[pattern]}, now ${MAX_PATTERN_INSTANCES})`);
+        });
+    }
+}
+
+/**
+ * Balances pattern frequencies to prevent certain endings or transitions
+ * from dominating the generation process. Applies caps to overly frequent patterns.
+ * 
+ * @param languageDefinition - Language definition to balance
+ */
+function balancePatternFrequencies(languageDefinition: LanguageDefinition): void {
+    const MAX_PATTERN_FREQUENCY = 6; // More aggressive capping
+    const ENDING_BALANCE_RATIO = MAX_ENDING_DOMINANCE; // Use the stricter 20% limit
+    
+    // Balance general pattern frequencies
+    for (const [key, patterns] of Object.entries(languageDefinition.patterns)) {
+        if (patterns.length > MAX_PATTERN_FREQUENCY) {
+            // Count frequency of each pattern
+            const patternCounts: { [pattern: string]: number } = {};
+            patterns.forEach(pattern => {
+                patternCounts[pattern] = (patternCounts[pattern] || 0) + 1;
+            });
+            
+            // Limit overrepresented patterns
+            const balancedPatterns: string[] = [];
+            const maxAllowed = Math.max(2, Math.floor(patterns.length / Object.keys(patternCounts).length * 1.5));
+            
+            for (const [pattern, count] of Object.entries(patternCounts)) {
+                const allowedCount = Math.min(count, maxAllowed);
+                for (let i = 0; i < allowedCount; i++) {
+                    balancedPatterns.push(pattern);
+                }
+            }
+            
+            languageDefinition.patterns[key] = balancedPatterns;
+        }
+        
+        // Balance specific overused suffix patterns (like "wyn")
+        balanceSpecificPatterns(patterns, key, languageDefinition);
+        
+        // Special handling for ending patterns to prevent dominance
+        if (patterns.includes('$')) {
+            const endingCount = patterns.filter(p => p === '$').length;
+            const totalCount = patterns.length;
+            
+            if (endingCount / totalCount > ENDING_BALANCE_RATIO) {
+                // Reduce ending frequency to maintain balance
+                const targetEndingCount = Math.floor(totalCount * ENDING_BALANCE_RATIO);
+                const nonEndingPatterns = patterns.filter(p => p !== '$');
+                const balancedPatterns = [...nonEndingPatterns];
+                
+                for (let i = 0; i < targetEndingCount; i++) {
+                    balancedPatterns.push('$');
+                }
+                
+                languageDefinition.patterns[key] = balancedPatterns;
+            }
+        }
+    }
 }
 
 /**
@@ -366,6 +624,9 @@ export function buildChain(names: string[], languageDefinition: LanguageDefiniti
     for (const key in languageDefinition.patterns) {
         languageDefinition.patterns[key] = Array.from(new Set(languageDefinition.patterns[key]));
     }
+
+    // Apply pattern frequency balancing to prevent dominance
+    balancePatternFrequencies(languageDefinition);
 
     return languageDefinition;
 }
