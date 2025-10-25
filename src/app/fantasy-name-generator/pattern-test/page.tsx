@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { SupportedLanguage } from '../lib/markov-chain-language-models/core';
 import { generateNamesForLanguage } from '../lib/markov-chain-language-models/generator';
 import { testNameDiversity } from '../lib/markov-chain-language-models/tests';
@@ -50,14 +51,21 @@ export default function PatternTest() {
     return (
         <div className="min-h-screen panda-bg-primary py-8">
             <div className="max-w-4xl mx-auto px-4">
-                <div className="mb-6">
-                    <a
-                        href="/fantasy-name-generator"
-                        className="panda-link text-sm font-medium"
-                    >
-                        ← Back to Fantasy Name Generator
-                    </a>
-                </div>
+
+                                <div className="mb-6 flex flex-col gap-1">
+                                    <Link
+                                        href="/"
+                                        className="panda-link text-sm font-medium"
+                                    >
+                                        ← Back to Portfolio
+                                    </Link>
+                                    <Link
+                                        href="/fantasy-name-generator"
+                                        className="panda-link text-sm font-medium"
+                                    >
+                                        ← Back to Fantasy Name Generator
+                                    </Link>
+                                </div>
 
                 <h1 className="text-3xl font-bold panda-text-primary mb-8">
                     <span className="panda-text-gradient-gold">

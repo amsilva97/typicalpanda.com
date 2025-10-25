@@ -63,16 +63,26 @@ export default function NameGenerator() {
       <div className="px-6 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link 
-            href="/fantasy-name-generator"
-            className="panda-link inline-flex items-center text-sm mb-4"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Fantasy Name Generator
-          </Link>
-          
+          <div className="mb-2">
+            <Link 
+              href="/"
+              className="panda-link inline-flex items-center text-sm mr-4"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Portfolio
+            </Link>
+            <Link 
+              href="/fantasy-name-generator"
+              className="panda-link inline-flex items-center text-sm"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Fantasy Name Generator
+            </Link>
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold panda-text-primary mb-4">
             <span className="panda-text-gradient-silver">
               Fantasy Name Generator
