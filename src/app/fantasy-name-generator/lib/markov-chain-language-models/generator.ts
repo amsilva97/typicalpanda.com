@@ -17,6 +17,89 @@ interface GenerationStep {
 }
 
 /**
+ * Deconstruct a word into all possible segmentations based on the language definition
+ */
+export function deconstructWord(word: string, languageDefinition: LanguageDefinition): string[][] {
+  const n = word.length;
+  let results: string[][] = [];
+
+  // Generate all possible splits using bit manipulation
+  // Each bit represents a split point between characters
+  for (let mask = 0; mask < (1 << (n - 1)); mask++) {
+    const grouping: string[] = [];
+    let current = word[0];
+
+    for (let i = 0; i < n - 1; i++) {
+      if (mask & (1 << i)) {
+        // Split at this position
+        grouping.push(current);
+        current = word[i + 1];
+      } else {
+        // Continue current segment
+        current += word[i + 1];
+      }
+    }
+    grouping.push(current);
+    results.push(grouping);
+  }
+
+  // Enforce consecutiveSingleLetterLimit
+  if (languageDefinition.options.consecutiveSingleLetterLimit !== undefined) {
+    results = results.filter(segments => {
+      const limit = languageDefinition.options.consecutiveSingleLetterLimit!;
+      let maxConsecutive = 0;
+      let currentConsecutive = 0;
+      for (const segment of segments) {
+        if (segment.length === 1) {
+          currentConsecutive++;
+          if (currentConsecutive > maxConsecutive) {
+            maxConsecutive = currentConsecutive;
+          }
+        } else {
+          currentConsecutive = 0;
+        }
+      }
+      return maxConsecutive <= limit;
+    });
+  }
+
+  // Enforce nonConsecutiveSingleLetterLimit
+  if (languageDefinition.options.nonConsecutiveSingleLetterLimit !== undefined) {
+    results = results.filter(segments => {
+      const limit = languageDefinition.options.nonConsecutiveSingleLetterLimit!;
+      const singleLetterCount = segments.filter(s => s.length === 1).length;
+      return singleLetterCount <= limit;
+    });
+  }
+
+  // Enforce duplicateClusterLimit
+  if (languageDefinition.options.duplicateClusterLimit !== undefined) {
+    results = results.filter(segments => {
+      const limit = languageDefinition.options.duplicateClusterLimit!;
+      const clusterCount: { [key: string]: number; } = {};
+      for (const segment of segments) {
+        if (segment.length >= 3) {
+          clusterCount[segment] = (clusterCount[segment] || 0) + 1;
+        }
+      }
+      const maxCluster = Math.max(...Object.values(clusterCount), 0);
+      return maxCluster <= limit;
+    });
+  }
+
+  // Enforce totalClusterLimit
+  if (languageDefinition.options.totalClusterLimit !== undefined) {
+    results = results.filter(segments => {
+      const limit = languageDefinition.options.totalClusterLimit!;
+      const totalClusters = segments.filter(s => s.length >= 3).length;
+      return totalClusters <= limit;
+    });
+  }
+
+  return results;
+}
+
+/**
  * Generate a single name using a language definition with backtracking
  */
 function generateName(languageDefinition: LanguageDefinition, timeoutMs: number = 5000): string {
