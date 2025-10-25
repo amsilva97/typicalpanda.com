@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import Link from 'next/link';
 import { SupportedLanguage } from '../lib/markov-chain-language-models/core';
