@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { buildChain, createEmptyLanguageDefinition } from '../lib/markov-chain-language-models/mkc-builder';
 import { LanguageDefinition } from '../lib/markov-chain-language-models/core';
-import { generateNames } from '../lib/markov-chain-language-models/generations';
+import { generateNames } from '../lib/markov-chain-language-models/generator';
 
 export default function MkcBuilder() {
   // Create persistent language definition

@@ -1,4 +1,4 @@
-import { generateNamesForLanguage } from '../markov-chain-language-models/generations';
+import { generateNamesForLanguage } from './generator';
 import { SupportedLanguage, getLanguageDefinition } from '../markov-chain-language-models/core';
 
 /**

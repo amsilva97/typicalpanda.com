@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { generateNamesForLanguage } from '../lib/markov-chain-language-models/generations';
+import { generateNamesForLanguage } from '../lib/markov-chain-language-models/generator';
 import { getLanguageDisplayName } from '../lib/markov-chain-language-models/core';
 import { getSupportedLanguages } from '../lib/markov-chain-language-models/core';
 import { SupportedLanguage } from '../lib/markov-chain-language-models/core';

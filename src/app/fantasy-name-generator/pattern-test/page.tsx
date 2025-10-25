@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { SupportedLanguage } from '../lib/markov-chain-language-models/core';
-import { generateNamesForLanguage } from '../lib/markov-chain-language-models/generations';
+import { generateNamesForLanguage } from '../lib/markov-chain-language-models/generator';
 import { testNameDiversity } from '../lib/markov-chain-language-models/tests';
 
 export default function PatternTest() {
