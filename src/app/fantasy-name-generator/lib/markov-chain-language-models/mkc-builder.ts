@@ -42,6 +42,7 @@ export function createEmptyLanguageDefinition(): LanguageDefinition {
  * @returns Array of all possible segmentations, each as an array of substrings
  * @example allGroupings("cat") returns [["cat"], ["c", "at"], ["ca", "t"], ["c", "a", "t"]]
  */
+//TODO: Use deconstructWord from generator.ts instead
 function allGroupings(word: string): string[][] {
     const n = word.length;
     const results: string[][] = [];
