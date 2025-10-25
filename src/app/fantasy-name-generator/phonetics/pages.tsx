@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import { generateNames, deconstructWord } from "../lib/markov-chain-language-models/generator";
 import { getLanguageDefinition, SupportedLanguage } from "../lib/markov-chain-language-models/core";
