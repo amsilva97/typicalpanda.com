@@ -42,6 +42,16 @@ export function deconstructWord(word: string, languageDefinition: LanguageDefini
     grouping.push(current);
     results.push(grouping);
   }
+  
+  // Enforce minNodes
+  if (languageDefinition.options.minNodes !== undefined) {
+    results = results.filter(segments => segments.length >= languageDefinition.options.minNodes!);
+  }
+
+  // Enforce maxNodes
+  if (languageDefinition.options.maxNodes !== undefined) {
+    results = results.filter(segments => segments.length <= languageDefinition.options.maxNodes!);
+  }
 
   // Enforce consecutiveSingleLetterLimit
   if (languageDefinition.options.consecutiveSingleLetterLimit !== undefined) {
